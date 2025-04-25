@@ -1,2 +1,2 @@
-# xrp
-Python code for the XRP robot
+# XRP Robot Code
+My Python code for the XRP robot
