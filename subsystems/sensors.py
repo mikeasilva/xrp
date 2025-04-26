@@ -17,18 +17,17 @@ class DistanceSensor(commands2.Subsystem):
         distance = self.distance_sensor.getDistance()
         if unit == "inch" or unit == "in":
             return distance * 39.3701
-        elif unit == "cm":
-            return distance * 100
-        elif unit == "meter":
-            return distance
         elif unit == "feet" or unit == "ft":
             return distance * 3.28084
         elif unit == "yard" or unit == "yd":
             return distance * 1.09361
+        elif unit == "cm":
+            return distance * 100
+        elif unit == "meter":
+            return distance
         else:
-            raise ValueError(
-                "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
-            )
+            raise ValueError("Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'.")
+        
 
 
 class LineSensor(commands2.Subsystem):

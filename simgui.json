@@ -3,19 +3,19 @@
     "Encoders": {
       "0": {
         "header": {
-          "open": true
+          "open": false
         }
       },
       "1": {
         "header": {
-          "open": true
+          "open": false
         }
       }
     },
     "Other Devices": {
       "BuiltInAccel": {
         "header": {
-          "open": true
+          "open": false
         }
       },
       "XRPGyro": {
@@ -46,31 +46,22 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
     "transitory": {
       "SmartDashboard": {
-        "open": true
+        "open": false
       }
     }
   },
   "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
-  },
-  "Plot": {
-    "Plot <0>": {
-      "plots": [
-        {
-          "backgroundColor": [
-            0.0,
-            0.0,
-            0.0,
-            0.8500000238418579
-          ],
-          "height": 332
-        }
-      ],
-      "window": {
-        "visible": false
-      }
-    }
   }
 }

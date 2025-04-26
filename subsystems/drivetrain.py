@@ -70,17 +70,6 @@ class Drivetrain(commands2.Subsystem):
         """
         self.drivetrain.feed()
 
-    def forward(self, distance: float) -> None:
-        """
-        Drive the robot forward a specified distance.
-
-        :param distance: the distance to drive in inches
-        """
-        self.reset_encoders()
-        while self.get_distance_traveled() < distance:
-            self.drive(0.5, 0.0)
-        self.stop()
-
     def get_distance_traveled(self) -> float:
         """
         Get the distance traveled by the robot.
@@ -90,7 +79,7 @@ class Drivetrain(commands2.Subsystem):
         return (
             self.left_encoder.getDistance() + self.right_encoder.getDistance()
         ) / 2.0
-    
+
     def get_left_encoder_position(self) -> float:
         """
         Get the position of the left encoder.
@@ -98,7 +87,7 @@ class Drivetrain(commands2.Subsystem):
         :return: the position of the left encoder in inches
         """
         return self.left_encoder.get()
-    
+
     def get_right_encoder_position(self) -> float:
         """
         Get the position of the right encoder.

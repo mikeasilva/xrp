@@ -77,10 +77,9 @@ class MyXRP(wpilib.TimedRobot):
     def autonomousInit(self) -> None:
         print("Autonomous Mode")
         self.led.on()
-        #self.drivetrain.safe(True)
+        # self.drivetrain.safe(True)
 
     def autonomousPeriodic(self) -> None:
-        
         distance_to_nearest_object = self.distance_sensor.get_distance()
 
         if distance_to_nearest_object - constants.CRASH_AVOIDANCE_DISTANCE > 0:
@@ -99,11 +98,13 @@ class MyXRP(wpilib.TimedRobot):
                 print("Turning right")
                 turn_to = round(current_heading + change_by, 0)
                 turn_by = -0.75
+            """
             while True:
                 if round(self.gyro.get_z, 0) >= turn_to:
                     break
                 self.drivetrain.drive(0, turn_by)
-           
+            """
+
     """
     ====================================================================
     Disabled mode functions
@@ -130,23 +131,29 @@ class MyXRP(wpilib.TimedRobot):
     def teleopPeriodic(self) -> None:
         # Blink the LED to indicate that the robot is in teleop mode
         self.led.blink()
-        distance = self.distance_sensor.get_distance()
+        distance_to_nearest_object = self.distance_sensor.get_distance()
 
-        if distance <= constants.CRASH_AVOIDANCE_DISTANCE:
-            # If the distance is greater than the crash avoidance distance, drive forward
+        # Crash avoidance system
+        # Check if the distance to the nearest object is under the crash avoidance threshold
+        # and the user is trying to move the robot foward
+        if (
+            distance_to_nearest_object <= constants.CRASH_AVOIDANCE_DISTANCE
+            and self.controller.getLeftY() < 0
+        ):
+            # We need to stop this wreckless behavior
             self.drivetrain.stop()
         else:
             # Drive the robot using the controller
-            self.drivetrain.drive(self.controller.getLeftY(), self.controller.getRightX())
-            
+            self.drivetrain.drive(
+                self.controller.getLeftY(), self.controller.getRightX()
+            )
+
         # Display information about the robot on the console
         if self.controller.getAButtonPressed():
             self._get_current_state()
         # Read the D-pad value and move the arm accordingly
         dpad = self.controller.getPOV()
         if dpad != -1:
-            # Read in the settings
-            # vars = Variables()
             shift_by = constants.ARM_SERVO_SHIFT_BY
             if dpad == 0:
                 # Up button on D-pad pressed so move the arm up
@@ -164,14 +171,11 @@ class MyXRP(wpilib.TimedRobot):
     def testInit(self) -> None:
         print("Test Mode")
         self.led.off()
+        self.effort = 0
         self.drivetrain.stop()
 
     def testPeriodic(self) -> None:
-        self.drivetrain.drive(self.controller.getLeftY(), self.controller.getRightX())
-        #if self.controller.getAButtonPressed():
-        distance_to_object = self.distance_sensor.get_distance()
-        print(f'Distance: {distance_to_object}"')
-        
+        pass
 
     """
     ====================================================================
