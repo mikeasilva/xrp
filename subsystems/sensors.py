@@ -1,5 +1,4 @@
 import xrp
-import wpimath.units
 import commands2
 
 
@@ -26,8 +25,9 @@ class DistanceSensor(commands2.Subsystem):
         elif unit == "meter":
             return distance
         else:
-            raise ValueError("Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'.")
-        
+            raise ValueError(
+                "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
+            )
 
 
 class LineSensor(commands2.Subsystem):
