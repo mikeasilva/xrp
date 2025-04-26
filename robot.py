@@ -80,13 +80,13 @@ class MyXRP(wpilib.TimedRobot):
         #self.drivetrain.safe(True)
 
     def autonomousPeriodic(self) -> None:
-        self.drivetrain.drive(1, 1)
-        """
-        distance = self.distance_sensor.get_distance()
-    
-        if distance > constants.CRASH_AVOIDANCE_DISTANCE:
+        
+        distance_to_nearest_object = self.distance_sensor.get_distance()
+
+        if distance_to_nearest_object - constants.CRASH_AVOIDANCE_DISTANCE > 0:
             # If the distance is greater than the crash avoidance distance, drive forward
-            self.drivetrain.feed()
+            self.drivetrain.drive(-0.75, 0)
+            print(f"Distance: {distance_to_nearest_object}")
         else:
             self.drivetrain.stop()
             current_heading = self.gyro.get_z()
@@ -103,7 +103,7 @@ class MyXRP(wpilib.TimedRobot):
                 if round(self.gyro.get_z, 0) >= turn_to:
                     break
                 self.drivetrain.drive(0, turn_by)
-            #"""
+           
     """
     ====================================================================
     Disabled mode functions

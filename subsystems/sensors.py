@@ -12,7 +12,8 @@ class DistanceSensor(commands2.Subsystem):
 
     def get_distance(self) -> float:
         """Get the distance from the sensor."""
-        return wpimath.units.metersToInches(self.distance_sensor.getDistance())
+        #return wpimath.units.metersToInches(self.distance_sensor.getDistance())
+        return self.distance_sensor.getDistance() * 39.3701 # Return inches
 
 
 class LineSensor(commands2.Subsystem):
