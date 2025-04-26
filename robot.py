@@ -167,7 +167,11 @@ class MyXRP(wpilib.TimedRobot):
         self.drivetrain.stop()
 
     def testPeriodic(self) -> None:
-        pass
+        self.drivetrain.drive(self.controller.getLeftY(), self.controller.getRightX())
+        #if self.controller.getAButtonPressed():
+        distance_to_object = self.distance_sensor.get_distance()
+        print(f'Distance: {distance_to_object}"')
+        
 
     """
     ====================================================================
