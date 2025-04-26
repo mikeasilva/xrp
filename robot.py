@@ -161,6 +161,15 @@ class MyXRP(wpilib.TimedRobot):
             elif dpad == 180:
                 # Down button on D-pad pressed so move the arm down
                 self.arm.set_position(self.arm.get_position() + (-1 * shift_by))
+            elif dpad == 90:
+                # Right button on D-pad pressed so turn right on the left wheel
+                self.drivetrain.drive_mode = "tank"
+                self.drivetrain.drive(-1, 0)
+            elif dpad == 270:
+                # Left button on D-pad pressed so turn left on the right wheel
+                self.drivetrain.drive_mode = "tank"
+                self.drivetrain.drive(0, -1)
+            self.drivetrain.drive_mode = "arcade"
 
     """
     ====================================================================
