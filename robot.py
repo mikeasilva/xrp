@@ -17,6 +17,7 @@ from subsystems.gyro import Gyro
 from subsystems.led import LED
 from subsystems.networktables import NetworkTables
 from subsystems.sensors import DistanceSensor, LineSensor
+import time
 import wpilib
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
@@ -47,6 +48,9 @@ class MyXRP(wpilib.TimedRobot):
 
         # Get the current state of the robot
         self._get_current_state()
+
+        with open("log.txt", "w") as f:
+            f.write("LOG STARTED\n")
 
     def _get_current_state(self) -> None:
         """
@@ -180,11 +184,13 @@ class MyXRP(wpilib.TimedRobot):
     def testInit(self) -> None:
         print("Test Mode")
         self.led.off()
-        self.effort = 0
         self.drivetrain.stop()
+        with open("log.txt", "a") as f:
+            f.write("test")
 
     def testPeriodic(self) -> None:
         pass
+        
 
     """
     ====================================================================
