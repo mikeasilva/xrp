@@ -15,7 +15,7 @@
     "Other Devices": {
       "BuiltInAccel": {
         "header": {
-          "open": false
+          "open": true
         }
       },
       "XRPGyro": {
@@ -48,11 +48,6 @@
   "NetworkTables": {
     "Persistent Values": {
       "open": false
-    },
-    "transitory": {
-      "SmartDashboard": {
-        "open": false
-      }
     }
   },
   "NetworkTables Info": {
