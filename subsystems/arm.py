@@ -8,5 +8,8 @@ class Arm(commands2.Subsystem):
         # Device number 4 maps to the physical Servo 1 port on the XRP
         self.armServo = xrp.XRPServo(4)
 
-    def setAngle(self, degrees: float):
+    def set_angle(self, degrees: float):
         self.armServo.setAngle(degrees)
+
+    def get_angle(self) -> float:
+        return self.armServo.getAngle()

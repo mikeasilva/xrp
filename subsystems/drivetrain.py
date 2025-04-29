@@ -1,4 +1,3 @@
-
 # Copyright (c) FIRST and other WPILib contributors.
 # Open Source Software; you can modify and/or share it under the terms of
 # the WPILib BSD license file in the root directory of this project.
@@ -18,11 +17,15 @@ from wpilib import SmartDashboard
 
 
 class Drivetrain(commands2.Subsystem):
-    kCountsPerRevolution = constants.ENCODER_RESOLUTION * constants.MOTOR_GEAR_RATIO #585.0
-    kWheelDiameterInch = constants.WHEEL_DIAMETER_INCH #2.3622
+    kCountsPerRevolution = (
+        constants.ENCODER_RESOLUTION * constants.MOTOR_GEAR_RATIO
+    )  # 585.0
+    kWheelDiameterInch = constants.WHEEL_DIAMETER_INCH  # 2.3622
 
     def __init__(self) -> None:
         super().__init__()
+
+        self.drive_mode = "arcade"  # default mode is arcade
 
         # The XRP has the left and right motors set to
         # PWM channels 0 and 1 respectively
@@ -32,8 +35,12 @@ class Drivetrain(commands2.Subsystem):
 
         # The XRP has onboard encoders that are hardcoded
         # to use DIO pins 4/5 and 6/7 for the left and right
-        self.leftEncoder = wpilib.Encoder(constants.LEFT_ENCODER_CHANNEL_A, constants.LEFT_ENCODER_CHANNEL_B)
-        self.rightEncoder = wpilib.Encoder(constants.RIGHT_ENCODER_CHANNEL_A, constants.RIGHT_ENCODER_CHANNEL_B)
+        self.leftEncoder = wpilib.Encoder(
+            constants.LEFT_ENCODER_CHANNEL_A, constants.LEFT_ENCODER_CHANNEL_B
+        )
+        self.rightEncoder = wpilib.Encoder(
+            constants.RIGHT_ENCODER_CHANNEL_A, constants.RIGHT_ENCODER_CHANNEL_B
+        )
 
         # And an onboard gyro (and you have to power on your XRP when it is on flat surface)
         self.gyro = xrp.XRPGyro()
@@ -54,17 +61,27 @@ class Drivetrain(commands2.Subsystem):
         # Set up the differential drive controller and differential drive odometry
         self.drive = DifferentialDrive(self.leftMotor, self.rightMotor)
         self.odometry = DifferentialDriveOdometry(
-            Rotation2d.fromDegrees(self.getGyroAngleZ()), self.getLeftDistanceInch(), self.getRightDistanceInch())
+            Rotation2d.fromDegrees(self.getGyroAngleZ()),
+            self.getLeftDistanceInch(),
+            self.getRightDistanceInch(),
+        )
 
     def periodic(self) -> None:
-        pose = self.odometry.update(Rotation2d.fromDegrees(self.getGyroAngleZ()), self.getLeftDistanceInch(), self.getRightDistanceInch())
+        pose = self.odometry.update(
+            Rotation2d.fromDegrees(self.getGyroAngleZ()),
+            self.getLeftDistanceInch(),
+            self.getRightDistanceInch(),
+        )
         SmartDashboard.putNumber("x", pose.x)
         SmartDashboard.putNumber("y", pose.y)
         SmartDashboard.putNumber("z-heading", pose.rotation().degrees())
         SmartDashboard.putNumber("distance", self.getDistanceToObstacle())
-        SmartDashboard.putNumber("left-reflect", self.reflectanceSensor.getLeftReflectanceValue())
-        SmartDashboard.putNumber("right-reflect", self.reflectanceSensor.getRightReflectanceValue())
-
+        SmartDashboard.putNumber(
+            "left-reflect", self.reflectanceSensor.getLeftReflectanceValue()
+        )
+        SmartDashboard.putNumber(
+            "right-reflect", self.reflectanceSensor.getRightReflectanceValue()
+        )
 
     def arcadeDrive(self, fwd: float, rot: float) -> None:
         """
@@ -75,11 +92,32 @@ class Drivetrain(commands2.Subsystem):
         """
         self.drive.arcadeDrive(fwd, -rot)
 
+    def drive(self, a: float, b: float) -> None:
+        """
+        Drive the robot using the specified drive mode.
+
+        :param a: the commanded forward movement or left movement
+        :param b: the commanded rotation or right movement
+        """
+        if self.drive_mode == "arcade":
+            self.arcadeDrive(a, b)
+        elif self.drive_mode == "tank":
+            self.tankDrive(a, b)
+
     def stop(self) -> None:
         """
         Stop the drivetrain motors
         """
         self.drive.arcadeDrive(0, 0)
+
+    def tankDrive(self, left: float, right: float) -> None:
+        """
+        Drives the robot using tank controls.
+
+        :param left: the commanded left movement
+        :param right: the commanded right movement
+        """
+        self.drive.tankDrive(-left, -right)
 
     def resetEncoders(self) -> None:
         """Resets the drive encoders to currently read a position of 0."""
@@ -144,13 +182,26 @@ class Drivetrain(commands2.Subsystem):
         """
         return self.gyro.getAngleZ()
 
-    def getDistanceToObstacle(self) -> float:
+    def getDistanceToObstacle(self, unit="inch") -> float:
         """Distance to obstacle in the front, as given by the distance sensor
 
-        :returns: Distance in meters, values >0.5 are not very reliable and are replaced with nan.
+        :returns: Distance in the requested unit.
         """
         distance = self.distanceSensor.getDistance()
-        return distance if distance < 0.5 else math.nan
+        if unit == "inch" or unit == "in":
+            return distance * 39.3701
+        elif unit == "feet" or unit == "ft":
+            return distance * 3.28084
+        elif unit == "yard" or unit == "yd":
+            return distance * 1.09361
+        elif unit == "cm":
+            return distance * 100
+        elif unit == "meter":
+            return distance
+        else:
+            raise ValueError(
+                "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
+            )
 
     def resetGyro(self) -> None:
         """Reset the gyro"""
@@ -160,4 +211,6 @@ class Drivetrain(commands2.Subsystem):
         self.resetGyro()
         self.resetEncoders()
         heading = Rotation2d.fromDegrees(self.getGyroAngleZ())
-        self.odometry.resetPosition(heading, self.getLeftDistanceInch(), self.getRightDistanceInch(), pose)
+        self.odometry.resetPosition(
+            heading, self.getLeftDistanceInch(), self.getRightDistanceInch(), pose
+        )

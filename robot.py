@@ -9,12 +9,14 @@
 # python -m robotpy test
 
 import os
-#import random
+
+# import random
 import constants
 from subsystems.arm import Arm
 from subsystems.drivetrain import Drivetrain
 from subsystems.led import LED
-#from subsystems.networktables import NetworkTables
+
+# from subsystems.networktables import NetworkTables
 import wpilib
 import json
 
@@ -51,11 +53,44 @@ class MyXRP(wpilib.TimedRobot):
         super().robotPeriodic()
 
         # 1. driving: take the speeds from joystick adjusted by the joystick drift
-        fwd_speed = -self.joystick.getRawAxis(constants.CONTROLLER_LEFT_STICK) + self.joystick_drift['left']
-        turn_speed = self.joystick.getRawAxis(constants.CONTROLLER_RIGHT_STICK) + self.joystick_drift['right']
-        self.drivetrain.arcadeDrive(fwd_speed, turn_speed)
-        self.drivetrain.periodic()  # updates odometry
+        fwd_speed = (
+            -self.joystick.getRawAxis(constants.CONTROLLER_LEFT_STICK)
+            + self.joystick_drift["left"]
+        )
+        turn_speed = (
+            self.joystick.getRawAxis(constants.CONTROLLER_RIGHT_STICK)
+            + self.joystick_drift["right"]
+        )
+        distance_to_nearest_object = self.drivetrain.getDistanceToObstacle()
+        if (
+            distance_to_nearest_object - constants.CRASH_AVOIDANCE_DISTANCE <= 0
+            and fwd_speed > 0
+        ):
+            # Activate crash avoidance mode
+            self.drivetrain.stop()
+        else:
+            self.drivetrain.arcadeDrive(fwd_speed, turn_speed)
+            self.drivetrain.periodic()  # updates odometry
 
+        # Read the D-pad value and move the arm accordingly
+        dpad = self.joystick.getPOV()
+        if dpad != -1:
+            shift_by = constants.ARM_SERVO_SHIFT_BY
+            if dpad == 0:
+                # Up button on D-pad pressed so move the arm up
+                self.arm.set_angle(self.arm.get_angle() + shift_by)
+            elif dpad == 180:
+                # Down button on D-pad pressed so move the arm down
+                self.arm.set_angle(self.arm.get_angle() - shift_by)
+            elif dpad == 90:
+                # Right button on D-pad pressed so turn right on the left wheel
+                self.drivetrain.drive_mode = "tank"
+                self.drivetrain.drive(-1, 0)
+            elif dpad == 270:
+                # Left button on D-pad pressed so turn left on the right wheel
+                self.drivetrain.drive_mode = "tank"
+                self.drivetrain.drive(0, -1)
+            self.drivetrain.drive_mode = "arcade"
 
     def teleopPeriodic(self) -> None:
         """This function is called periodically when in operator control mode"""
