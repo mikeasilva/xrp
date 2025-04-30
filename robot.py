@@ -30,7 +30,7 @@ class MyXRP(wpilib.TimedRobot):
         This function is run when the robot is first started up and should be used for any
         initialization code.
         """
-        # Assumes a gamepad plugged into channnel 0
+        # Assumes a gamepad plugged into channel 0
         self.joystick = wpilib.Joystick(constants.CONTROLLER_PORT)
 
         # create a drivetrain (contains two motors, two encoders, a gyro, a distance sensor, and a reflective sensor)
@@ -61,7 +61,7 @@ class MyXRP(wpilib.TimedRobot):
             self.joystick.getRawAxis(constants.CONTROLLER_RIGHT_STICK)
             + self.joystick_drift["right"]
         )
-        distance_to_nearest_object = self.drivetrain.getDistanceToObstacle()
+        distance_to_nearest_object = self.drivetrain.get_distance_to_obstacle()
         if (
             distance_to_nearest_object - constants.CRASH_AVOIDANCE_DISTANCE <= 0
             and fwd_speed > 0
@@ -69,7 +69,7 @@ class MyXRP(wpilib.TimedRobot):
             # Activate crash avoidance mode
             self.drivetrain.stop()
         else:
-            self.drivetrain.arcadeDrive(fwd_speed, turn_speed)
+            self.drivetrain.arcade_drive(fwd_speed, turn_speed)
             self.drivetrain.periodic()  # updates odometry
 
         # Read the D-pad value and move the arm accordingly
@@ -84,13 +84,10 @@ class MyXRP(wpilib.TimedRobot):
                 self.arm.set_angle(self.arm.get_angle() - shift_by)
             elif dpad == 90:
                 # Right button on D-pad pressed so turn right on the left wheel
-                self.drivetrain.drive_mode = "tank"
-                self.drivetrain.drive(-1, 0)
+                self.drivetrain.tank_drive(1, 0)
             elif dpad == 270:
                 # Left button on D-pad pressed so turn left on the right wheel
-                self.drivetrain.drive_mode = "tank"
-                self.drivetrain.drive(0, -1)
-            self.drivetrain.drive_mode = "arcade"
+                self.drivetrain.tank_drive(0, 1)
 
     def teleopPeriodic(self) -> None:
         """This function is called periodically when in operator control mode"""
