@@ -4,29 +4,29 @@ from subsystems.drivetrain import Drivetrain
 
 
 class Turn(commands2.Command):
-    def __init__(self, turn_degrees: float, speed: float = 0.5, timeout: float = None):
+    def __init__(
+        self, degrees: float, direction: str = "CW", margin_of_error: float = 0.5
+    ) -> None:
         """
         Command to turn the robot a specified number of degrees.
-        :param turn_degrees: the number of degrees to turn (positive for right, negative for left)
-        :param speed: the speed of the turn (default is 0.5)
-        :param timeout: the time limit for the command (default is None, meaning no timeout)
+        :param degrees: the number of degrees to turn
+        :param direction: the direction to turn, either "CW" (clockwise) or "CCW" (counter-clockwise)
+        :param margin_of_error: the margin of error of the turn in degrees (default: 0.5)
         """
         super().__init__()
         self.drivetrain = Drivetrain()
         self.addRequirements(self.drivetrain)
 
-        # ensure distance is always positive while speed could be either positive or negative
-        if turn_degrees < 0:
-            speed *= -1
-            turn_degrees *= -1
-
-        self.turn_degrees = turn_degrees
-        self.speed = speed
-        self.timeout = timeout
-        self.left_delta = 0
-        self.right_delta = 0
-        self.left_start = self.drivetrain.get_left_encoder_position()
-        self.right_start = self.drivetrain.get_right_encoder_position()
+        self.degrees = degrees
+        self.direction = direction.upper()
+        if self.direction not in ["CW", "CCW"]:
+            raise ValueError("Direction must be either 'CW' or 'CCW'")
+        self.margin_of_error = margin_of_error
+        self.heading_start = self.drivetrain.get_gyro_angle_z()
+        # self.left_delta = 0
+        # self.right_delta = 0
+        # self.left_start = self.drivetrain.get_left_encoder_position()
+        # self.right_start = self.drivetrain.get_right_encoder_position()
 
     def initialize(self):
         pass
@@ -35,7 +35,12 @@ class Turn(commands2.Command):
         pass
 
     def isFinished(self) -> bool:
-        pass
+        """Check if the robot has turned the specified number of degrees."""
+        current_heading = self.drivetrain.get_gyro_angle_z()
+        degrees_turned = abs(current_heading - self.heading_start)
+        return abs(degrees_turned + self.margin_of_error) >= abs(self.degrees) or abs(
+            degrees_turned - self.margin_of_error
+        ) >= abs(self.degrees)
 
     def end(self, interrupted: bool):
         self.drivetrain.stop()
