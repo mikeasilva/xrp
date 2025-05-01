@@ -5,11 +5,11 @@ from subsystems.drivetrain import Drivetrain
 
 class Turn(commands2.Command):
     def __init__(
-        self, 
-        degrees: float, 
-        direction: str = "CW", 
+        self,
+        degrees: float,
+        direction: str = "CW",
         margin_of_error: float = 0.5,
-        drivetrain: Drivetrain = None
+        drivetrain: Drivetrain = None,
     ) -> None:
         """
         Command to turn the robot a specified number of degrees.
@@ -46,11 +46,11 @@ class Turn(commands2.Command):
         """Check if the robot has turned the specified number of degrees."""
         current_heading = self.drivetrain.get_gyro_angle_z()
         degrees_turned = abs(current_heading - self.heading_start)
-        '''
+        """
         return abs(degrees_turned + self.margin_of_error) >= abs(self.degrees) or abs(
             degrees_turned - self.margin_of_error
         ) >= abs(self.degrees)
-        '''
+        """
         return abs(degrees_turned) >= abs(self.degrees)
 
     def end(self, interrupted: bool):

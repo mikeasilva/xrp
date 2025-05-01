@@ -8,7 +8,7 @@ class Joystick(commands2.Subsystem):
     def __init__(self) -> None:
         super().__init__()
         self.joystick = wpilib.XboxController(constants.CONTROLLER_PORT)
-        #self.joystick = wpilib.Joystick(constants.CONTROLLER_PORT)
+        # self.joystick = wpilib.Joystick(constants.CONTROLLER_PORT)
 
         # Read in the joystick drift
         try:
@@ -33,22 +33,22 @@ class Joystick(commands2.Subsystem):
         """
         Get the left stick value
         """
-        '''
+        """
         return (
             self.joystick.getRawAxis(constants.CONTROLLER_LEFT_STICK)
             + self.joystick_drift["left"]
         )
-        '''
+        """
         return self.joystick.getLeftY() + self.joystick_drift["left"]
 
     def get_right_stick(self) -> float:
         """
         Get the right stick value
         """
-        '''
+        """
         return (
             self.joystick.getRawAxis(constants.CONTROLLER_RIGHT_STICK)
             + self.joystick_drift["right"]
         )
-        '''
+        """
         return self.joystick.getRightX() + self.joystick_drift["right"]

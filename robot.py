@@ -9,12 +9,14 @@
 # python -m robotpy test
 
 import constants
+import ntcore
 import os
 from subsystems.arm import Arm
 from subsystems.drivetrain import Drivetrain
 from subsystems.led import LED
 from subsystems.joystick import Joystick
-from subsystems.networktables import NetworkTables
+
+# from subsystems.networktables import NetworkTables
 import wpilib
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
@@ -32,7 +34,10 @@ class MyXRP(wpilib.TimedRobot):
         self.drivetrain = Drivetrain()
         self.joystick = Joystick()
         self.led = LED()
-        self.network_tables = NetworkTables()
+        # self.network_tables = NetworkTables()
+        network_tables = ntcore.NetworkTableInstance.getDefault()
+        table = network_tables.getTable("XRP")
+        self.crash_pub = table.getBooleanTopic("crash-avoidance-activated").publish()
 
     def robotPeriodic(self) -> None:
         """This function is called periodically (by default, 50 times per second)"""
@@ -40,9 +45,12 @@ class MyXRP(wpilib.TimedRobot):
 
         # 1. driving: take the speeds from joystick
         forward_speed = -self.joystick.get_left_stick()
-        turn_speed = self.joystick.get_right_stick()
+        turn_speed = -self.joystick.get_right_stick()
         self.drivetrain.arcade_drive(forward_speed, turn_speed)
         self.drivetrain.periodic()  # updates odometry
+
+        # 2. update network tables
+        self.crash_pub.set(self.drivetrain.at_risk_of_crashing(1))
 
         # Read the D-pad value and move the arm accordingly
         dpad = self.joystick.get_dpad()
