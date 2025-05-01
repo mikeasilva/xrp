@@ -99,7 +99,7 @@ class Drivetrain(commands2.Subsystem):
         # The crash avoidance system check
         if not self.at_risk_of_crashing(fwd):
             # If the robot is not at risk of crashing, drive normally
-            self.drive.arcadeDrive(fwd, rot)
+            self.drive.arcadeDrive(fwd, -rot)
 
     def at_risk_of_crashing(self, forward_speed=0) -> None:
         if self.crash_avoidance_enabled:
