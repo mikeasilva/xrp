@@ -8,17 +8,14 @@
 # ---------------
 # python -m robotpy test
 
-import os
-
-# import random
 import constants
+import os
 from subsystems.arm import Arm
 from subsystems.drivetrain import Drivetrain
 from subsystems.led import LED
-
-# from subsystems.networktables import NetworkTables
+from subsystems.joystick import Joystick
+from subsystems.networktables import NetworkTables
 import wpilib
-import json
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
 os.environ["HALSIMXRP_PORT"] = "3540"
@@ -30,58 +27,35 @@ class MyXRP(wpilib.TimedRobot):
         This function is run when the robot is first started up and should be used for any
         initialization code.
         """
-        # Assumes a gamepad plugged into channel 0
-        self.joystick = wpilib.Joystick(constants.CONTROLLER_PORT)
-
-        # create a drivetrain (contains two motors, two encoders, a gyro, a distance sensor, and a reflective sensor)
-        self.drivetrain = Drivetrain()
+        # Create the subsytems objects
         self.arm = Arm()
+        self.drivetrain = Drivetrain()
+        self.joystick = Joystick()
         self.led = LED()
-
-        # Read in the joystick drift
-        try:
-            with open("joystick_drift.json", "r") as f:
-                self.joystick_drift = json.load(f)
-        except:
-            self.joystick_drift = {
-                "left": 0.0,
-                "right": 0.0,
-            }
+        self.network_tables = NetworkTables()
 
     def robotPeriodic(self) -> None:
         """This function is called periodically (by default, 50 times per second)"""
         super().robotPeriodic()
 
-        # 1. driving: take the speeds from joystick adjusted by the joystick drift
-        fwd_speed = (
-            -self.joystick.getRawAxis(constants.CONTROLLER_LEFT_STICK)
-            + self.joystick_drift["left"]
-        )
-        turn_speed = (
-            self.joystick.getRawAxis(constants.CONTROLLER_RIGHT_STICK)
-            + self.joystick_drift["right"]
-        )
-        distance_to_nearest_object = self.drivetrain.get_distance_to_obstacle()
-        if (
-            distance_to_nearest_object - constants.CRASH_AVOIDANCE_DISTANCE <= 0
-            and fwd_speed > 0
-        ):
-            # Activate crash avoidance mode
-            self.drivetrain.stop()
-        else:
-            self.drivetrain.arcade_drive(fwd_speed, turn_speed)
-            self.drivetrain.periodic()  # updates odometry
+        # 1. driving: take the speeds from joystick
+        forward_speed = -self.joystick.get_left_stick()
+        turn_speed = self.joystick.get_right_stick()
+        self.drivetrain.arcade_drive(forward_speed, turn_speed)
+        self.drivetrain.periodic()  # updates odometry
 
         # Read the D-pad value and move the arm accordingly
-        dpad = self.joystick.getPOV()
+        dpad = self.joystick.get_dpad()
         if dpad != -1:
             shift_by = constants.ARM_SERVO_SHIFT_BY
             if dpad == 0:
                 # Up button on D-pad pressed so move the arm up
-                self.arm.set_angle(self.arm.get_angle() + shift_by)
+                #self.arm.set_angle(self.arm.get_angle() + shift_by)
+                self.arm.retract_arm()
             elif dpad == 180:
                 # Down button on D-pad pressed so move the arm down
-                self.arm.set_angle(self.arm.get_angle() - shift_by)
+                #self.arm.set_angle(self.arm.get_angle() - shift_by)
+                self.arm.extend_arm()
             elif dpad == 90:
                 # Right button on D-pad pressed so turn right on the left wheel
                 self.drivetrain.tank_drive(1, 0)

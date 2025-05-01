@@ -63,16 +63,16 @@ class Drivetrain(commands2.Subsystem):
             self.get_right_distance_inch(),
         )
 
+        # Settings for the crash avoidance system
+        self.crash_avoidance_enabled = True
+        self.crash_avoidance_distance = constants.CRASH_AVOIDANCE_DISTANCE
+
     def periodic(self) -> None:
-        pose = self.odometry.update(
-            Rotation2d.fromDegrees(self.get_gyro_angle_z()),
-            self.get_left_distance_inch(),
-            self.get_right_distance_inch(),
-        )
+        pose = self.get_pose()
         SmartDashboard.putNumber("x", pose.x)
         SmartDashboard.putNumber("y", pose.y)
         SmartDashboard.putNumber("z-heading", pose.rotation().degrees())
-        SmartDashboard.putNumber("distance", self.get_distance_to_obstacle())
+        SmartDashboard.putNumber("distance-to-obstacle", self.get_distance_to_obstacle())
         SmartDashboard.putNumber(
             "left-reflect", self.reflectance_sensor.getLeftReflectanceValue()
         )
@@ -80,6 +80,13 @@ class Drivetrain(commands2.Subsystem):
             "right-reflect", self.reflectance_sensor.getRightReflectanceValue()
         )
 
+    def get_pose(self):
+        return self.odometry.update(
+            Rotation2d.fromDegrees(self.get_gyro_angle_z()),
+            self.get_left_distance_inch(),
+            self.get_right_distance_inch(),
+        )
+    
     def arcade_drive(self, fwd: float, rot: float) -> None:
         """
         Drives the robot using arcade controls.
@@ -87,7 +94,23 @@ class Drivetrain(commands2.Subsystem):
         :param fwd: the commanded forward movement
         :param rot: the commanded rotation
         """
-        self.drive.arcadeDrive(fwd, -rot)
+        # The crash avoidance system check
+        if not self.at_risk_of_crashing(fwd):
+            # If the robot is not at risk of crashing, drive normally
+            self.drive.arcadeDrive(fwd, rot)
+
+    def at_risk_of_crashing(self, forward_speed=0) -> None:
+        if self.crash_avoidance_enabled:
+            return self.get_distance_to_obstacle() - self.crash_avoidance_distance <= 0 and forward_speed > 0
+        return False
+
+    def set_crash_avoidance_enabled(self, enabled: bool) -> None:
+        """
+        Enable or disable the crash avoidance system.
+
+        :param enabled: True to enable, False to disable
+        """
+        self.crash_avoidance_enabled = enabled                
 
     def stop(self) -> None:
         """
@@ -102,7 +125,13 @@ class Drivetrain(commands2.Subsystem):
         :param left: the commanded left movement
         :param right: the commanded right movement
         """
-        self.drive.tankDrive(left, right)
+        # The crash avoidance system check
+        forward_speed = 0
+        if left > 0 and right > 0:
+            forward_speed = 1
+        if not self.at_risk_of_crashing(forward_speed):
+            # If the robot is not at risk of crashing, drive normally
+            self.drive.tankDrive(left, right)
 
     def reset_encoders(self) -> None:
         """Resets the drive encoders to currently read a position of 0."""
