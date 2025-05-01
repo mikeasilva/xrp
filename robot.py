@@ -50,11 +50,11 @@ class MyXRP(wpilib.TimedRobot):
             shift_by = constants.ARM_SERVO_SHIFT_BY
             if dpad == 0:
                 # Up button on D-pad pressed so move the arm up
-                #self.arm.set_angle(self.arm.get_angle() + shift_by)
+                # self.arm.set_angle(self.arm.get_angle() + shift_by)
                 self.arm.retract_arm()
             elif dpad == 180:
                 # Down button on D-pad pressed so move the arm down
-                #self.arm.set_angle(self.arm.get_angle() - shift_by)
+                # self.arm.set_angle(self.arm.get_angle() - shift_by)
                 self.arm.extend_arm()
             elif dpad == 90:
                 # Right button on D-pad pressed so turn right on the left wheel

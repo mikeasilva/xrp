@@ -3,6 +3,7 @@ import constants
 import wpilib
 import json
 
+
 class Joystick(commands2.Subsystem):
     def __init__(self) -> None:
         super().__init__()
@@ -26,15 +27,21 @@ class Joystick(commands2.Subsystem):
         Get the D-pad value
         """
         return self.joystick.getPOV()
-    
+
     def get_left_stick(self) -> float:
         """
         Get the left stick value
         """
-        return self.joystick.getRawAxis(constants.CONTROLLER_LEFT_STICK) + self.joystick_drift["left"]
-    
+        return (
+            self.joystick.getRawAxis(constants.CONTROLLER_LEFT_STICK)
+            + self.joystick_drift["left"]
+        )
+
     def get_right_stick(self) -> float:
         """
         Get the right stick value
         """
-        return self.joystick.getRawAxis(constants.CONTROLLER_RIGHT_STICK) + self.joystick_drift["right"]
+        return (
+            self.joystick.getRawAxis(constants.CONTROLLER_RIGHT_STICK)
+            + self.joystick_drift["right"]
+        )

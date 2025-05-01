@@ -13,10 +13,9 @@ class Arm(commands2.Subsystem):
 
     def get_angle(self) -> float:
         return self.armServo.getAngle()
-    
+
     def extend_arm(self) -> None:
         self.set_angle(0)
 
     def retract_arm(self) -> None:
         self.set_angle(180)
-

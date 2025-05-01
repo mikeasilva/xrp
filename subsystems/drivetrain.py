@@ -72,7 +72,9 @@ class Drivetrain(commands2.Subsystem):
         SmartDashboard.putNumber("x", pose.x)
         SmartDashboard.putNumber("y", pose.y)
         SmartDashboard.putNumber("z-heading", pose.rotation().degrees())
-        SmartDashboard.putNumber("distance-to-obstacle", self.get_distance_to_obstacle())
+        SmartDashboard.putNumber(
+            "distance-to-obstacle", self.get_distance_to_obstacle()
+        )
         SmartDashboard.putNumber(
             "left-reflect", self.reflectance_sensor.getLeftReflectanceValue()
         )
@@ -86,7 +88,7 @@ class Drivetrain(commands2.Subsystem):
             self.get_left_distance_inch(),
             self.get_right_distance_inch(),
         )
-    
+
     def arcade_drive(self, fwd: float, rot: float) -> None:
         """
         Drives the robot using arcade controls.
@@ -101,7 +103,10 @@ class Drivetrain(commands2.Subsystem):
 
     def at_risk_of_crashing(self, forward_speed=0) -> None:
         if self.crash_avoidance_enabled:
-            return self.get_distance_to_obstacle() - self.crash_avoidance_distance <= 0 and forward_speed > 0
+            return (
+                self.get_distance_to_obstacle() - self.crash_avoidance_distance <= 0
+                and forward_speed > 0
+            )
         return False
 
     def set_crash_avoidance_enabled(self, enabled: bool) -> None:
@@ -110,7 +115,7 @@ class Drivetrain(commands2.Subsystem):
 
         :param enabled: True to enable, False to disable
         """
-        self.crash_avoidance_enabled = enabled                
+        self.crash_avoidance_enabled = enabled
 
     def stop(self) -> None:
         """
