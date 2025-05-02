@@ -52,6 +52,9 @@
     "transitory": {
       "SmartDashboard": {
         "open": false
+      },
+      "XRP": {
+        "open": true
       }
     }
   },

@@ -11,6 +11,7 @@
 import commands2
 import ntcore
 import os
+import typing
 import wpilib
 from robotcontainer import RobotContainer
 
@@ -19,6 +20,10 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 
 class MyXRP(wpilib.TimedRobot):
+
+    autonomous_command: typing.Optional[commands2.Command] = None
+    test_command: typing.Optional[commands2.Command] = None
+
     def robotInit(self) -> None:
         """
         This function is run when the robot is first started up and should be used for any
@@ -27,9 +32,9 @@ class MyXRP(wpilib.TimedRobot):
         # Set up the network tables
         network_tables = ntcore.NetworkTableInstance.getDefault()
         table = network_tables.getTable("XRP")
-        self.mode_pub = table.getStringTopic("mode").publish()
-        self.mode_pub.set("Init")
-        self.robotContainer = RobotContainer(self)
+        self.state = table.getStringTopic("state").publish()
+        self.state.set("Init")
+        self.container = RobotContainer(self)
 
         # Initialize the robot
         # self.controller = wpilib.XboxController(constants.CONTROLLER_PORT)
@@ -41,7 +46,7 @@ class MyXRP(wpilib.TimedRobot):
 
     def autonomousInit(self):
         """This autonomous runs the autonomous command selected by your RobotContainer class."""
-        self.mode_pub.set("Autonomous")
+        self.state.set("Autonomous")
         # Or, just import AutonomousCommand function? What's point of this indirection?
         self.autonomous_command = self.container.getAutonomousCommand()
         if self.autonomous_command:
@@ -53,14 +58,14 @@ class MyXRP(wpilib.TimedRobot):
 
     def disabledInit(self) -> None:
         """This function is called once each time the robot enters Disabled mode."""
-        self.mode_pub.set("Disabled")
+        self.state.set("Disabled")
 
     def disabledPeriodic(self) -> None:
         """This function is called periodically when disabled"""
         pass
 
     def teleopInit(self):
-        self.mode_pub.set("Teleop")
+        self.state.set("Teleop")
         # This makes sure that the autonomous stops running when
         # teleop starts running. If you want the autonomous to
         # continue until interrupted by another command, remove
@@ -73,10 +78,10 @@ class MyXRP(wpilib.TimedRobot):
         pass
 
     def testInit(self):
-        self.mode_pub.set("Test")
+        self.state.set("Test")
         # Cancels all running subsystems at the start of test mode
         commands2.CommandScheduler.getInstance().cancelAll()
-        self.test_command = self.robotContainer.getTestCommand()
+        self.test_command = self.container.getTestCommand()
         # schedule the command
         if self.test_command is not None:
             self.test_command.schedule()

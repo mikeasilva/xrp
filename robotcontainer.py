@@ -1,5 +1,6 @@
 import commands2
 import constants
+import typing
 import wpilib
 
 
@@ -31,12 +32,13 @@ class RobotContainer:
         and then passing it to a JoystickButton.
         """
 
-        x_button = self.controller.button(wpilib.XboxController.Button.kX)
+        #x_button = self.controller.button(wpilib.XboxController.Button.kX)
         # x_button.onTrue(ResetXY(x=0.0, y=0.0, headingDegrees=0.0, drivetrain=self.drivetrain))
         # x_button.whileTrue(RunCommand(self.drivetrain.setX, self.drivetrain))  # use the swerve X brake when "X" is pressed
 
-        y_button = self.controller.button(wpilib.XboxController.Button.kY)
+        #y_button = self.controller.button(wpilib.XboxController.Button.kY)
         # y_button.onTrue(ResetSwerveFront(self.drivetrain))
+        pass
 
     def disablePIDSubsystems(self) -> None:
         """Disables all ProfiledPIDSubsystem and PIDSubsystem instances.
