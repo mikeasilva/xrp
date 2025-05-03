@@ -41,6 +41,7 @@ class Drive(commands2.SubsystemBase):
         self.right_encoder.setDistancePerPulse(
             (math.pi * constants.WHEEL_DIAMETER_INCH) / COUNTS_PER_REVOLUTION
         )
+
         self.reset_encoders()
         self.reset_gyro()
 
@@ -48,6 +49,7 @@ class Drive(commands2.SubsystemBase):
         self.drivetrain = wpilib.drive.DifferentialDrive(
             self.left_motor, self.right_motor
         )
+        self.drivetrain.setSafetyEnabled(False)  # Disable safety checks
         self.odometry = wpimath.kinematics.DifferentialDriveOdometry(
             wpimath.geometry.Rotation2d.fromDegrees(self.get_gyro_angle_z()),
             self.get_left_distance_inch(),
@@ -57,86 +59,35 @@ class Drive(commands2.SubsystemBase):
         # Settings for the crash avoidance system
         self.crash_avoidance_enabled = True
         self.crash_avoidance_distance = constants.CRASH_AVOIDANCE_DISTANCE
-
-    def tank_drive(self, left_speed, right_speed):
-        # The crash avoidance system check
-        forward_speed = 0
-        if left_speed > 0 and right_speed > 0:
-            forward_speed = 1
-        if not self.at_risk_of_crashing(forward_speed):
-            # If the robot is not at risk of crashing, drive normally
-            self.left_motor.set(left_speed)
-            self.right_motor.set(right_speed)
-
-    def arcade_drive(self, fwd: float, rot: float) -> None:
+    
+    def arcade_drive(self, forward: float, rotation: float) -> None:
         """
         Drives the robot using arcade controls.
 
-        :param fwd: the commanded forward movement
-        :param rot: the commanded rotation
+        :param forward: the commanded forward movement
+        :param rotation: the commanded rotation
         """
         # The crash avoidance system check
-        if not self.at_risk_of_crashing(fwd):
+        if not self.at_risk_of_crashing(forward):
             # If the robot is not at risk of crashing, drive normally
-            self.drivetrain.arcadeDrive(fwd, rot)
+            self.drivetrain.arcadeDrive(forward, rotation)
 
-    def at_risk_of_crashing(self, forward_speed=0) -> None:
-        if self.crash_avoidance_enabled:
-            return (
-                self.get_distance_to_obstacle() - self.crash_avoidance_distance <= 0
-                and forward_speed > 0
-            )
-        return False
-
-    def set_crash_avoidance_enabled(self, enabled: bool) -> None:
+    def at_risk_of_crashing(self, forward_speed=0) -> bool:
         """
-        Enable or disable the crash avoidance system.
+        Checks if the robot is at risk of crashing into an obstacle.
 
-        :param enabled: True to enable, False to disable
+        :param forward_speed: The forward speed of the robot
         """
-        self.crash_avoidance_enabled = enabled
 
-    def stop(self) -> None:
-        """
-        Stop the drivetrain motors
-        """
-        self.drivetrain.arcadeDrive(0, 0)
-
-    def tank_drive2(self, left: float, right: float) -> None:
-        """
-        Drives the robot using tank controls.
-
-        :param left: the commanded left movement
-        :param right: the commanded right movement
-        """
-        # The crash avoidance system check
-        forward_speed = 0
-        if left > 0 and right > 0:
-            forward_speed = 1
-        if not self.at_risk_of_crashing(forward_speed):
-            # If the robot is not at risk of crashing, drive normally
-            self.drivetrain.tankDrive(left, right)
-
-    def reset_encoders(self) -> None:
-        """Resets the drive encoders to currently read a position of 0."""
-        self.left_encoder.reset()
-        self.right_encoder.reset()
-
-    def get_left_encoder_count(self) -> int:
-        return self.left_encoder.get()
-
-    def get_right_encoder_count(self) -> int:
-        return self.right_encoder.get()
-
-    def get_left_distance_inch(self) -> float:
-        return -self.left_encoder.getDistance()
-
-    def get_right_distance_inch(self) -> float:
-        return -self.right_encoder.getDistance()
-
-    def get_average_distance_inch(self) -> float:
-        """Gets the average distance of the TWO encoders."""
-        return (self.get_left_distance_inch() + self.get_right_distance_inch()) / 2.0
+        if forward_speed < 0 or not self.crash_avoidance_enabled:
+            return False
+        # Crash avoidance system is enabled, check distance to obstacle
+        # and if the robot is moving forward. If the distance to the obstacle is less than the
+        # crash avoidance distance, return True.
+        return (
+            self.get_distance_to_obstacle() - self.crash_avoidance_distance <= 0
+            and forward_speed > 0
+        )
 
     def get_accel_x(self) -> float:
         """The acceleration in the X-axis.
@@ -159,31 +110,15 @@ class Drive(commands2.SubsystemBase):
         """
         return self.accelerometer.getZ()
 
-    def get_gyro_angle_x(self) -> float:
-        """Current angle of the XRP around the X-axis.
-
-        :returns: The current angle of the XRP in degrees
-        """
-        return self.gyro.getAngleX()
-
-    def get_gyro_angle_y(self) -> float:
-        """Current angle of the XRP around the Y-axis.
-
-        :returns: The current angle of the XRP in degrees
-        """
-        return self.gyro.getAngleY()
-
-    def get_gyro_angle_z(self) -> float:
-        """Current angle of the XRP around the Z-axis.
-
-        :returns: The current angle of the XRP in degrees
-        """
-        return self.gyro.getAngleZ()
+    def get_average_distance_inch(self) -> float:
+        """Gets the average distance of the two encoders."""
+        return (self.get_left_distance_inch() + self.get_right_distance_inch()) / 2.0
 
     def get_distance_to_obstacle(self, unit="inch") -> float:
         """Distance to obstacle in the front, as given by the distance sensor
 
-        :returns: Distance in the requested unit.
+        :param unit: The unit to convert to. Can be 'inch', 'feet', 'yard', 'cm', or 'meter'
+        :returns: The distance to the obstacle in the requested unit
         """
         distance = self.distance_sensor.getDistance()
         if unit == "inch" or unit == "in":
@@ -200,6 +135,95 @@ class Drive(commands2.SubsystemBase):
             raise ValueError(
                 "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
             )
+        
+    def _return_gyro(self, angle: float, units:str = "degrees") -> float:
+        """Convert the angle to the requested unit.
+
+        :param angle: The angle in radians
+        :param units: The unit to convert to. Can be 'degrees' or 'radians'
+        :returns: The angle in the requested unit
+        """
+        # Ensure the units are lowercase for consistency
+        units = units.lower()
+        if units == "degrees":
+            return angle * (180 / math.pi)
+        elif units == "radians":
+            return angle
+        raise ValueError("Invalid units. Use 'degrees' or 'radians'.")
+    
+    def get_gyro_angle(self, units:str="degrees") -> float:
+        """Current actual angle the XRP is currently facing.
+
+        :param units: The unit to convert to. Can be 'degrees' or 'radians'
+        :returns: The current angle of the XRP in degrees
+        """
+        return self._return_gyro(self.gyro.getAngle(), units)
+
+    def get_gyro_angle_x(self, units="degrees") -> float:
+        """Current angle of the XRP around the X-axis.
+
+        :param units: The unit to convert to. Can be 'degrees' or 'radians'
+        :returns: The current angle of the XRP in degrees
+        """
+        return self._return_gyro(self.gyro.getAngleX(), units)
+
+    def get_gyro_angle_y(self, units:str = "degrees") -> float:
+        """Current angle of the XRP around the Y-axis.
+
+        :param units: The unit to convert to. Can be 'degrees' or 'radians'
+        :returns: The current angle of the XRP in degrees or radians
+        """
+        return self._return_gyro(self.gyro.getAngleY(), units)
+
+    def get_gyro_angle_z(self, units:str="degrees") -> float:
+        """Current angle of the XRP around the Z-axis.
+
+        :param units: The unit to convert to. Can be 'degrees' or 'radians'
+        :returns: The current angle of the XRP in degrees or radians
+        """
+        return self._return_gyro(self.gyro.getAngleZ(), units)
+
+    def get_left_distance_inch(self) -> float:
+        return -self.left_encoder.getDistance()
+
+    def get_left_encoder_count(self) -> int:
+        return self.left_encoder.get()
+
+    def get_pose(self):
+        return self.odometry.update(
+            wpimath.geometry.Rotation2d.fromDegrees(self.get_gyro_angle_z()),
+            self.get_left_distance_inch(),
+            self.get_right_distance_inch(),
+        )
+        
+    def get_right_distance_inch(self) -> float:
+        return -self.right_encoder.getDistance()
+
+    def get_right_encoder_count(self) -> int:
+        return self.right_encoder.get()
+
+    def periodic(self) -> None:
+        '''
+        pose = self.get_pose()
+        wpilib.SmartDashboard.putNumber("x", pose.x)
+        wpilib.SmartDashboard.putNumber("y", pose.y)
+        wpilib.SmartDashboard.putNumber("z-heading", pose.rotation().degrees())
+        wpilib.SmartDashboard.putNumber("heading", self.get_gyro_angle())
+        wpilib.SmartDashboard.putNumber(
+            "distance-to-obstacle", self.get_distance_to_obstacle()
+        )
+        wpilib.SmartDashboard.putNumber(
+            "left-reflect", self.reflectance_sensor.getLeftReflectanceValue()
+        )
+        wpilib.SmartDashboard.putNumber(
+            "right-reflect", self.reflectance_sensor.getRightReflectanceValue()
+        )
+        '''
+
+    def reset_encoders(self) -> None:
+        """Resets the drive encoders to currently read a position of 0."""
+        self.left_encoder.reset()
+        self.right_encoder.reset()
 
     def reset_gyro(self) -> None:
         """Reset the gyro"""
@@ -215,5 +239,32 @@ class Drive(commands2.SubsystemBase):
             heading, self.get_left_distance_inch(), self.get_right_distance_inch(), pose
         )
 
-    def stop(self):
+    def set_crash_avoidance_enabled(self, enabled: bool) -> None:
+        """
+        Enable or disable the crash avoidance system.
+
+        :param enabled: True to enable, False to disable
+        """
+        self.crash_avoidance_enabled = enabled
+
+    def stop(self) -> None:
+        """
+        Stop the drivetrain motors
+        """
         self.tank_drive(0, 0)
+
+    def tank_drive(self, left_speed, right_speed):
+        """
+        Drives the robot using tank controls.
+
+        :param left_speed: the speed of the left motor
+        :param right_speed: the speed of the right motor
+        """
+        # The crash avoidance system check
+        forward_speed = 0
+        if left_speed > 0 and right_speed > 0:
+            forward_speed = 1
+        if not self.at_risk_of_crashing(forward_speed):
+            # If the robot is not at risk of crashing, drive normally
+            self.left_motor.set(left_speed)
+            self.right_motor.set(right_speed)

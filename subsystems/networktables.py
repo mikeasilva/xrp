@@ -9,27 +9,34 @@ class NetworkTables(commands2.Subsystem):
         """
         super().__init__()
         nti = ntcore.NetworkTableInstance.getDefault()
-        self.nti_table = nti.getTable(table)
-        self.state_pub = self.create_topic("state", "string")
-        self.crash_pub = self.create_topic("crash-avoidance-activated", "boolean")
+        self.table = nti.getTable(table)
+        self.state = self.create_topic("state", "string")
+        self.crash = self.create_topic("crash-avoidance-activated", "boolean")
+        self.max_speed = self.create_topic("max-speed", "double")
 
     def create_topic(self, topic_name: str, topic_type: str) -> None:
         if topic_type == "boolean":
-            pub = self.nti_table.getBooleanTopic(topic_name).publish()
+            pub = self.table.getBooleanTopic(topic_name).publish()
         elif topic_type == "integer":
-            pub = self.nti_table.getIntegerTopic(topic_name).publish()
+            pub = self.table.getIntegerTopic(topic_name).publish()
         elif topic_type == "double":
-            pub = self.nti_table.getDoubleTopic(topic_name).publish()
+            pub = self.table.getDoubleTopic(topic_name).publish()
         elif topic_type == "string":
-            pub = self.nti_table.getStringTopic(topic_name).publish()
+            pub = self.table.getStringTopic(topic_name).publish()
         elif topic_type == "raw":
-            pub = self.nti_table.getRawTopic(topic_name).publish()
+            pub = self.table.getRawTopic(topic_name).publish()
         elif topic_type == "boolean_array":
-            pub = self.nti_table.getBooleanArrayTopic(topic_name).publish()
+            pub = self.table.getBooleanArrayTopic(topic_name).publish()
         elif topic_type == "integer_array":
-            pub = self.nti_table.getIntegerArrayTopic(topic_name).publish()
+            pub = self.table.getIntegerArrayTopic(topic_name).publish()
         elif topic_type == "double_array":
-            pub = self.nti_table.getDoubleArrayTopic(topic_name).publish()
+            pub = self.table.getDoubleArrayTopic(topic_name).publish()
         else:
             raise ValueError(f"Unsupported topic type: {topic_type}")
         return pub
+
+    def get(self, topic_name: str) -> None:
+        """
+        Get the value of a topic.
+        """
+        return self.table.getEntry(topic_name)

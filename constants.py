@@ -38,3 +38,7 @@ ARM_SERVO_SHIFT_BY = 0.02
 
 # Distance in inches to avoid an obstacle
 CRASH_AVOIDANCE_DISTANCE = 12.0
+
+# Maximum speed for the robot (ranges between 0.5 and 1.0)
+# This is a percentage of the maximum speed of the motors
+MAX_SPEED = 0.8
