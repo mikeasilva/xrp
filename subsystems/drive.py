@@ -59,7 +59,7 @@ class Drive(commands2.SubsystemBase):
         # Settings for the crash avoidance system
         self.crash_avoidance_enabled = True
         self.crash_avoidance_distance = constants.CRASH_AVOIDANCE_DISTANCE
-    
+
     def arcade_drive(self, forward: float, rotation: float) -> None:
         """
         Drives the robot using arcade controls.
@@ -135,8 +135,8 @@ class Drive(commands2.SubsystemBase):
             raise ValueError(
                 "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
             )
-        
-    def _return_gyro(self, angle: float, units:str = "degrees") -> float:
+
+    def _return_gyro(self, angle: float, units: str = "degrees") -> float:
         """Convert the angle to the requested unit.
 
         :param angle: The angle in radians
@@ -150,8 +150,8 @@ class Drive(commands2.SubsystemBase):
         elif units == "radians":
             return angle
         raise ValueError("Invalid units. Use 'degrees' or 'radians'.")
-    
-    def get_gyro_angle(self, units:str="degrees") -> float:
+
+    def get_gyro_angle(self, units: str = "degrees") -> float:
         """Current actual angle the XRP is currently facing.
 
         :param units: The unit to convert to. Can be 'degrees' or 'radians'
@@ -167,7 +167,7 @@ class Drive(commands2.SubsystemBase):
         """
         return self._return_gyro(self.gyro.getAngleX(), units)
 
-    def get_gyro_angle_y(self, units:str = "degrees") -> float:
+    def get_gyro_angle_y(self, units: str = "degrees") -> float:
         """Current angle of the XRP around the Y-axis.
 
         :param units: The unit to convert to. Can be 'degrees' or 'radians'
@@ -175,7 +175,7 @@ class Drive(commands2.SubsystemBase):
         """
         return self._return_gyro(self.gyro.getAngleY(), units)
 
-    def get_gyro_angle_z(self, units:str="degrees") -> float:
+    def get_gyro_angle_z(self, units: str = "degrees") -> float:
         """Current angle of the XRP around the Z-axis.
 
         :param units: The unit to convert to. Can be 'degrees' or 'radians'
@@ -195,7 +195,7 @@ class Drive(commands2.SubsystemBase):
             self.get_left_distance_inch(),
             self.get_right_distance_inch(),
         )
-        
+
     def get_right_distance_inch(self) -> float:
         return -self.right_encoder.getDistance()
 
@@ -203,7 +203,7 @@ class Drive(commands2.SubsystemBase):
         return self.right_encoder.get()
 
     def periodic(self) -> None:
-        '''
+        """
         pose = self.get_pose()
         wpilib.SmartDashboard.putNumber("x", pose.x)
         wpilib.SmartDashboard.putNumber("y", pose.y)
@@ -218,7 +218,7 @@ class Drive(commands2.SubsystemBase):
         wpilib.SmartDashboard.putNumber(
             "right-reflect", self.reflectance_sensor.getRightReflectanceValue()
         )
-        '''
+        """
 
     def reset_encoders(self) -> None:
         """Resets the drive encoders to currently read a position of 0."""

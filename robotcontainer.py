@@ -13,13 +13,16 @@ class RobotContainer:
         self.led = subsystems.LED()
         self.joystick = wpilib.XboxController(constants.CONTROLLER_PORT)
         self.network_tables = subsystems.NetworkTables()
-        self.network_tables.max_speed.set(constants.MAX_SPEED)
+        self.network_tables.update("max-speed", constants.MAX_SPEED)
         # No joystick, so default command may not be needed.
+        self.configureButtonBindings()
         # self.drive.setDefaultCommand(...)
 
     def getAutonomousCommand(self):
         # Drive forward for a bit
-        return commands.AutonomousDrive(self.drive, duration=2.0, speed=constants.MAX_SPEED)# speed=self.network_tables.get('max-speed'))
+        return commands.AutonomousDrive(
+            self.drive, duration=2.0, speed=constants.MAX_SPEED
+        )  # speed=self.network_tables.get('max-speed'))
 
     def configureButtonBindings(self):
         """Configure button bindings for the robot."""
@@ -27,20 +30,22 @@ class RobotContainer:
         # =====================================================================
         #   A BUTTON
         # =====================================================================
-        self.joystick.getAButtonPressed().whenPressed(
-            print("A")
-        )
+        print("ConfigureButtonBindings")
+        # self.joystick.getAButton().whenPressed(
+        #    print("A")
+        # )
+        """
         # =====================================================================
         #   B BUTTON
         # =====================================================================
         self.joystick.getBButtonPressed().whenPressed(
             # B button pressed = fast mode
-            self.network_tables.max_speed.set(1.0)
+            #self.network_tables.max_speed.set(1.0)
         )
         
         self.joystick.getBButtonReleased().whenReleased(
             # Switch back to normal speed when released
-            self.network_tables.max_speed.set(constants.MAX_SPEED)
+            #self.network_tables.max_speed.set(constants.MAX_SPEED)
         )
         # =====================================================================
 
@@ -60,6 +65,4 @@ class RobotContainer:
             self.drive.set_crash_avoidance_enabled(True)
         )
         # =====================================================================
-
-
-        
+        #"""

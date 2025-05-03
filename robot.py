@@ -14,10 +14,14 @@ class MyXRP(commands2.TimedCommandRobot):
 
     def robotPeriodic(self):
         super().robotPeriodic()
-        self.container.network_tables.x.set(round(self.container.drive.get_gyro_angle_x(), constants.ROUND_TO))
-        self.container.network_tables.y.set(round(self.container.drive.get_gyro_angle_y(), constants.ROUND_TO))
-        self.container.network_tables.z.set(round(self.container.drive.get_gyro_angle(), constants.ROUND_TO))
-        '''
+        self.container.network_tables.update(
+            "x", self.container.drive.get_gyro_angle_x()
+        )
+        self.container.network_tables.update(
+            "y", self.container.drive.get_gyro_angle_y()
+        )
+        self.container.network_tables.update("z", self.container.drive.get_gyro_angle())
+        """
         # TODO: Get the max speed from network tables
         # 1. driving: Adjust the max speed based on the joystick input
         forward_speed = (
@@ -30,21 +34,22 @@ class MyXRP(commands2.TimedCommandRobot):
         )
         self.container.drive.arcade_drive(forward_speed, turn_speed)
         self.container.drive.periodic()  # updates odometry
-        '''
+        """
         commands2.CommandScheduler.getInstance().run()
 
     def autonomousInit(self):
         self.container.led.on()
-        self.container.network_tables.state.set("autonomous")
+        self.container.network_tables.update("state", "autonomous")
         self.autonomous_command = self.container.getAutonomousCommand()
         if self.autonomous_command:
             self.autonomous_command.schedule()
 
     def disabledInit(self) -> None:
         """This function is called once each time the robot enters Disabled mode."""
-        self.container.network_tables.state.set("disabled")
         self.container.drive.stop()
         self.container.led.off()
+        self.container.network_tables.update("state", "disabled")
+        commands2.CommandScheduler.getInstance().cancelAll()
 
     def disabledPeriodic(self) -> None:
         """This function is called periodically when disabled"""
@@ -52,7 +57,7 @@ class MyXRP(commands2.TimedCommandRobot):
 
     def teleopInit(self) -> None:
         """This function is initially when operator control mode runs"""
-        self.container.network_tables.state.set("teleop")
+        self.container.network_tables.update("state", "teleop")
         if self.autonomous_command:
             self.autonomous_command.cancel()
 
@@ -62,7 +67,8 @@ class MyXRP(commands2.TimedCommandRobot):
 
     def testInit(self) -> None:
         """This function is called once each time the robot enters test mode."""
-        self.container.network_tables.state.set("test")
-        self.container.led.off()
-        commands2.CommandScheduler.getInstance().cancelAll()
         self.container.drive.stop()
+        self.container.led.off()
+        self.container.network_tables.update("state", "test")
+        print(self.container.network_tables.read("state"))
+        commands2.CommandScheduler.getInstance().cancelAll()
