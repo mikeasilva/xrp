@@ -26,6 +26,10 @@ WHEEL_DIAMETER_INCH = WHEEL_DIAMETER_MM / 25.4  # Wheel diameter in inches
 
 # The controller is connected to the XRP on port 0
 CONTROLLER_PORT = 0
+JOYSTICK_LEFT_X = 0
+JOYSTICK_LEFT_Y = 1
+JOYSTICK_RIGHT_X = 4
+JOYSTICK_RIGHT_Y = 5
 
 # How long should the LED be on or off?
 LED_BLINK_DURATION_IN_SECONDS = 0.5

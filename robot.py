@@ -13,14 +13,14 @@ class MyXRP(commands2.TimedCommandRobot):
 
     def robotPeriodic(self):
         super().robotPeriodic()
-
+        # TODO: Get the max speed from network tables
         # 1. driving: Adjust the max speed based on the joystick input
         forward_speed = (
-            -self.container.joystick.getRawAxis(1)
+            -self.container.joystick.getRawAxis(constants.JOYSTICK_LEFT_Y)
             * 1#self.container.network_tables.get("max-speed")
         )
         turn_speed = (
-            -self.container.joystick.getRawAxis(4)
+            -self.container.joystick.getRawAxis(constants.JOYSTICK_RIGHT_X)
             * 1#self.container.network_tables.get("max-speed")
         )
         self.container.drive.arcade_drive(forward_speed, turn_speed)
