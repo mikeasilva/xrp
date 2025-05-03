@@ -136,21 +136,6 @@ class Drive(commands2.SubsystemBase):
                 "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
             )
 
-    def _return_gyro(self, angle: float, units: str = "degrees") -> float:
-        """Convert the angle to the requested unit.
-
-        :param angle: The angle in radians
-        :param units: The unit to convert to. Can be 'degrees' or 'radians'
-        :returns: The angle in the requested unit
-        """
-        # Ensure the units are lowercase for consistency
-        units = units.lower()
-        if units == "degrees":
-            return angle * (180 / math.pi)
-        elif units == "radians":
-            return angle
-        raise ValueError("Invalid units. Use 'degrees' or 'radians'.")
-
     def get_gyro_angle(self, units: str = "degrees") -> float:
         """Current actual angle the XRP is currently facing.
 
@@ -203,12 +188,10 @@ class Drive(commands2.SubsystemBase):
         return self.right_encoder.get()
 
     def periodic(self) -> None:
-        """
         pose = self.get_pose()
         wpilib.SmartDashboard.putNumber("x", pose.x)
         wpilib.SmartDashboard.putNumber("y", pose.y)
         wpilib.SmartDashboard.putNumber("z-heading", pose.rotation().degrees())
-        wpilib.SmartDashboard.putNumber("heading", self.get_gyro_angle())
         wpilib.SmartDashboard.putNumber(
             "distance-to-obstacle", self.get_distance_to_obstacle()
         )
@@ -218,7 +201,6 @@ class Drive(commands2.SubsystemBase):
         wpilib.SmartDashboard.putNumber(
             "right-reflect", self.reflectance_sensor.getRightReflectanceValue()
         )
-        """
 
     def reset_encoders(self) -> None:
         """Resets the drive encoders to currently read a position of 0."""
@@ -238,6 +220,21 @@ class Drive(commands2.SubsystemBase):
         self.odometry.resetPosition(
             heading, self.get_left_distance_inch(), self.get_right_distance_inch(), pose
         )
+
+    def _return_gyro(self, angle: float, units: str = "degrees") -> float:
+        """Convert the angle to the requested unit.
+
+        :param angle: The angle in radians
+        :param units: The unit to convert to. Can be 'degrees' or 'radians'
+        :returns: The angle in the requested unit
+        """
+        # Ensure the units are lowercase for consistency
+        units = units.lower()
+        if units == "degrees":
+            return angle * (180 / math.pi)
+        elif units == "radians":
+            return angle
+        raise ValueError("Invalid units. Use 'degrees' or 'radians'.")
 
     def set_crash_avoidance_enabled(self, enabled: bool) -> None:
         """

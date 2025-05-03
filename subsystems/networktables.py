@@ -3,22 +3,13 @@ import ntcore
 
 
 class NetworkTables(commands2.Subsystem):
-    def __init__(self, table: str = "XRP") -> None:
+    def __init__(self, table: str = "DATA", topics_and_types: list = []) -> None:
         """
         Initialize the network tables subsystem.
         """
         super().__init__()
         nti = ntcore.NetworkTableInstance.getDefault()
         self.table = nti.getTable(table)
-
-        topics_and_types = [
-            ("state", "string"),
-            ("crash-avoidance-activated", "boolean"),
-            ("max-speed", "double"),
-            ("x", "double"),
-            ("y", "double"),
-            ("z", "double"),
-        ]
 
         self.topic = {}
         for topic_name, topic_type in topics_and_types:

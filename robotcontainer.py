@@ -9,10 +9,21 @@ import wpilib
 
 class RobotContainer:
     def __init__(self):
+        # Define the topics and their types for network tables
+        # The topics and types are defined in the format (topic_name, topic_type)
+        topics_and_types = [
+            ("state", "string"),
+            ("crash-avoidance-activated", "boolean"),
+            ("max-speed", "double"),
+            ("x", "double"),
+            ("y", "double"),
+            ("z", "double"),
+        ]
+
         self.drive = subsystems.Drive()
         self.led = subsystems.LED()
         self.joystick = wpilib.XboxController(constants.CONTROLLER_PORT)
-        self.network_tables = subsystems.NetworkTables()
+        self.network_tables = subsystems.NetworkTables("XRP", topics_and_types)
         self.network_tables.update("max-speed", constants.MAX_SPEED)
         # No joystick, so default command may not be needed.
         self.configureButtonBindings()
