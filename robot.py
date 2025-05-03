@@ -11,6 +11,7 @@ class MyXRP(commands2.TimedCommandRobot):
     def robotInit(self):
         self.container = RobotContainer()
         self.autonomous_command = None
+        self.teleop_command = None
 
     def robotPeriodic(self):
         super().robotPeriodic()
@@ -40,7 +41,7 @@ class MyXRP(commands2.TimedCommandRobot):
     def autonomousInit(self):
         self.container.led.on()
         self.container.network_tables.update("state", "autonomous")
-        self.autonomous_command = self.container.getAutonomousCommand()
+        self.autonomous_command = self.container.get_autonomous_command()
         if self.autonomous_command:
             self.autonomous_command.schedule()
 
@@ -60,6 +61,9 @@ class MyXRP(commands2.TimedCommandRobot):
         self.container.network_tables.update("state", "teleop")
         if self.autonomous_command:
             self.autonomous_command.cancel()
+        self.teleop_command = self.container.get_teleop_command()
+        if self.teleop_command:
+            self.teleop_command.schedule()
 
     def teleopPeriodic(self) -> None:
         """This function is called periodically when in operator control mode"""
