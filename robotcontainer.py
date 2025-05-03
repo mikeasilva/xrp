@@ -47,21 +47,19 @@ class RobotContainer:
         )
         a_button.onTrue(commands.PrintCommand("A Pressed"))
         a_button.onFalse(commands.PrintCommand("A Released"))
-        """
+
         # =====================================================================
         #   B BUTTON
         # =====================================================================
-        self.joystick.getBButtonPressed().whenPressed(
-            # B button pressed = fast mode
-            #self.network_tables.max_speed.set(1.0)
+        b_button = commands2.button.JoystickButton(
+            self.joystick, wpilib.XboxController.Button.kB
         )
-        
-        self.joystick.getBButtonReleased().whenReleased(
-            # Switch back to normal speed when released
-            #self.network_tables.max_speed.set(constants.MAX_SPEED)
-        )
+        # B button pressed = fast mode
+        b_button.onTrue(commands2.InstantCommand(lambda: self.network_tables.update("max-speed", 1.0)))
+        # Switch back to normal speed when released
+        b_button.onFalse(commands2.InstantCommand(lambda: self.network_tables.update("max-speed", constants.MAX_SPEED)))
         # =====================================================================
-
+        
         # =====================================================================
         #   X BUTTON
         # =====================================================================
@@ -69,13 +67,11 @@ class RobotContainer:
         # =====================================================================
         #   Y BUTTON
         # =====================================================================
-        self.joystick.getYButtonPressed().whenPressed(
-            # Disable crash avoidance when Y button is pressed
-            self.drive.set_crash_avoidance_enabled(False)
+        y_button = commands2.button.JoystickButton(
+            self.joystick, wpilib.XboxController.Button.kY
         )
-        self.joystick.getYButtonReleased().whenReleased(
-            # Enable crash avoidance when Y button is released
-            self.drive.set_crash_avoidance_enabled(True)
-        )
+        # Disable crash avoidance when Y button is pressed
+        y_button.onTrue(commands2.InstantCommand(lambda: self.drive.set_crash_avoidance_enabled(False)))
+        # Enable crash avoidance when Y button is released
+        y_button.onFalse(commands2.InstantCommand(lambda: self.drive.set_crash_avoidance_enabled(True)))
         # =====================================================================
-        #"""
