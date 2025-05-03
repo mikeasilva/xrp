@@ -10,9 +10,14 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 class MyXRP(commands2.TimedCommandRobot):
     def robotInit(self):
         self.container = RobotContainer()
+        self.autonomous_command = None
 
     def robotPeriodic(self):
         super().robotPeriodic()
+        self.container.network_tables.x.set(round(self.container.drive.get_gyro_angle_x(), constants.ROUND_TO))
+        self.container.network_tables.y.set(round(self.container.drive.get_gyro_angle_y(), constants.ROUND_TO))
+        self.container.network_tables.z.set(round(self.container.drive.get_gyro_angle(), constants.ROUND_TO))
+        '''
         # TODO: Get the max speed from network tables
         # 1. driving: Adjust the max speed based on the joystick input
         forward_speed = (
@@ -25,7 +30,7 @@ class MyXRP(commands2.TimedCommandRobot):
         )
         self.container.drive.arcade_drive(forward_speed, turn_speed)
         self.container.drive.periodic()  # updates odometry
-
+        '''
         commands2.CommandScheduler.getInstance().run()
 
     def autonomousInit(self):
