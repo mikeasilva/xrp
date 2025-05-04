@@ -10,7 +10,6 @@ class MyXRP(commands2.TimedCommandRobot):
     def robotInit(self):
         self.container = RobotContainer()
         self.autonomous_command = self.container.get_autonomous_command()
-        self.teleop_command = self.container.get_teleop_command()
 
     def robotPeriodic(self):
         super().robotPeriodic()
@@ -21,20 +20,6 @@ class MyXRP(commands2.TimedCommandRobot):
             "y", self.container.drive.get_gyro_angle_y()
         )
         self.container.network_tables.update("z", self.container.drive.get_gyro_angle())
-        """
-        # TODO: Get the max speed from network tables
-        # 1. driving: Adjust the max speed based on the joystick input
-        forward_speed = (
-            -self.container.joystick.getRawAxis(constants.JOYSTICK_LEFT_Y)
-            * 1#self.container.network_tables.get("max-speed")
-        )
-        turn_speed = (
-            -self.container.joystick.getRawAxis(constants.JOYSTICK_RIGHT_X)
-            * 1#self.container.network_tables.get("max-speed")
-        )
-        self.container.drive.arcade_drive(forward_speed, turn_speed)
-        self.container.drive.periodic()  # updates odometry
-        """
         commands2.CommandScheduler.getInstance().run()
 
     def autonomousInit(self):
@@ -50,17 +35,11 @@ class MyXRP(commands2.TimedCommandRobot):
         self.container.network_tables.update("state", "disabled")
         commands2.CommandScheduler.getInstance().cancelAll()
 
-    def disabledPeriodic(self) -> None:
-        """This function is called periodically when disabled"""
-        pass
-
     def teleopInit(self) -> None:
         """This function is initially when operator control mode runs"""
         self.container.network_tables.update("state", "teleop")
         if self.autonomous_command:
             self.autonomous_command.cancel()
-        if self.teleop_command:
-            self.teleop_command.schedule()
 
     def teleopPeriodic(self) -> None:
         """This function is called periodically when in operator control mode"""

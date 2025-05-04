@@ -3,6 +3,11 @@ import ntcore
 
 
 class NetworkTables(commands2.Subsystem):
+    """This class is used to interact with the network tables subsystem.
+    It gives a CRUD interface with the network tables. You can create,
+    read, update and delete topics in the network tables using those methods.
+    """
+
     def __init__(self, table: str = "DATA", topics_and_types: list = []) -> None:
         """
         Initialize the network tables subsystem.
@@ -48,9 +53,8 @@ class NetworkTables(commands2.Subsystem):
         :return: The value of the topic
         """
         topic = self.topic.get(topic_name, None)
-        if topic is None:
-            raise ValueError(f"Topic {topic_name} not found in network tables")
-        return self.table.getEntry(topic_name).getValue()
+        self._validate_topic(topic_name)
+        return  self.table.getEntry(topic_name).getValue()
 
     def update(self, topic_name: str, value) -> None:
         """Updates the network table topic with the value
@@ -59,6 +63,22 @@ class NetworkTables(commands2.Subsystem):
         :param value: The value to set the topic to
         """
         topic = self.topic.get(topic_name, None)
-        if topic is None:
-            raise ValueError(f"Topic {topic_name} not found in network tables")
+        self._validate_topic(topic_name)
         topic.set(value)
+
+    def delete(self, topic_name: str) -> None:
+        """Delete a topic from the network tables
+
+        :param topic_name: The name of the topic to delete
+        """
+        topic = self.topic.get(topic_name, None)
+        self._validate_topic(topic_name)
+        self.table.delete(topic_name)
+
+    def _validate_topic(self, topic_name: str) -> None:
+        """Validate that the topic exists in the network tables
+
+        :param topic_name: The name of the topic to validate
+        """
+        if topic_name not in self.topic:
+            raise ValueError(f"Topic {topic_name} not found in network tables")
