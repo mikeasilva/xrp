@@ -13,6 +13,7 @@ class RobotContainer:
             ("state", "string"),
             ("crash-avoidance-activated", "boolean"),
             ("max-speed", "double"),
+            ("closest-object", "double"),
             ("x", "double"),
             ("y", "double"),
             ("z", "double"),
@@ -72,6 +73,7 @@ class RobotContainer:
         x_button = commands2.button.JoystickButton(
             self.joystick, wpilib.XboxController.Button.kX
         )
+        x_button.onTrue(commands.Turn(360, "CW", self.drive.get_gyro_angle(), self.network_tables.read("max-speed"), self.drive))
         # =====================================================================
 
         # =====================================================================
@@ -90,6 +92,34 @@ class RobotContainer:
         y_button.onFalse(
             commands2.InstantCommand(
                 lambda: self.drive.set_crash_avoidance_enabled(True)
+            )
+        )
+        # =====================================================================
+
+        # =====================================================================
+        #   LEFT BUMPER
+        # =====================================================================
+        left_bumper = commands2.button.JoystickButton(
+            self.joystick, wpilib.XboxController.Button.kLeftBumper
+        )
+        left_bumper.onTrue(
+            (
+                commands2.InstantCommand(self.network_tables.update("state", "turning left"))
+                .andThen(commands.Turn(90, "CCW", self.drive.get_gyro_angle(), self.network_tables.read("max-speed"), self.drive))
+            )
+        )
+        # =====================================================================
+
+        # =====================================================================
+        #   RIGHT BUMPER
+        # =====================================================================
+        right_bumper = commands2.button.JoystickButton(
+            self.joystick, wpilib.XboxController.Button.kRightBumper
+        )
+        right_bumper.onTrue(
+            (
+                commands2.InstantCommand(self.network_tables.update("state", "turning right"))
+                .andThen(commands.Turn(90, "CW", self.drive.get_gyro_angle(), self.network_tables.read("max-speed"), self.drive))
             )
         )
         # =====================================================================
