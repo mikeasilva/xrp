@@ -50,5 +50,4 @@ class MyXRP(commands2.TimedCommandRobot):
         self.container.drive.stop()
         self.container.led.off()
         self.container.network_tables.update("state", "test")
-        print(self.container.network_tables.read("state"))
         commands2.CommandScheduler.getInstance().cancelAll()

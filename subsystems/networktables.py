@@ -54,7 +54,7 @@ class NetworkTables(commands2.Subsystem):
         """
         topic = self.topic.get(topic_name, None)
         self._validate_topic(topic_name)
-        return  self.table.getEntry(topic_name).getValue()
+        return self.table.getEntry(topic_name).getValue().value()
 
     def update(self, topic_name: str, value) -> None:
         """Updates the network table topic with the value

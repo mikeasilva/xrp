@@ -23,11 +23,11 @@ class TeleopDrive(commands2.Command):
         # 1. driving: Adjust the max speed based on the joystick input
         forward_speed = (
             -self.joystick.getRawAxis(constants.JOYSTICK_LEFT_Y)
-            * constants.MAX_SPEED  # self.network_tables.read("max-speed")
+            * self.network_tables.read("max-speed")
         )
         turn_speed = (
             -self.joystick.getRawAxis(constants.JOYSTICK_RIGHT_X)
-            * constants.MAX_SPEED  # self.network_tables.read("max-speed")
+            * self.network_tables.read("max-speed")
         )
         self.drive.arcade_drive(forward_speed, turn_speed)
         self.drive.periodic()  # updates odometry
