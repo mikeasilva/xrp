@@ -6,12 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="006004e0-914d-4c4a-b3ef-3703c8b31540" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/teleopdrive.py" beforeDir="false" afterPath="$PROJECT_DIR$/commands/teleopdrive.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/turn.py" beforeDir="false" afterPath="$PROJECT_DIR$/commands/turn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/joystick_calibration.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/joystick_drift.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/robotcontainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/robotcontainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/subsystems/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/subsystems/__init__.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

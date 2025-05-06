@@ -2,7 +2,6 @@ import commands
 import commands2
 import constants
 import subsystems
-import wpilib
 
 
 class RobotContainer:
@@ -20,16 +19,19 @@ class RobotContainer:
         ]
 
         # Initialize the subsystems
+        self.arm = subsystems.Arm()
+        self.controller = subsystems.Controller("Xbox")
         self.drive = subsystems.XRPDrive()
         self.led = subsystems.LED()
-        self.controller = subsystems.Controller("Xbox")
         self.network_tables = subsystems.NetworkTables("XRP", topics_and_types)
         self.network_tables.update("max-speed", constants.MAX_SPEED)
+        # Configure the buttons
         self.configure_button_bindings()
-        self.teleop_drive = commands.TeleopDrive(
+        # Set the default command
+        default_command = commands.TeleopDrive(
             self.drive, self.controller, self.network_tables
         )
-        self.drive.setDefaultCommand(self.teleop_drive)
+        self.drive.setDefaultCommand(default_command)
 
     def configure_button_bindings(self):
         """Configure button bindings for the robot."""
@@ -38,6 +40,11 @@ class RobotContainer:
         #   A BUTTON
         # =====================================================================
         a_button = self.controller.a_button
+        # A button pressed = Extend the arm
+        a_button.onTrue(commands2.InstantCommand(lambda: self.arm.extend()))
+        # A button released = Retract the arm
+        a_button.onFalse(commands2.InstantCommand(lambda: self.arm.retract()))
+        # =====================================================================
 
         # =====================================================================
         #   B BUTTON
