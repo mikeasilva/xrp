@@ -20,22 +20,16 @@ class RobotContainer:
         ]
 
         # Initialize the subsystems
-        self.drive = subsystems.Drive()
+        self.drive = subsystems.XRPDrive()
         self.led = subsystems.LED()
-        self.joystick = wpilib.XboxController(constants.CONTROLLER_PORT)
+        self.controller = subsystems.Controller("Xbox")
         self.network_tables = subsystems.NetworkTables("XRP", topics_and_types)
         self.network_tables.update("max-speed", constants.MAX_SPEED)
         self.configure_button_bindings()
         self.teleop_drive = commands.TeleopDrive(
-            self.drive, self.joystick, self.network_tables
+            self.drive, self.controller, self.network_tables
         )
         self.drive.setDefaultCommand(self.teleop_drive)
-
-    def get_autonomous_command(self):
-        # Drive forward for a bit
-        return commands.AutonomousDrive(
-            self.drive, duration=2.0, speed=constants.MAX_SPEED
-        )  # speed=self.network_tables.read('max-speed'))
 
     def configure_button_bindings(self):
         """Configure button bindings for the robot."""
@@ -43,16 +37,12 @@ class RobotContainer:
         # =====================================================================
         #   A BUTTON
         # =====================================================================
-        a_button = commands2.button.JoystickButton(
-            self.joystick, wpilib.XboxController.Button.kA
-        )
+        a_button = self.controller.a_button
 
         # =====================================================================
         #   B BUTTON
         # =====================================================================
-        b_button = commands2.button.JoystickButton(
-            self.joystick, wpilib.XboxController.Button.kB
-        )
+        b_button = self.controller.b_button
         # B button pressed = fast mode
         b_button.onTrue(
             commands2.InstantCommand(
@@ -70,18 +60,24 @@ class RobotContainer:
         # =====================================================================
         #   X BUTTON
         # =====================================================================
-        x_button = commands2.button.JoystickButton(
-            self.joystick, wpilib.XboxController.Button.kX
+        x_button = self.controller.x_button
+        x_button.onTrue(
+            commands2.InstantCommand(
+                commands.Turn(
+                    360,
+                    "CW",
+                    self.drive.get_gyro_angle(),
+                    self.network_tables.read("max-speed"),
+                    self.drive,
+                )
+            )
         )
-        x_button.onTrue(commands.Turn(360, "CW", self.drive.get_gyro_angle(), self.network_tables.read("max-speed"), self.drive))
         # =====================================================================
 
         # =====================================================================
         #   Y BUTTON
         # =====================================================================
-        y_button = commands2.button.JoystickButton(
-            self.joystick, wpilib.XboxController.Button.kY
-        )
+        y_button = self.controller.y_button
         # Disable crash avoidance when Y button is pressed
         y_button.onTrue(
             commands2.InstantCommand(
@@ -99,13 +95,20 @@ class RobotContainer:
         # =====================================================================
         #   LEFT BUMPER
         # =====================================================================
-        left_bumper = commands2.button.JoystickButton(
-            self.joystick, wpilib.XboxController.Button.kLeftBumper
-        )
+        left_bumper = self.controller.left_bumper
         left_bumper.onTrue(
             (
-                commands2.InstantCommand(self.network_tables.update("state", "turning left"))
-                .andThen(commands.Turn(90, "CCW", self.drive.get_gyro_angle(), self.network_tables.read("max-speed"), self.drive))
+                commands2.InstantCommand(
+                    self.network_tables.update("state", "turning left")
+                ).andThen(
+                    commands.Turn(
+                        90,
+                        "CCW",
+                        self.drive.get_gyro_angle(),
+                        self.network_tables.read("max-speed"),
+                        self.drive,
+                    )
+                )
             )
         )
         # =====================================================================
@@ -113,13 +116,26 @@ class RobotContainer:
         # =====================================================================
         #   RIGHT BUMPER
         # =====================================================================
-        right_bumper = commands2.button.JoystickButton(
-            self.joystick, wpilib.XboxController.Button.kRightBumper
-        )
+        right_bumper = self.controller.right_bumper
         right_bumper.onTrue(
             (
-                commands2.InstantCommand(self.network_tables.update("state", "turning right"))
-                .andThen(commands.Turn(90, "CW", self.drive.get_gyro_angle(), self.network_tables.read("max-speed"), self.drive))
+                commands2.InstantCommand(
+                    self.network_tables.update("state", "turning right")
+                ).andThen(
+                    commands.Turn(
+                        90,
+                        "CW",
+                        self.drive.get_gyro_angle(),
+                        self.network_tables.read("max-speed"),
+                        self.drive,
+                    )
+                )
             )
         )
         # =====================================================================
+
+    def get_autonomous_command(self):
+        # Drive forward for a bit
+        return commands.AutonomousDrive(
+            self.drive, duration=2.0, speed=self.network_tables.read("max-speed")
+        )

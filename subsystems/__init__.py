@@ -1,5 +1,6 @@
+from .controller import Controller
+from .xrpdrive import XRPDrive
 from .led import LED
-from .drive import Drive
 from .networktables import NetworkTables
 
-__all__ = ["LED", "Drive", "NetworkTables"]
+__all__ = ["Controller", "XRPDrive", "LED", "NetworkTables"]

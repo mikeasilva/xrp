@@ -7,7 +7,7 @@ import wpimath
 import xrp
 
 
-class Drive(commands2.SubsystemBase):
+class XRPDrive(commands2.SubsystemBase):
     def __init__(self):
         super().__init__()
         self.left_motor = xrp.XRPMotor(constants.LEFT_MOTOR_CHANNEL)
