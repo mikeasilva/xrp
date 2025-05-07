@@ -1,6 +1,6 @@
 from .autonomousdrive import AutonomousDrive
-from .printcommand import PrintCommand
+from .printme import PrintMe
 from .teleopdrive import TeleopDrive
 from .turn import Turn
 
-__all__ = ["AutonomousDrive", "PrintCommand", "TeleopDrive", "Turn"]
+__all__ = ["AutonomousDrive", "PrintMe", "TeleopDrive", "Turn"]

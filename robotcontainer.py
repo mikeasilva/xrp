@@ -68,17 +68,6 @@ class RobotContainer:
         #   X BUTTON
         # =====================================================================
         x_button = self.controller.x_button
-        x_button.onTrue(
-            commands2.InstantCommand(
-                commands.Turn(
-                    360,
-                    "CW",
-                    self.drive.get_gyro_angle(),
-                    self.network_tables.read("max-speed"),
-                    self.drive,
-                )
-            )
-        )
         # =====================================================================
 
         # =====================================================================
