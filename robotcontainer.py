@@ -92,42 +92,14 @@ class RobotContainer:
         #   LEFT BUMPER
         # =====================================================================
         left_bumper = self.controller.left_bumper
-        left_bumper.onTrue(
-            (
-                commands2.InstantCommand(
-                    self.network_tables.update("state", "turning left")
-                ).andThen(
-                    commands.Turn(
-                        90,
-                        "CCW",
-                        self.drive.get_gyro_angle(),
-                        self.network_tables.read("max-speed"),
-                        self.drive,
-                    )
-                )
-            )
-        )
+        left_bumper.onTrue(commands.Turn(90, "CCW", self.drive, self.network_tables))
         # =====================================================================
 
         # =====================================================================
         #   RIGHT BUMPER
         # =====================================================================
         right_bumper = self.controller.right_bumper
-        right_bumper.onTrue(
-            (
-                commands2.InstantCommand(
-                    self.network_tables.update("state", "turning right")
-                ).andThen(
-                    commands.Turn(
-                        90,
-                        "CW",
-                        self.drive.get_gyro_angle(),
-                        self.network_tables.read("max-speed"),
-                        self.drive,
-                    )
-                )
-            )
-        )
+        right_bumper.onTrue(commands.Turn(90, "CW", self.drive, self.network_tables))
         # =====================================================================
 
     def get_autonomous_command(self):

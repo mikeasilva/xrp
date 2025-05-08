@@ -168,18 +168,32 @@ class XRPDrive(commands2.SubsystemBase):
         """
         return self._return_gyro(self.gyro.getAngleZ(), units)
 
+    def get_heading(self) -> wpimath.geometry.Rotation2d:
+        """Current actual angle the XRP is currently facing."""
+        return self.get_pose().rotation()
+
     def get_left_distance_inch(self) -> float:
         return -self.left_encoder.getDistance()
 
     def get_left_encoder_count(self) -> int:
         return self.left_encoder.get()
 
-    def get_pose(self):
+    def get_location(self):
+        return self.get_pose().translation()
+
+    def get_pose(self) -> wpimath.geometry.Pose2d:
+        """Get the current pose of the robot.
+        :returns: The current pose of the robot in the field frame
+        """
+        """
+        # Update the odometry with the current gyro angle and encoder distances
         return self.odometry.update(
             wpimath.geometry.Rotation2d.fromDegrees(self.get_gyro_angle_z()),
             self.get_left_distance_inch(),
             self.get_right_distance_inch(),
         )
+        """
+        return self.odometry.getPose()
 
     def get_right_distance_inch(self) -> float:
         return -self.right_encoder.getDistance()
