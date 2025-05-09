@@ -34,8 +34,10 @@ JOYSTICK_RIGHT_Y = 5
 # How long should the LED be on or off?
 LED_BLINK_DURATION_IN_SECONDS = 0.5
 
-# The servo motor is connected to PWM channel 4
-ARM_SERVO_CHANNEL = 4
+# The servo motor is connected to
+# SERVO 1 = 4
+# SERVO 2 = 5
+ARM_SERVO_CHANNEL = 5
 
 # How much do you want to shift the servo by when you press the button?
 ARM_SERVO_SHIFT_BY = 0.02
