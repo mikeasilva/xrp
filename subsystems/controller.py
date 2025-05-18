@@ -40,21 +40,12 @@ class Controller(commands2.Subsystem):
             self.right_stick = commands2.button.JoystickButton(
                 self.device, wpilib.XboxController.Button.kRightStick
             )
-            """
             # The D-pad
-            self.dpad_up = commands2.button.JoystickButton(
-                self.device, wpilib.XboxController.POVUp()
-            )
-            self.dpad_down = commands2.button.DPadButton(
-                self.device, wpilib.XboxController.Direction.kDown
-            )
-            self.dpad_left = commands2.button.DPadButton(
-                self.device, wpilib.XboxController.Direction.kLeft
-            )
-            self.dpad_right = commands2.button.DPadButton(
-                self.device, wpilib.XboxController.Direction.kRight
-            )
-            """
+            self.dpad_up = commands2.button.POVButton(self.device, 0)
+            self.dpad_right = commands2.button.POVButton(self.device, 90)
+            self.dpad_down = commands2.button.POVButton(self.device, 180)
+            self.dpad_left = commands2.button.POVButton(self.device, 270)
+
             self.start_button = commands2.button.JoystickButton(
                 self.device, wpilib.XboxController.Button.kStart
             )
