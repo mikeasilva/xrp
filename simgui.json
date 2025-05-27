@@ -1,0 +1,50 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "motorL": {
+        "header": {
+          "open": true
+        }
+      },
+      "motorR": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
+      "/SmartDashboard/Autonomous Mode": "String Chooser",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "autonomous": {
+        "Automagic": {
+          "open": true,
+          "state": {
+            "open": true,
+            "string[]##v_/autonomous/Automagic/state/state_names": {
+              "open": true
+            }
+          }
+        },
+        "DriveForward": {
+          "open": true,
+          "state": {
+            "open": true
+          }
+        },
+        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}

@@ -1,19 +1,22 @@
 import magicbot
 import components
+import constants
 
 
-class Robot(magicbot.MagicRobot):
-    led: components.LED
+class MyRobot(magicbot.MagicRobot):
+    drivetrain: components.Drivetrain
+    left_motor: components.XRPMotor
+    right_motor: components.XRPMotor
 
     def createObjects(self):
-        """Create motors and stuff here"""
-        pass
-
-    def teleopInit(self):
-        """Called when teleop starts; optional"""
-        pass
+        self.left_motor = components.XRPMotor(
+            channel=constants.LEFT_MOTOR_CHANNEL, name="LeftMotor", inverted=False
+        )
+        self.right_motor = components.XRPMotor(
+            channel=constants.RIGHT_MOTOR_CHANNEL, name="RightMotor", inverted=True
+        )
+        self.drivetrain = components.Drivetrain(self.left_motor, self.right_motor)
 
     def teleopPeriodic(self):
-        """Called every 20ms during teleop"""
-        # Blink the LED to indicate mode
-        self.led.blink()
+        # For this example, always move forward at 0.5 speed in teleop
+        self.drivetrain.set_speed(0.5)
