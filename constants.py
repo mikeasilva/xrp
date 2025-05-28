@@ -21,4 +21,5 @@ ENCODER_RESOLUTION = 12  # From datasheet
 WHEEL_DIAMETER_MM = 60
 WHEEL_DIAMETER_INCH = WHEEL_DIAMETER_MM / 25.4  # Wheel diameter in inches
 
+# Xbox controller port
 CONTROLLER_PORT = 0

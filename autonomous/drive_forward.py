@@ -1,17 +1,17 @@
-from magicbot import AutonomousStateMachine, state, timed_state
-from components.drivetrain import Drivetrain
+import components
+import magicbot
 
 
-class DriveForward(AutonomousStateMachine):
+class DriveForward(magicbot.AutonomousStateMachine):
     MODE_NAME = "Drive Forward"
     DEFAULT = True
 
-    drivetrain: Drivetrain
+    drivetrain: components.Drivetrain
 
-    @timed_state(duration=2.0, next_state="stop", first=True)
+    @magicbot.timed_state(duration=2.0, next_state="stop", first=True)
     def start(self):
         self.drivetrain.move(0.9, 0)
 
-    @state()
+    @magicbot.state()
     def stop(self):
         self.drivetrain.stop()

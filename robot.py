@@ -1,18 +1,17 @@
-from magicbot import MagicRobot
-from components.drivetrain import Drivetrain
+import components
 import constants
-import wpilib
-import autonomous
-import os
-import xrp
+import magicbot
 import math
+import os
+import wpilib
+import xrp
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
 os.environ["HALSIMXRP_PORT"] = "3540"
 
 
-class MyRobot(MagicRobot):
-    drivetrain: Drivetrain
+class MyRobot(magicbot.MagicRobot):
+    drivetrain: components.Drivetrain
 
     def createObjects(self):
         # Motors
@@ -34,9 +33,3 @@ class MyRobot(MagicRobot):
         )
         self.left_encoder.setDistancePerPulse(distance_per_pulse)
         self.right_encoder.setDistancePerPulse(distance_per_pulse)
-
-
-"""
-    def autonomous(self):
-        return autonomous.DriveForward()
-"""

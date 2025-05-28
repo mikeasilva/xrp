@@ -1,4 +1,3 @@
-import wpilib
 import wpilib.drive
 import xrp
 
@@ -10,7 +9,7 @@ class Drivetrain:
     def setup(self):
         self.drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
 
-    def move(self, speed, rotation):
+    def move(self, speed: float, rotation: float):
         self.drive.arcadeDrive(speed, rotation, squareInputs=False)
 
     def stop(self):
