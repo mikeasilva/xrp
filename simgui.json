@@ -24,11 +24,22 @@
   },
   "NetworkTables": {
     "transitory": {
+      "SmartDashboard": {
+        "Autonomous Mode": {
+          "open": true
+        },
+        "string[]##v_/SmartDashboard/Auto List": {
+          "open": true
+        }
+      },
       "autonomous": {
         "Automagic": {
           "open": true,
           "state": {
             "open": true,
+            "string[]##v_/autonomous/Automagic/state/state_descriptions": {
+              "open": true
+            },
             "string[]##v_/autonomous/Automagic/state/state_names": {
               "open": true
             }
@@ -45,6 +56,9 @@
     }
   },
   "NetworkTables Info": {
+    "Connections": {
+      "open": true
+    },
     "visible": true
   }
 }

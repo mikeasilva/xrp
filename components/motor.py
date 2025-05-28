@@ -4,7 +4,7 @@ import xrp
 class XRPMotor:
     motor = xrp.XRPMotor
 
-    def __init__(self, channel: int, name:str, inverted: bool = False):
+    def __init__(self, channel: int, name: str, inverted: bool = False):
         self.motor = xrp.XRPMotor(channel)
         self.motor.setInverted(inverted)
         self.speed = 0.0
@@ -17,6 +17,9 @@ class XRPMotor:
             self.speed = speed
             self.motor.set(self.speed)
             self.motor.feed()
+
+    def enabled(self):
+        self.set_speed(0)
 
     def execute(self):
         pass

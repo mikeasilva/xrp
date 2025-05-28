@@ -10,9 +10,7 @@ class AutonomousMode(magicbot.AutonomousStateMachine):
 
     @magicbot.timed_state(first=True, duration=2.0)
     def drive_forward(self):
-        self.drivetrain.set_speed(0.5)
+        self.drivetrain.set_speed(0.9)
 
-    @magicbot.state()
-    def stop(self):
-        self.drivetrain.set_speed(0.0)
-        self.done()
+    def done(self):
+        self.drivetrain.stop()

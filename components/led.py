@@ -13,7 +13,7 @@ class LED:
         self.io = xrp.XRPOnBoardIO()
         self.blink_timer = wpilib.Timer()
         self.enabled = False
-        self.blink_on_off_duration = magicbot.tunable(1.0)
+        self.blink_on_off_duration = 0.5
 
     def blink(self) -> None:
         """
@@ -31,6 +31,9 @@ class LED:
             # Reset the timer
             self.blink_timer.reset()
 
+    def set_blink_duration(self, microseconds: float):
+        self.blink_on_off_duration = microseconds
+
     def turn_off(self) -> None:
         """
         Turn the LED off.
@@ -46,7 +49,7 @@ class LED:
         self.io.setLed(self.enabled)
 
     def enable(self):
-        self.turn_on()
+        self.turn_off()
 
     def execute(self):
         pass
