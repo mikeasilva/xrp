@@ -14,6 +14,7 @@ class MyRobot(magicbot.MagicRobot):
     left_motor: components.XRPMotor
     right_motor: components.XRPMotor
     led: components.LED
+    odometry: components.Odometry
 
     def createObjects(self):
         self.controller = wpilib.XboxController(constants.CONTROLLER_PORT)
@@ -25,6 +26,13 @@ class MyRobot(magicbot.MagicRobot):
         )
         self.drivetrain = components.Drivetrain(self.left_motor, self.right_motor)
         self.led = components.LED()
+        self.odometry = components.Odometry()
+        """
+            gyro=wpilib.XRPGyro(),
+            left_encoder=wpilib.Encoder(constants.LEFT_ENCODER_CHANNEL_A, constants.LEFT_ENCODER_CHANNEL_B),
+            right_encoder=wpilib.Encoder(constants.RIGHT_ENCODER_CHANNEL_A, constants.RIGHT_ENCODER_CHANNEL_B),
+        )
+        """
 
     def teleopPeriodic(self):
         self.led.blink()

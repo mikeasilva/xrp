@@ -2,24 +2,25 @@ import xrp
 
 
 class XRPMotor:
-    motor = xrp.XRPMotor
+    motor: xrp.XRPMotor
+    speed: float
+    name: str
 
-    def __init__(self, channel: int, name: str, inverted: bool = False):
+    def __init__(self, channel: int, name: str, inverted: bool = False) -> None:
         self.motor = xrp.XRPMotor(channel)
         self.motor.setInverted(inverted)
         self.speed = 0.0
         self.name = name
 
-    def set_speed(self, speed: float):
+    def set_speed(self, speed: float) -> None:
         if speed != self.speed:
-            # Only print if the speed is actually changing
             print(f"Setting speed of {self.name} to {speed}")
             self.speed = speed
             self.motor.set(self.speed)
-            self.motor.feed()
 
-    def enabled(self):
+    def enabled(self) -> None:
         self.set_speed(0)
 
-    def execute(self):
-        pass
+    def execute(self) -> None:
+        # pass
+        self.motor.feed()

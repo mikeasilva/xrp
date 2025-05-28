@@ -12,7 +12,7 @@ class Drivetrain:
     def execute(self):
         pass
 
-    def set_speed(self, speed):
+    def set_speed(self, speed: float):
         self.left_motor.set_speed(speed)
         self.right_motor.set_speed(speed)
 
