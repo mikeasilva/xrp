@@ -75,6 +75,9 @@
         "open": true
       },
       "components": {
+        "arm": {
+          "open": true
+        },
         "drivetrain": {
           "open": true
         },
@@ -87,5 +90,12 @@
   },
   "NetworkTables Info": {
     "visible": true
+  },
+  "Plot": {
+    "Plot <0>": {
+      "window": {
+        "visible": false
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 
 class MyRobot(magicbot.MagicRobot):
+    # List all the components used by the robot
     drivetrain: components.Drivetrain
     led: components.LED
     odometry: components.Odometry
@@ -18,6 +19,7 @@ class MyRobot(magicbot.MagicRobot):
     reflectance_sensor: components.ReflectanceSensor
     distance_sensor: components.DistanceSensor
     arm: components.Arm
+    # What we want to see in the network tables
     left_joystick_y = magicbot.tunable(0.0)
     right_joystick_x = magicbot.tunable(0.0)
 
@@ -42,9 +44,6 @@ class MyRobot(magicbot.MagicRobot):
         self.left_encoder.setDistancePerPulse(distance_per_pulse)
         self.right_encoder.setDistancePerPulse(distance_per_pulse)
 
-        # Controller
-        self.controller = wpilib.XboxController(constants.CONTROLLER_PORT)
-
         # LED
         self.xrp_io = xrp.XRPOnBoardIO()
 
@@ -59,8 +58,25 @@ class MyRobot(magicbot.MagicRobot):
         # Arm Servo
         self.arm_servo = xrp.XRPServo(constants.ARM_SERVO_CHANNEL)
 
+        # Controller
+        self.controller = wpilib.XboxController(constants.CONTROLLER_PORT)
+
     def teleopPeriodic(self):
-        self.left_joystick_y = round(-self.controller.getLeftY(), 2)
-        self.right_joystick_x = round(-self.controller.getRightX(), 2)
+        # Blink to indicat telop mode
         self.led.blink()
+        # Get the input from the controller
+        self.left_joystick_y = round(-self.controller.getLeftY(), 1)
+        self.right_joystick_x = round(-self.controller.getRightX(), 1)
+        # Use the controller input to move the robot
         self.drivetrain.move(speed=self.left_joystick_y, rotation=self.right_joystick_x)
+
+        if self.controller.getAButton():
+            self.arm.extend()
+
+        if self.controller.getBButton():
+            self.arm.retract()
+
+    def disabledPeriodic(self):
+        self.led.off()
+        self.arm.retract()
+        self.drivetrain.stop()
