@@ -1,6 +1,16 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "BuiltInAccel": {
+        "header": {
+          "open": true
+        }
+      },
+      "XRPGyro": {
+        "header": {
+          "open": true
+        }
+      },
       "motorL": {
         "header": {
           "open": true
@@ -24,16 +34,44 @@
       "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
       "/SmartDashboard/Autonomous Mode": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Autonomous Mode": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
+      "SmartDashboard": {
+        "Autonomous Mode": {
+          "open": true
+        },
+        "string[]##v_/SmartDashboard/Auto List": {
+          "open": true
+        }
+      },
       "autonomous": {
-        "Drive Forward": {
-          "open": true,
+        "Drive Backward": {
           "state": {
             "open": true
           }
+        },
+        "Drive Forward": {
+          "state": {
+            "open": true
+          }
+        },
+        "open": true
+      },
+      "components": {
+        "drivetrain": {
+          "open": true
         },
         "open": true
       },

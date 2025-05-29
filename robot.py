@@ -13,6 +13,10 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 class MyRobot(magicbot.MagicRobot):
     drivetrain: components.Drivetrain
     led: components.LED
+    odometry: components.Odometry
+    accelerometer: components.Accelerometer
+    reflectance_sensor: components.ReflectanceSensor
+    distance_sensor: components.DistanceSensor
 
     def createObjects(self):
         # Motors
@@ -40,6 +44,14 @@ class MyRobot(magicbot.MagicRobot):
 
         # LED
         self.xrp_io = xrp.XRPOnBoardIO()
+
+        # Gyro
+        self.gyro = xrp.XRPGyro()
+
+        # Sensors
+        self.accelerometer = wpilib.BuiltInAccelerometer()
+        self.reflectance_sensor = xrp.XRPReflectanceSensor()
+        self.distance_sensor = xrp.XRPRangefinder()
 
     def teleopPeriodic(self):
         self.led.blink()
