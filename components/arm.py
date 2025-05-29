@@ -4,7 +4,7 @@ import magicbot
 
 class Arm:
     servo: xrp.XRPServo
-    servo_angle = magicbot.tunable(0)
+    servo_angle = magicbot.tunable(0.0)
 
     def execute(self) -> None:
         pass
@@ -19,7 +19,7 @@ class Arm:
 
     def lift(self, by: float = 0.1) -> None:
         """Lift the arm by a specified amount."""
-        new_angle = max(180, self.get_angle() + by)
+        new_angle = min(180, self.get_angle() + by)
         self.set_angle(new_angle)
 
     def lower(self, by: float = 0.1) -> None:

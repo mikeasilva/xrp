@@ -76,6 +76,11 @@ class MyRobot(magicbot.MagicRobot):
         if self.controller.getBButton():
             self.arm.retract()
 
+        if self.controller.getPOV() == 0:
+            self.arm.lift()
+        elif self.controller.getPOV() == 180:
+            self.arm.lower()
+
     def disabledPeriodic(self):
         self.led.off()
         self.arm.retract()
