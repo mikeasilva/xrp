@@ -60,9 +60,7 @@ class MyRobot(magicbot.MagicRobot):
         self.arm_servo = xrp.XRPServo(constants.ARM_SERVO_CHANNEL)
 
     def teleopPeriodic(self):
-        self.left_joystick_y = round(-self.controller.getLeftY(),2)
-        self.right_joystick_x = round(-self.controller.getRightX(),2)
+        self.left_joystick_y = round(-self.controller.getLeftY(), 2)
+        self.right_joystick_x = round(-self.controller.getRightX(), 2)
         self.led.blink()
-        self.drivetrain.move(
-            speed=self.left_joystick_y, rotation=self.right_joystick_x
-        )
+        self.drivetrain.move(speed=self.left_joystick_y, rotation=self.right_joystick_x)
