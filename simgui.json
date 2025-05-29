@@ -16,12 +16,25 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[4]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[5]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[6]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
       "/SmartDashboard/Autonomous Mode": "String Chooser"
     }
   },
   "NetworkTables": {
     "transitory": {
-      "SmartDashboard": {
+      "autonomous": {
+        "Drive Forward": {
+          "open": true,
+          "state": {
+            "open": true
+          }
+        },
         "open": true
       },
       "robot": {

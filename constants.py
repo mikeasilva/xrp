@@ -23,3 +23,6 @@ WHEEL_DIAMETER_INCH = WHEEL_DIAMETER_MM / 25.4  # Wheel diameter in inches
 
 # Xbox controller port
 CONTROLLER_PORT = 0
+
+# Duration for the LED to blink on and off
+LED_BLINK_DURATION_IN_SECONDS = 0.5

@@ -12,6 +12,7 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 class MyRobot(magicbot.MagicRobot):
     drivetrain: components.Drivetrain
+    led: components.LED
 
     def createObjects(self):
         # Motors
@@ -33,3 +34,15 @@ class MyRobot(magicbot.MagicRobot):
         )
         self.left_encoder.setDistancePerPulse(distance_per_pulse)
         self.right_encoder.setDistancePerPulse(distance_per_pulse)
+
+        # Controller
+        self.controller = wpilib.XboxController(constants.CONTROLLER_PORT)
+
+        # LED
+        self.xrp_io = xrp.XRPOnBoardIO()
+
+    def teleopPeriodic(self):
+        self.led.blink()
+        self.drivetrain.move(
+            speed=-self.controller.getLeftY(), rotation=-self.controller.getRightX()
+        )
