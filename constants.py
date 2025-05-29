@@ -26,3 +26,8 @@ CONTROLLER_PORT = 0
 
 # Duration for the LED to blink on and off
 LED_BLINK_DURATION_IN_SECONDS = 0.5
+
+# The servo motor is connected to
+# SERVO 1 = 4
+# SERVO 2 = 5
+ARM_SERVO_CHANNEL = 5

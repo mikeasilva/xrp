@@ -20,6 +20,11 @@
         "header": {
           "open": true
         }
+      },
+      "servo2": {
+        "header": {
+          "open": true
+        }
       }
     }
   },

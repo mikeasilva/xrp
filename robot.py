@@ -17,6 +17,9 @@ class MyRobot(magicbot.MagicRobot):
     accelerometer: components.Accelerometer
     reflectance_sensor: components.ReflectanceSensor
     distance_sensor: components.DistanceSensor
+    arm: components.Arm
+    left_joystick_y = magicbot.tunable(0.0)
+    right_joystick_x = magicbot.tunable(0.0)
 
     def createObjects(self):
         # Motors
@@ -53,8 +56,13 @@ class MyRobot(magicbot.MagicRobot):
         self.reflectance_sensor = xrp.XRPReflectanceSensor()
         self.distance_sensor = xrp.XRPRangefinder()
 
+        # Arm Servo
+        self.arm_servo = xrp.XRPServo(constants.ARM_SERVO_CHANNEL)
+
     def teleopPeriodic(self):
+        self.left_joystick_y = round(-self.controller.getLeftY(),2)
+        self.right_joystick_x = round(-self.controller.getRightX(),2)
         self.led.blink()
         self.drivetrain.move(
-            speed=-self.controller.getLeftY(), rotation=-self.controller.getRightX()
+            speed=self.left_joystick_y, rotation=self.right_joystick_x
         )
