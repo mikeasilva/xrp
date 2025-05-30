@@ -62,6 +62,9 @@
         }
       },
       "autonomous": {
+        "Calibrate": {
+          "open": true
+        },
         "Drive Backward": {
           "state": {
             "open": true

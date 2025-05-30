@@ -21,3 +21,6 @@ class Drivetrain:
 
     def execute(self):
         pass
+
+    def get_speeds(self):
+        return self.left_motor.get(), self.right_motor.get()

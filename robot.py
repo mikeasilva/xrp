@@ -80,8 +80,3 @@ class MyRobot(magicbot.MagicRobot):
             self.arm.lift()
         elif self.controller.getPOV() == 180:
             self.arm.lower()
-
-    def disabledPeriodic(self):
-        self.led.off()
-        self.arm.retract()
-        self.drivetrain.stop()
