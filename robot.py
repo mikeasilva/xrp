@@ -10,8 +10,9 @@ os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
 os.environ["HALSIMXRP_PORT"] = "3540"
 
 
-class MyRobot(magicbot.MagicRobot):
+class Robot(magicbot.MagicRobot):
     # List all the components used by the robot
+    controller: components.XboxController
     drivetrain: components.Drivetrain
     led: components.LED
     odometry: components.Odometry
@@ -59,24 +60,23 @@ class MyRobot(magicbot.MagicRobot):
         self.arm_servo = xrp.XRPServo(constants.ARM_SERVO_CHANNEL)
 
         # Controller
-        self.controller = wpilib.XboxController(constants.CONTROLLER_PORT)
+        self.xbox_controller = wpilib.XboxController(constants.CONTROLLER_PORT)
 
     def teleopPeriodic(self):
         # Blink to indicat telop mode
         self.led.blink()
         # Get the input from the controller
-        self.left_joystick_y = round(-self.controller.getLeftY(), 1)
-        self.right_joystick_x = round(-self.controller.getRightX(), 1)
+        left_x, left_y, right_x, right_y = self.controller.get_joysticks()
         # Use the controller input to move the robot
-        self.drivetrain.move(speed=self.left_joystick_y, rotation=self.right_joystick_x)
+        self.drivetrain.move(speed=left_y, rotation=right_x)
 
-        if self.controller.getAButton():
+        if self.controller.a_button():
             self.arm.extend()
 
-        if self.controller.getBButton():
+        if self.controller.b_button():
             self.arm.retract()
 
-        if self.controller.getPOV() == 0:
+        if self.controller.dpad_up():
             self.arm.lift()
-        elif self.controller.getPOV() == 180:
+        elif self.controller.dpad_down():
             self.arm.lower()

@@ -1,4 +1,5 @@
 from .arm import Arm
+from .controller import XboxController
 from .drivetrain import Drivetrain
 from .led import LED
 from .odometry import Odometry
@@ -12,4 +13,5 @@ __all__ = [
     "Accelerometer",
     "ReflectanceSensor",
     "DistanceSensor",
+    "XboxController",
 ]
