@@ -20,20 +20,7 @@ class Odometry:
         )
 
     def execute(self) -> None:
-        pass
-
-    def reset_encoders(self) -> None:
-        """
-        Reset the encoders to zero.
-        """
-        self.left_encoder.reset()
-        self.right_encoder.reset()
-
-    def reset_gyro(self) -> None:
-        """
-        Reset the gyro to zero.
-        """
-        self.gyro.reset()
+        pass       
 
     def get_left_distance(self) -> float:
         """
