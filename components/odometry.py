@@ -77,9 +77,13 @@ class Odometry:
         """
         return self._return_gyro(self.gyro.getAngleZ(), units)
 
+    '''
     def get_heading(self) -> wpimath.geometry.Rotation2d:
         """Current actual angle the XRP is currently facing."""
         return self.get_pose().rotation()
+    '''
+    def get_heading(self) -> float:
+        return round(self.heading, 0)
 
     def get_left_encoder_count(self) -> int:
         return self.left_encoder.get()

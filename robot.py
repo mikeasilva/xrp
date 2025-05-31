@@ -24,6 +24,7 @@ class Robot(magicbot.MagicRobot):
     # What we want to see in the network tables
     at_risk_of_crashing = magicbot.tunable(False)
     closest_object = magicbot.tunable(0.0)
+    heading = magicbot.tunable(0.0)
     left_line_sensor = magicbot.tunable(0.0)
     right_line_sensor = magicbot.tunable(0.0)
 
@@ -71,6 +72,7 @@ class Robot(magicbot.MagicRobot):
         # Get Sensor Readings
         self.closest_object = distance = self.distance_sensor.get_distance()
         self.at_risk_of_crashing = distance <= constants.CRASH_DISTANCE
+        self.heading = self.odometry.get_heading()
         self.left_line_sensor = self.reflectance_sensor.get_left()
         self.right_line_sensor = self.reflectance_sensor.get_right()
 
@@ -87,6 +89,9 @@ class Robot(magicbot.MagicRobot):
 
         if self.controller.b_button():
             self.arm.retract()
+
+        if self.controller.start_button():
+            self.odometry.reset_odometry()
 
         if self.controller.dpad_up():
             self.arm.lift()

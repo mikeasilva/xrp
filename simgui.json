@@ -82,9 +82,6 @@
         }
       },
       "components": {
-        "arm": {
-          "open": true
-        },
         "drivetrain": {
           "open": true
         },
@@ -102,6 +99,12 @@
     }
   },
   "NetworkTables Info": {
+    "Server": {
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
     "visible": true
   },
   "Plot": {
