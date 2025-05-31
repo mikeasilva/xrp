@@ -11,7 +11,7 @@ class Drivetrain:
     def setup(self):
         self.drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
 
-    def move(self, speed: float, rotation: float):
+    def go(self, speed: float, rotation: float):
         self.speed = speed
         self.drive.arcadeDrive(speed, rotation, squareInputs=False)
 

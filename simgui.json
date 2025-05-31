@@ -75,6 +75,12 @@
             "open": true
           }
         },
+        "Roomba": {
+          "open": true,
+          "state": {
+            "open": true
+          }
+        },
         "open": true
       },
       "components": {

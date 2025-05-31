@@ -21,8 +21,7 @@ class Robot(magicbot.MagicRobot):
     distance_sensor: components.DistanceSensor
     arm: components.Arm
     # What we want to see in the network tables
-    left_joystick_y = magicbot.tunable(0.0)
-    right_joystick_x = magicbot.tunable(0.0)
+    closest_object = magicbot.tunable(0.0)
 
     def createObjects(self):
         # Motors
@@ -52,9 +51,9 @@ class Robot(magicbot.MagicRobot):
         self.gyro = xrp.XRPGyro()
 
         # Sensors
-        self.accelerometer = wpilib.BuiltInAccelerometer()
-        self.reflectance_sensor = xrp.XRPReflectanceSensor()
-        self.distance_sensor = xrp.XRPRangefinder()
+        self.xrp_accelerometer = wpilib.BuiltInAccelerometer()
+        self.xrp_reflectance_sensor = xrp.XRPReflectanceSensor()
+        self.xrp_distance_sensor = xrp.XRPRangefinder()
 
         # Arm Servo
         self.arm_servo = xrp.XRPServo(constants.ARM_SERVO_CHANNEL)
@@ -63,12 +62,14 @@ class Robot(magicbot.MagicRobot):
         self.xbox_controller = wpilib.XboxController(constants.CONTROLLER_PORT)
 
     def teleopPeriodic(self):
+        self.closest_object = self.distance_sensor.get_distance()
+
         # Blink to indicat telop mode
         self.led.blink()
         # Get the input from the controller
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
         # Use the controller input to move the robot
-        self.drivetrain.move(speed=left_y, rotation=right_x)
+        self.drivetrain.go(speed=left_y, rotation=right_x)
 
         if self.controller.a_button():
             self.arm.extend()

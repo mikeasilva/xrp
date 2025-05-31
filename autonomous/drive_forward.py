@@ -4,7 +4,7 @@ import magicbot
 
 class DriveForward(magicbot.AutonomousStateMachine):
     MODE_NAME = "Drive Forward"
-    DEFAULT = True
+    DEFAULT = False
 
     drivetrain: components.Drivetrain
     led: components.LED
@@ -16,7 +16,7 @@ class DriveForward(magicbot.AutonomousStateMachine):
 
     @magicbot.timed_state(duration=2.0, next_state="stop")
     def start(self):
-        self.drivetrain.move(0.9, 0)
+        self.drivetrain.go(0.9, 0)
 
     @magicbot.state()
     def stop(self):
