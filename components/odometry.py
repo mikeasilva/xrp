@@ -1,3 +1,4 @@
+import magicbot
 import math
 import wpilib
 import wpimath.geometry
@@ -10,6 +11,11 @@ class Odometry:
     right_encoder: wpilib.Encoder
     gyro: xrp.XRPGyro
 
+    heading = magicbot.tunable(0.0)
+    left_encoder_distance = magicbot.tunable(0.0)
+    right_encoder_distance = magicbot.tunable(0.0)
+    headings = []
+
     def setup(self) -> None:
         self.reset_gyro()
         self.reset_encoders()
@@ -20,7 +26,12 @@ class Odometry:
         )
 
     def execute(self) -> None:
-        pass       
+        self.left_encoder_distance = self.get_left_distance()
+        self.right_encoder_distance = self.get_right_distance()
+        self.headings.append(round(self.get_gyro_angle(), 0))
+        if len(self.headings) > 10:
+            self.headings.pop(0)
+        self.heading = sum(self.headings) / len(self.headings)
 
     def get_left_distance(self) -> float:
         """

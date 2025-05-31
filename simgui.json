@@ -76,12 +76,10 @@
           }
         },
         "Roomba": {
-          "open": true,
           "state": {
             "open": true
           }
-        },
-        "open": true
+        }
       },
       "components": {
         "arm": {
@@ -90,7 +88,13 @@
         "drivetrain": {
           "open": true
         },
-        "open": true
+        "odometry": {
+          "open": true
+        },
+        "open": true,
+        "reflectance_sensor": {
+          "open": true
+        }
       },
       "robot": {
         "open": true

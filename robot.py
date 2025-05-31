@@ -2,6 +2,7 @@ import components
 import constants
 import magicbot
 import math
+import ntcore
 import os
 import wpilib
 import xrp
@@ -21,7 +22,10 @@ class Robot(magicbot.MagicRobot):
     distance_sensor: components.DistanceSensor
     arm: components.Arm
     # What we want to see in the network tables
+    at_risk_of_crashing = magicbot.tunable(False)
     closest_object = magicbot.tunable(0.0)
+    left_line_sensor = magicbot.tunable(0.0)
+    right_line_sensor = magicbot.tunable(0.0)
 
     def createObjects(self):
         # Motors
@@ -61,11 +65,18 @@ class Robot(magicbot.MagicRobot):
         # Controller
         self.xbox_controller = wpilib.XboxController(constants.CONTROLLER_PORT)
 
+        self.network_table_client = ntcore.NetworkTableInstance.getDefault()
+
     def teleopPeriodic(self):
-        self.closest_object = self.distance_sensor.get_distance()
+        # Get Sensor Readings
+        self.closest_object = distance = self.distance_sensor.get_distance()
+        self.at_risk_of_crashing = distance <= constants.CRASH_DISTANCE
+        self.left_line_sensor = self.reflectance_sensor.get_left()
+        self.right_line_sensor = self.reflectance_sensor.get_right()
 
         # Blink to indicat telop mode
         self.led.blink()
+
         # Get the input from the controller
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
         # Use the controller input to move the robot

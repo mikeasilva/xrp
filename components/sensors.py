@@ -1,3 +1,4 @@
+import magicbot
 import wpilib
 import xrp
 
@@ -32,11 +33,13 @@ class Accelerometer:
 
 class DistanceSensor:
     xrp_distance_sensor: xrp.XRPRangefinder
-    distances = [0]
+    distances = []
+    n_values = 20
 
     def execute(self) -> None:
+        """Collects the distance from the distance sensor and stores it in a list."""
         self.distances.append(self.xrp_distance_sensor.getDistance())
-        if len(self.distances) > 20:
+        if len(self.distances) > self.n_values:
             self.distances.pop(0)
 
     def get_distance(self, unit="inch", precision=1) -> float:
@@ -46,7 +49,7 @@ class DistanceSensor:
         :returns: The distance to the obstacle in the requested unit
         """
 
-        distance = sum(self.distances) / len(self.distances)
+        distance = average(self.distances)
         if unit == "inch" or unit == "in":
             return round(distance * 39.3701, precision)
         elif unit == "feet" or unit == "ft":
@@ -65,12 +68,40 @@ class DistanceSensor:
 
 class ReflectanceSensor:
     xrp_reflectance_sensor: xrp.XRPReflectanceSensor
+    left_values = []
+    right_values = []
+    n_values = 10  # Number of values to keep in the list
 
     def execute(self) -> None:
-        pass
+        """Collects the reflectance values from the sensors and stores them in lists."""
+        self.left_values.append(self.get_raw_left())
+        self.right_values.append(self.get_raw_right())
+
+        if len(self.left_values) > self.n_values:
+            self.left_values.pop(0)
+
+        if len(self.right_values) > self.n_values:
+            self.right_values.pop(0)
 
     def get_left(self) -> float:
-        return self.xrp_reflectance_sensor.getLeftReflectanceValue()
+        """Get the average left reflectance value."""
+        return round(average(self.left_values), 2)
 
     def get_right(self) -> float:
+        """Get the average right reflectance value."""
+        return round(average(self.right_values), 2)
+
+    def get_raw_right(self) -> float:
+        """Get the raw right reflectance value."""
         return self.xrp_reflectance_sensor.getRightReflectanceValue()
+
+    def get_raw_left(self) -> float:
+        """Get the raw left reflectance value."""
+        return self.xrp_reflectance_sensor.getLeftReflectanceValue()
+
+
+def average(values: list[float]) -> float:
+    """Calculate the average of a list of values."""
+    if not values:
+        return 0.0
+    return sum(values) / len(values)

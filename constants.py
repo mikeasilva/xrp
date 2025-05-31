@@ -31,3 +31,6 @@ LED_BLINK_DURATION_IN_SECONDS = 0.5
 # SERVO 1 = 4
 # SERVO 2 = 5
 ARM_SERVO_CHANNEL = 5
+
+# How many inches until robot at risk of crashing?
+CRASH_DISTANCE = 6.0

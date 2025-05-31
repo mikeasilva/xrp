@@ -1,4 +1,6 @@
 import magicbot
+
+# import ntcore
 import wpilib.drive
 import xrp
 
@@ -6,6 +8,7 @@ import xrp
 class Drivetrain:
     left_motor: xrp.XRPMotor
     right_motor: xrp.XRPMotor
+    # network_table_client: ntcore.NetworkTableInstance
     speed = magicbot.tunable(0.0)
 
     def setup(self):
@@ -13,10 +16,12 @@ class Drivetrain:
 
     def go(self, speed: float, rotation: float):
         self.speed = speed
-        self.drive.arcadeDrive(speed, rotation, squareInputs=False)
+        self.drive.arcadeDrive(speed, rotation, squareInputs=True)
 
     def stop(self):
         self.speed = 0.0
+        # table = self.network_table_client.getTable("robot")
+        # table.getEntry("is_moving").setBoolean(False)
         self.drive.stopMotor()
 
     def execute(self):
