@@ -75,11 +75,18 @@
             "open": true
           }
         },
+        "Random Walk": {
+          "open": true,
+          "state": {
+            "open": true
+          }
+        },
         "Roomba": {
           "state": {
             "open": true
           }
-        }
+        },
+        "open": true
       },
       "components": {
         "drivetrain": {

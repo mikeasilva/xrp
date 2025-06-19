@@ -10,7 +10,7 @@ class RoombaMode(magicbot.AutonomousStateMachine):
     distance_sensor: components.DistanceSensor
     drivetrain: components.Drivetrain
     led: components.LED
-    speed = 0.5
+    speed = 0.9
     turn_threshold = 6.0
 
     @magicbot.state(first=True)
