@@ -46,3 +46,6 @@ class LED:
         Turn the LED on.
         """
         self.set_led(True)
+
+    def execute(self):
+        pass
