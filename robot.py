@@ -11,11 +11,19 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 
 class Robot(magicbot.MagicRobot):
+    arm: components.Arm
     controller: components.XboxController
     drivetrain: components.TankDrive
     led: components.LED
 
     def createObjects(self):
+        wpilib.DataLogManager.start()
+        wpilib.DataLogManager.logNetworkTables(True)
+        wpilib.DataLogManager.logConsoleOutput(True)
+        # =============================================================
+        # ARM
+        # =============================================================
+        self.arm_servo = xrp.XRPServo(constants.ARM_SERVO_CHANNEL)
         # =============================================================
         # CONTROLLER
         # =============================================================
@@ -46,9 +54,9 @@ class Robot(magicbot.MagicRobot):
 
     def teleopPeriodic(self):
         # Blink to indicat telop mode
-        self.led.blink()
+        self.led.blink(duration=0.25)
 
         # Get the input from the controller
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
         # Use the controller input to move the robot
-        self.drivetrain.go(speed=left_y, rotation=right_y)
+        self.drivetrain.go(speed=left_y, rotation=right_x)

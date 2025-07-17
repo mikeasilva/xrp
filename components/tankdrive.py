@@ -1,4 +1,5 @@
 import magicbot
+from magicbot import feedback
 import math
 import wpilib.drive
 import xrp
@@ -96,13 +97,15 @@ class CurvatureDrive:
 class TankDrive:
     left_motor: xrp.XRPMotor
     right_motor: xrp.XRPMotor
-    speed = magicbot.tunable(0.0)
-    rotation = magicbot.tunable(0.0)
-    use_curvature_drive = magicbot.tunable(True)
-    square_inputs = magicbot.tunable(False)
+    # speed = magicbot.tunable(0.0)
+    # rotation = magicbot.tunable(0.0)
+    use_curvature_drive = magicbot.tunable(False)
+    square_inputs = magicbot.tunable(True)
     # target_heading = magicbot.tunable(0.0)
 
     def setup(self):
+        self.speed = 0.0
+        self.rotation = 0.0
         self.drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
         self.curvature_drive = CurvatureDrive()
 
@@ -129,3 +132,13 @@ class TankDrive:
     def set_use_curvature_drive(self, use_curvature_drive: bool):
         """Enable or disable curvature drive mode."""
         self.use_curvature_drive = use_curvature_drive
+
+    @feedback(key="Speed")
+    def get_speed(self) -> float:
+        """Get the speed passed into the drive."""
+        return self.speed
+
+    @feedback(key="Rotation")
+    def get_rotation(self) -> float:
+        """Get the rotation passed into the drive."""
+        return self.rotation

@@ -1,3 +1,5 @@
+from enum import Enum
+
 # ============================================================
 # ARM CONSTANTS
 # ============================================================
@@ -5,7 +7,6 @@
 # SERVO 1 = 4
 # SERVO 2 = 5
 ARM_SERVO_CHANNEL = 5
-
 
 # ============================================================
 # CONTROLLER CONSTANTS
@@ -39,3 +40,10 @@ ENCODER_RESOLUTION = 12  # From datasheet
 WHEEL_DIAMETER_MM = 60
 # Converting the diameter to inches
 WHEEL_DIAMETER_INCH = WHEEL_DIAMETER_MM / 25.4
+
+
+class LineFinder_State(Enum):
+    SEARCHING = 0
+    DETECTING = 1
+    ALIGNING = 2
+    FOLLOWING = 3

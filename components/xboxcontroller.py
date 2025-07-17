@@ -1,17 +1,22 @@
-import magicbot
 import wpilib
+from magicbot import feedback
 
 
 class XboxController:
     xbox_controller: wpilib.XboxController
 
-    left_joystick_x = magicbot.tunable(0.0)
-    left_joystick_y = magicbot.tunable(0.0)
-    right_joystick_x = magicbot.tunable(0.0)
-    right_joystick_y = magicbot.tunable(0.0)
-
     def execute(self) -> None:
         pass
+
+    @feedback(key="Left Y")
+    def get_left_y(self) -> float:
+        """Get the Y-axis value of the left joystick."""
+        return -self.xbox_controller.getLeftY()
+
+    @feedback(key="Right X")
+    def get_right_x(self) -> float:
+        """Get the X-axis value of the right joystick."""
+        return -self.xbox_controller.getRightX()
 
     def get_joysticks(self) -> tuple[float, float, float, float]:
         """
@@ -20,8 +25,8 @@ class XboxController:
         :return: A tuple containing the left joystick x, left joystick y, right joystick x, and right joystick y values.
         """
         self.left_joystick_x = -self.xbox_controller.getLeftX()
-        self.left_joystick_y = -self.xbox_controller.getLeftY()
-        self.right_joystick_x = -self.xbox_controller.getRightX()
+        self.left_joystick_y = self.get_left_y()
+        self.right_joystick_x = self.get_right_x()
         self.right_joystick_y = -self.xbox_controller.getRightY()
         return (
             self.left_joystick_x,
