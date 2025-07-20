@@ -56,7 +56,7 @@
         "open": true
       },
       "components": {
-        "controller": {
+        "arm": {
           "open": true
         },
         "drivetrain": {

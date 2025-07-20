@@ -8,15 +8,52 @@ class XboxController:
     def execute(self) -> None:
         pass
 
+    def setup(self):
+        """
+        Setup the Xbox controller.
+        This method is called once when the robot is initialized.
+        """
+        self.correct_for_deadband = True
+        self.deadband = 0.3
+
+    def linear_deadband(self, raw_value: float, deadband: float) -> float:
+        if abs(raw_value) < deadband:
+            return 0.0
+        return (raw_value / abs(raw_value)) * (
+            (abs(raw_value) - deadband) / (1 - deadband)
+        )
+
+    @feedback(key="Left X")
+    def get_left_x(self) -> float:
+        """Get the X-axis value of the left joystick."""
+        raw_value = self.xbox_controller.getLeftX()
+        if self.correct_for_deadband:
+            return self.linear_deadband(raw_value, self.deadband)
+        return raw_value
+
     @feedback(key="Left Y")
     def get_left_y(self) -> float:
         """Get the Y-axis value of the left joystick."""
-        return -self.xbox_controller.getLeftY()
+        raw_value = self.xbox_controller.getLeftY()
+        if self.correct_for_deadband:
+            return self.linear_deadband(raw_value, self.deadband)
+        return raw_value
 
     @feedback(key="Right X")
     def get_right_x(self) -> float:
         """Get the X-axis value of the right joystick."""
-        return -self.xbox_controller.getRightX()
+        raw_value = self.xbox_controller.getRightX()
+        if self.correct_for_deadband:
+            return self.linear_deadband(raw_value, self.deadband)
+        return raw_value
+
+    @feedback(key="Right Y")
+    def get_right_y(self) -> float:
+        """Get the Y-axis value of the right joystick."""
+        raw_value = self.xbox_controller.getRightY()
+        if self.correct_for_deadband:
+            return self.linear_deadband(raw_value, self.deadband)
+        return raw_value
 
     def get_joysticks(self) -> tuple[float, float, float, float]:
         """
@@ -24,10 +61,10 @@ class XboxController:
 
         :return: A tuple containing the left joystick x, left joystick y, right joystick x, and right joystick y values.
         """
-        self.left_joystick_x = -self.xbox_controller.getLeftX()
-        self.left_joystick_y = self.get_left_y()
-        self.right_joystick_x = self.get_right_x()
-        self.right_joystick_y = -self.xbox_controller.getRightY()
+        self.left_joystick_x = self.xbox_controller.getLeftX()
+        self.left_joystick_y = self.xbox_controller.getLeftY()
+        self.right_joystick_x = self.xbox_controller.getRightX()
+        self.right_joystick_y = self.xbox_controller.getRightY()
         return (
             self.left_joystick_x,
             self.left_joystick_y,

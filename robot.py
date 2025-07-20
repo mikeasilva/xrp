@@ -14,6 +14,7 @@ class Robot(magicbot.MagicRobot):
     arm: components.Arm
     controller: components.XboxController
     drivetrain: components.TankDrive
+    # drivetrain: components.CurvatureDrive
     led: components.LED
 
     def createObjects(self):
@@ -54,9 +55,35 @@ class Robot(magicbot.MagicRobot):
 
     def teleopPeriodic(self):
         # Blink to indicat telop mode
-        self.led.blink(duration=0.25)
+        self.led.blink(duration=0.1)
+
+        if self.controller.right_bumper_pressed():
+            mode_toggle = {"arcade": "tank", "tank": "arcade", "curvature": "curvature"}
+            self.drivetrain.set_mode(mode_toggle[self.drivetrain.get_mode()])
 
         # Get the input from the controller
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
+
+        drivetrain_mode = self.drivetrain.get_mode()
+        if drivetrain_mode == "arcade":
+            # Using arcade drive
+            left_stick = -left_y
+            right_stick = -right_x
+        elif drivetrain_mode == "curvature":
+            # Using curvature drive
+            left_stick = -left_y
+            right_stick = right_x
+        else:
+            # Using tank drive
+            left_stick = -left_y
+            right_stick = -right_y
         # Use the controller input to move the robot
-        self.drivetrain.go(speed=left_y, rotation=right_x)
+        self.drivetrain.go(left_stick, right_stick)
+
+        if self.controller.dpad_up_pressed():
+            print("lift")
+            self.arm.lift()
+
+        elif self.controller.dpad_down_pressed():
+            print("lower")
+            self.arm.lower()
