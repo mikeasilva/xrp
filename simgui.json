@@ -41,6 +41,13 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[4]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[5]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[6]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
       "/SmartDashboard/Autonomous Mode": "String Chooser"
     }
   },
@@ -53,10 +60,23 @@
     },
     "transitory": {
       "SmartDashboard": {
+        "Autonomous Mode": {
+          "string[]##v_/SmartDashboard/Autonomous Mode/options": {
+            "open": true
+          }
+        },
         "open": true
       },
+      "autonomous": {
+        "Calibrate Drivetrain": {
+          "open": true,
+          "state": {
+            "open": true
+          }
+        }
+      },
       "components": {
-        "arm": {
+        "controller": {
           "open": true
         },
         "drivetrain": {

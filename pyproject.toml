@@ -16,13 +16,13 @@ robotpy_extras = [
     # "commands2",
     # "cscore",
     # "navx",
-    # "pathplannerlib",
+    "pathplannerlib",
     # "phoenix5",
     # "phoenix6",
     # "rev",
     # "romi",
-    # "sim",
-    # "xrp",
+    "sim",
+    "xrp",
 ]
 
 # Other pip packages to install

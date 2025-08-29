@@ -61,10 +61,10 @@ class XboxController:
 
         :return: A tuple containing the left joystick x, left joystick y, right joystick x, and right joystick y values.
         """
-        self.left_joystick_x = self.xbox_controller.getLeftX()
-        self.left_joystick_y = self.xbox_controller.getLeftY()
-        self.right_joystick_x = self.xbox_controller.getRightX()
-        self.right_joystick_y = self.xbox_controller.getRightY()
+        self.left_joystick_x = self.get_left_x()
+        self.left_joystick_y = self.get_left_y()
+        self.right_joystick_x = self.get_right_x()
+        self.right_joystick_y = self.get_right_y()
         return (
             self.left_joystick_x,
             self.left_joystick_y,

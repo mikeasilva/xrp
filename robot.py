@@ -14,13 +14,9 @@ class Robot(magicbot.MagicRobot):
     arm: components.Arm
     controller: components.XboxController
     drivetrain: components.TankDrive
-    # drivetrain: components.CurvatureDrive
     led: components.LED
 
     def createObjects(self):
-        wpilib.DataLogManager.start()
-        wpilib.DataLogManager.logNetworkTables(True)
-        wpilib.DataLogManager.logConsoleOutput(True)
         # =============================================================
         # ARM
         # =============================================================
@@ -66,13 +62,8 @@ class Robot(magicbot.MagicRobot):
 
         drivetrain_mode = self.drivetrain.get_mode()
         if drivetrain_mode == "arcade":
-            # Using arcade drive
             left_stick = -left_y
             right_stick = -right_x
-        elif drivetrain_mode == "curvature":
-            # Using curvature drive
-            left_stick = -left_y
-            right_stick = right_x
         else:
             # Using tank drive
             left_stick = -left_y
