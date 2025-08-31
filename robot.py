@@ -24,16 +24,19 @@ class MyRobot(genie.GenieRobot):
         self.led.blink(duration=0.1)
         self.controller.capture_buton_presses()
 
-        if self.controller.x_button_was_pressed():
-            print("X button was pressed")
+        # "Boost" the motor when the B button is pressed
+        if self.controller.b_button_pressed():
+            self.drivetrain.set_max_output(1)
+        else:
+            self.drivetrain.set_max_output(constants.DEFAULT_MAX_OUTPUT)
 
         # Get the input from the controller
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
 
         # Make adjustments based on the drive mode
         if self.drivetrain.mode == "arcade":
-            left_stick = -left_y
-            right_stick = -right_x
+            left_stick = left_y
+            right_stick = right_x
         else:
             # Using tank drive
             left_stick = -left_y
@@ -41,3 +44,6 @@ class MyRobot(genie.GenieRobot):
 
         # Use the controller input to move the robot
         self.drivetrain.go(left_stick, right_stick)
+
+        if self.controller.x_button_was_pressed():
+            print("X button was pressed")

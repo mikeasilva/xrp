@@ -41,6 +41,9 @@ WHEEL_DIAMETER_MM = 60
 # Converting the diameter to inches
 WHEEL_DIAMETER_INCH = WHEEL_DIAMETER_MM / 25.4
 
+# Limit the maximum motor output to enable a "boost"
+DEFAULT_MAX_OUTPUT = 0.8
+
 
 class LineFinder_State(Enum):
     SEARCHING = 0
