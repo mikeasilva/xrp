@@ -16,7 +16,23 @@ class XboxController:
         self.correct_for_deadband = True
         self.deadband = 0.3
         self.xbox_controller = wpilib.XboxController(self.port)
-        self.button_pressed = {
+        self.button_was_pressed = {
+            "A": False,
+            "B": False,
+            "X": False,
+            "Y": False,
+            "DPad_Up": False,
+            "DPad_Down": False,
+            "DPad_Left": False,
+            "DPad_Right": False,
+            "Left_Bumper": False,
+            "Right_Bumper": False,
+            "Left_Trigger": False,
+            "Right_Trigger": False,
+            "Start": False,
+            "Back": False,
+        }
+        self.button_is_pressed = {
             "A": False,
             "B": False,
             "X": False,
@@ -40,7 +56,11 @@ class XboxController:
         :param pressed: The current state of the button (True if pressed, False otherwise).
         """
         if pressed:
-            self.button_pressed[button_name] = True
+            self.button_is_pressed[button_name] = True
+        else:
+            if self.button_is_pressed[button_name]:
+                self.button_was_pressed[button_name] = True
+            self.button_is_pressed[button_name] = False
         return pressed
 
     def _button_was_pressed(self, button_name: str) -> bool:
@@ -49,8 +69,8 @@ class XboxController:
         :param button_name: The name of the button to check.
         :return: True if the button was pressed since the last check, False otherwise.
         """
-        if self.button_pressed[button_name]:
-            self.button_pressed[button_name] = False
+        if self.button_was_pressed[button_name]:
+            self.button_was_pressed[button_name] = False
             return True
         return False
 
