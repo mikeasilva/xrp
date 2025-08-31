@@ -6,7 +6,7 @@ class NetworkTables(commands2.Subsystem):
     def __init__(self) -> None:
         super().__init__()
         self.nt = ntcore.NetworkTableInstance.getDefault()
-        self.table = self.nt.getTable("XRPRobot")
+        self.table = self.nt.getTable("robot")
 
     def get_entry(self, entry: str) -> ntcore.NetworkTableEntry:
         """

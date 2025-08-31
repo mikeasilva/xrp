@@ -5,7 +5,7 @@ import wpilib.drive
 import xrp
 
 
-class Drivetrain(commands2.Subsystem):
+class XRPDrivetrain(commands2.Subsystem):
     def __init__(self, drive_mode: str = "arcade") -> None:
         """
         Initialize the drivetrain subsystem.

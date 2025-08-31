@@ -1,67 +1,30 @@
 {
-  "HALProvider": {
-    "Encoders": {
-      "0": {
-        "header": {
-          "open": false
-        }
-      },
-      "1": {
-        "header": {
-          "open": false
-        }
-      }
-    },
-    "Other Devices": {
-      "BuiltInAccel": {
-        "header": {
-          "open": false
-        }
-      },
-      "XRPGyro": {
-        "header": {
-          "open": true
-        }
-      },
-      "motorL": {
-        "header": {
-          "open": true
-        }
-      },
-      "motorR": {
-        "header": {
-          "open": true
-        }
-      },
-      "servo1": {
-        "header": {
-          "open": true
-        }
-      }
-    }
-  },
   "NTProvider": {
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Autonomous Mode": "String Chooser"
     }
   },
   "NetworkTables": {
-    "Persistent Values": {
-      "open": false
-    },
     "transitory": {
-      "SmartDashboard": {
-        "open": false
+      "LiveWindow": {
+        "open": true
+      },
+      "components": {
+        "arm": {
+          "open": true
+        },
+        "distance_sensor": {
+          "open": true
+        },
+        "line_sensor": {
+          "open": true
+        },
+        "open": true
       }
     }
   },
   "NetworkTables Info": {
-    "Clients": {
-      "open": true
-    },
-    "Server": {
-      "open": true
-    },
     "visible": true
   }
 }
