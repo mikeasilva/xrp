@@ -68,6 +68,26 @@ class XboxController:
             )
         return raw_value
 
+    def capture_buton_presses(self) -> None:
+        """
+        Capture the current state of all buttons to track presses.
+        This method should be called at the end of each control loop iteration.
+        """
+        self.a_button_pressed()
+        self.b_button_pressed()
+        self.x_button_pressed()
+        self.y_button_pressed()
+        self.dpad_up_pressed()
+        self.dpad_down_pressed()
+        self.dpad_left_pressed()
+        self.dpad_right_pressed()
+        self.left_bumper_pressed()
+        self.right_bumper_pressed()
+        self.left_trigger_pressed()
+        self.right_trigger_pressed()
+        self.start_button_pressed()
+        self.back_button_pressed()
+
     def get_joysticks(self) -> tuple[float, float, float, float]:
         """
         Get the joystick values from the Xbox controller.

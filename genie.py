@@ -17,3 +17,6 @@ class GenieRobot(magicbot.MagicRobot):
         """
         inst = commands2.CommandScheduler.getInstance()
         inst.schedule(command)
+
+    def disabledPeriodic(self):
+        pass
