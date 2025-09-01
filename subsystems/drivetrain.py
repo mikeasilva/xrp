@@ -1,6 +1,6 @@
 import commands2
-import math
 import constants
+import math
 import wpilib.drive
 import xrp
 
@@ -110,6 +110,16 @@ class XRPDrivetrain(commands2.Subsystem):
         :param mode: True to enable safety, False to disable
         """
         self.drivetrain.setSafetyEnabled(mode)
+
+    def set_drive_mode(self, mode: str) -> None:
+        """
+        Set the drive mode of the drivetrain.
+
+        :param mode: the mode for driving the XRP robot, either 'arcade' or 'tank'
+        """
+        if mode not in ["arcade", "tank"]:
+            raise ValueError("Drive mode must be either 'arcade' or 'tank'")
+        self.drive_mode = mode
 
     def stop(self) -> None:
         """
