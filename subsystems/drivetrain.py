@@ -80,21 +80,36 @@ class XRPDrivetrain(commands2.Subsystem):
             self.left_encoder.getDistance() + self.right_encoder.getDistance()
         ) / 2.0
 
-    def get_left_encoder_position(self) -> float:
+    def scale_distance(self, distance: float, units="in") -> float:
+        """
+        Scale a distance to the appropriate units.
+
+        :param distance: the distance to scale
+        :param units: the units to scale to, either 'in' or 'm'
+        :return: the scaled distance
+        """
+        if units == "in":
+            return distance
+        elif units == "m":
+            return distance * 0.0254
+        else:
+            raise ValueError("Units must be either 'in' or 'm'")
+        
+    def get_left_encoder_position(self, units="in") -> float:
         """
         Get the position of the left encoder.
 
         :return: the position of the left encoder in inches
         """
-        return self.left_encoder.get()
+        return self.scale_distance(self.left_encoder.get(), units)
 
-    def get_right_encoder_position(self) -> float:
+    def get_right_encoder_position(self, units="in") -> float:
         """
         Get the position of the right encoder.
 
         :return: the position of the right encoder in inches
         """
-        return self.right_encoder.get()
+        return self.scale_distance(self.right_encoder.get(), units)
 
     def reset_encoders(self) -> None:
         """

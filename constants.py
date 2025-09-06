@@ -6,7 +6,7 @@ from enum import Enum
 # The servo motor is connected to
 # SERVO 1 = 4
 # SERVO 2 = 5
-ARM_SERVO_CHANNEL = 5
+ARM_SERVO_CHANNEL = 4
 
 # ============================================================
 # CONTROLLER CONSTANTS
@@ -42,8 +42,16 @@ WHEEL_DIAMETER_MM = 60
 WHEEL_DIAMETER_INCH = WHEEL_DIAMETER_MM / 25.4
 
 # Limit the maximum motor output to enable a "boost"
-DEFAULT_MAX_OUTPUT = 0.8
+DEFAULT_MAX_OUTPUT = 0.9
 
+# ============================================================
+# PID CONSTANTS
+# ============================================================
+TURN_P = 1.00
+TURN_I = 0.00
+TURN_D = 0.00
+TURN_F = 0.00
+TURN_TOLERANCE_DEGREES = 2.0
 
 class LineFinder_State(Enum):
     SEARCHING = 0

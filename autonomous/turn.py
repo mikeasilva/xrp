@@ -2,9 +2,9 @@ import components
 import magicbot
 
 
-class DriveForward(magicbot.AutonomousStateMachine):
-    MODE_NAME = "Drive Forward"
-    DEFAULT = True
+class Turn(magicbot.AutonomousStateMachine):
+    MODE_NAME = "Turn CW"
+    DEFAULT = False
 
     drivetrain: components.Drivetrain
     led: components.LED
@@ -16,11 +16,11 @@ class DriveForward(magicbot.AutonomousStateMachine):
     @magicbot.state()
     def led_on(self):
         self.led.turn_on()
-        self.next_state("drive_forward")
+        self.next_state("turn")
 
-    @magicbot.timed_state(duration=1.0, next_state="finish")
-    def drive_forward(self):
-        self.drivetrain.go(-1, 0)
+    @magicbot.timed_state(duration=2.0, next_state="finish")
+    def turn(self):
+        self.drivetrain.go(0, 1)
 
     @magicbot.state()
     def finish(self):

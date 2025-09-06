@@ -16,22 +16,21 @@ class XRPGyro(commands2.Subsystem):
         """Get the angles from the gyro."""
         return (self.get_x(), self.get_y(), self.get_z())
 
-    @feedback(key="rotation")
     def get_rotation2d(self) -> wpimath.geometry.Rotation2d:
         """Get the rotation2d from the gyro."""
         return self.gyro.getRotation2d()
 
-    @feedback(key="x_angle")
     def get_x(self) -> float:
         return wpimath.units.radiansToDegrees(self.gyro.getAngleX())
 
-    @feedback(key="y_angle")
     def get_y(self) -> float:
         return wpimath.units.radiansToDegrees(self.gyro.getAngleY())
 
-    @feedback(key="z_angle")
     def get_z(self) -> float:
         return wpimath.units.radiansToDegrees(self.gyro.getAngleZ())
+    
+    def get_yaw(self) -> float:
+        return self.get_z()
 
     def reset(self) -> None:
         """Reset the gyro."""

@@ -7,7 +7,7 @@
       "font": "Proggy Dotted",
       "fps": "120",
       "height": "991",
-      "maximized": "1",
+      "maximized": "0",
       "style": "0",
       "userScale": "2",
       "width": "1920",
@@ -15,10 +15,27 @@
       "ypos": "29"
     }
   },
+  "Table": {
+    "0x542B5671,2": {
+      "Column 0  Width": "372",
+      "Column 1  Width": "535",
+      "RefScale": "16"
+    }
+  },
   "Window": {
+    "###/SmartDashboard/Autonomous Mode": {
+      "Collapsed": "0",
+      "Pos": "1553,914",
+      "Size": "320,60"
+    },
+    "###Encoders": {
+      "Collapsed": "0",
+      "Pos": "1315,26",
+      "Size": "280,502"
+    },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "4,828",
+      "Pos": "2,381",
       "Size": "202,214"
     },
     "###Joysticks": {
@@ -29,7 +46,7 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "Pos": "212,65",
-      "Size": "1065,703"
+      "Size": "1065,840"
     },
     "###NetworkTables Info": {
       "Collapsed": "1",
@@ -40,6 +57,11 @@
       "Collapsed": "0",
       "Pos": "1603,25",
       "Size": "312,868"
+    },
+    "###Plot <0>": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "700,400"
     },
     "###System Joysticks": {
       "Collapsed": "1",
