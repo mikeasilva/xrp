@@ -14,14 +14,14 @@ class Drivetrain:
 
     def setup(self):
         self.drivetrain = subsystems.XRPDrivetrain()
-        self.imu = subsystems.XRPGyro()
-        self.imu.reset()
-        self.HEADING = self.imu.get_yaw()
+        self.gyro = subsystems.XRPGyro()
+        self.gyro.reset()
+        self.HEADING = self.gyro.get_yaw()
         self.mode = "arcade"  # or "tank"
         self.max_output = constants.DEFAULT_MAX_OUTPUT
         self.drivetrain.set_drive_mode(self.mode)
         self.odometry = DifferentialDriveOdometry(
-            self.imu.get_rotation2d(), self.drivetrain.get_left_encoder_position(units="m"), self.drivetrain.get_right_encoder_position(units="m")
+            self.gyro.get_rotation2d(), self.drivetrain.get_left_encoder_position(units="in"), self.drivetrain.get_right_encoder_position(units="in")
         )
         
         '''
@@ -69,17 +69,15 @@ class Drivetrain:
 
     @feedback(key="X")
     def get_x(self) -> float:
-        return round(self.imu.get_x(), 2)
+        return round(self.gyro.get_x(), 2)
 
     @feedback(key="Y")
     def get_y(self) -> float:
-        return round(self.imu.get_y(), 2)
-
+        return round(self.gyro.get_y(), 2)
     
     def get_z(self) -> float:
-        return round(self.imu.get_z(), 1)
+        return round(self.gyro.get_z(), 1)
 
-    @feedback(key="Robot Pose")
     def get_pose_string(self) -> str:
         pose = self.odometry.getPose()
         return f"({pose.X():.2f}, {pose.Y():.2f}) @ {pose.rotation().degrees():.2f} deg"
@@ -90,16 +88,16 @@ class Drivetrain:
         Get the current heading of the robot in degrees.
         :return: The current heading in degrees.
         """
-        if not self.IS_MOVING:
+        #if not self.IS_MOVING:
             # This is the core ZUPT step
             # Reset the gyroscope yaw reading to zero to eliminate drift
             # Or, if using odometry, you can set the heading directly
-            #self.imu.reset()
+            #self.gyro.reset()
                 
             # You might also want to reset the odometry pose's rotation
             # to the corrected gyro value.
             # Here, we can create a new pose with the current position but corrected heading
-            corrected_pose = wpimath.geometry.Pose2d(self.odometry.getPose().X(), self.odometry.getPose().Y(), wpimath.geometry.Rotation2d(0))
+            #corrected_pose = wpimath.geometry.Pose2d(self.odometry.getPose().X(), self.odometry.getPose().Y(), wpimath.geometry.Rotation2d(0))
             #self.odometry.resetPose(corrected_pose)
         
         pose = self.odometry.getPose()

@@ -21,19 +21,25 @@ class DistanceSensor:
         # Convert to the requested unit.
         distance = self.distance_sensor.getDistance()
         if self.UNIT == "inch" or self.UNIT == "in":
-            return distance * 39.3701
+            distance = distance * 39.3701
         elif self.UNIT == "feet" or self.UNIT == "ft":
-            return distance * 3.28084
+            distance =  distance * 3.28084
         elif self.UNIT == "yard" or self.UNIT == "yd":
-            return distance * 1.09361
+            distance = distance * 1.09361
         elif self.UNIT == "cm":
-            return distance * 100
+            distance = distance * 100
         elif self.UNIT == "meter":
             return distance
         else:
             raise ValueError(
                 "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
             )
+        return distance
+
+    @feedback(key="Nearest Object")
+    def get_distance_string(self) -> str:
+        distance = int(round(self.get_distance(), 0))
+        return f"{distance} {self.UNIT}"
 
     @feedback(key="unit")
     def get_unit(self) -> str:
