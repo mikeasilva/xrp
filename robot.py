@@ -1,17 +1,17 @@
 import components
 import constants
+import genie
 import magicbot
 from magicbot import feedback
 import os
 import wpilib
-import wpimath.units
 import xrp
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
 os.environ["HALSIMXRP_PORT"] = "3540"
 
 
-class MyRobot(magicbot.MagicRobot):
+class MyRobot(genie.GenieRobot):
     # The robot's magic components
     controller: components.XboxController
     drivetrain: components.DriveTrain
@@ -19,6 +19,7 @@ class MyRobot(magicbot.MagicRobot):
     # Key variables
     STATE = "STARTING"
     IS_MOVING = False
+    ALLIANCE = "RED" if wpilib.DriverStation.Alliance.kRed else "BLUE"
 
     def createObjects(self):
         """Create motors and stuff here"""
@@ -50,11 +51,16 @@ class MyRobot(magicbot.MagicRobot):
         self.set_state("OPERATOR CONTROLLED")
 
     def teleopPeriodic(self):
+        self.set_is_moving(self.drivetrain.is_moving())
         # Get the input from the controller
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
 
         # Use the controller input to move the robot
         self.drivetrain.go(left_y, right_x)
+
+    @feedback(key="alliance")
+    def get_alliance(self):
+        return self.ALLIANCE
 
     @feedback(key="state")
     def get_state(self):
@@ -64,5 +70,8 @@ class MyRobot(magicbot.MagicRobot):
     def get_is_moving(self):
         return self.IS_MOVING
 
-    def set_state(self, state):
+    def set_is_moving(self, is_moving: bool):
+        self.IS_MOVING = is_moving
+
+    def set_state(self, state: str):
         self.STATE = state

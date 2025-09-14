@@ -7,6 +7,12 @@
   },
   "NetworkTables": {
     "transitory": {
+      "components": {
+        "drivetrain": {
+          "open": true
+        },
+        "open": true
+      },
       "robot": {
         "open": true
       }
