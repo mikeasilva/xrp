@@ -1,5 +1,6 @@
 import components
 import constants
+import elasticlib
 import genie
 import magicbot
 from magicbot import feedback
@@ -46,8 +47,14 @@ class MyRobot(genie.GenieRobot):
         )
         self.drivetrain_p = magicbot.tunable(default=1.0)
 
+    def autonomousInit(self):
+        """Runs all initialization code for autonomous"""
+        elasticlib.select_tab("Autonomous")
+        self.set_state("AUTOPILOT")
+
     def teleopInit(self):
         """Called when teleop starts; optional"""
+        elasticlib.select_tab("Teleoperated")
         self.set_state("OPERATOR CONTROLLED")
 
     def teleopPeriodic(self):
@@ -56,7 +63,11 @@ class MyRobot(genie.GenieRobot):
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
 
         # Use the controller input to move the robot
-        self.drivetrain.go(left_y, right_x)
+        self.drivetrain.go(-left_y, -right_x)
+
+        if self.controller.x_button_was_pressed():
+            self.drivetrain.reset_gyro()
+            self.drivetrain.reset_encoders()
 
     @feedback(key="alliance")
     def get_alliance(self):

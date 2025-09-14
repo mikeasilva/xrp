@@ -25,7 +25,7 @@ class DriveForward(magicbot.AutonomousStateMachine):
     def drive_forward(self):
         error = self.heading - self.drivetrain.gyro.getAngle()
         # Drives forward continuously at half speed, using the gyro to stabilize the heading
-        self.drivetrain.drive.tankDrive(0.5 + self.P * error, 0.5 - self.P * error)
+        self.drivetrain.drive.tankDrive(0.8 + self.P * error, 0.8 - self.P * error)
 
     @state()
     def finish(self):

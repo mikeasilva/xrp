@@ -1,4 +1,23 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "XRPGyro": {
+        "header": {
+          "open": true
+        }
+      },
+      "motorL": {
+        "header": {
+          "open": true
+        }
+      },
+      "motorR": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -6,7 +25,21 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
+      "autonomous": {
+        "Drive Forward": {
+          "open": true,
+          "state": {
+            "open": true
+          }
+        }
+      },
       "components": {
         "drivetrain": {
           "open": true

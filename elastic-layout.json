@@ -1,0 +1,136 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "Line Sensor",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "LEFT"
+            },
+            "children": [
+              {
+                "title": "Left",
+                "x": 128.0,
+                "y": 128.0,
+                "width": 256.0,
+                "height": 256.0,
+                "type": "Radial Gauge",
+                "properties": {
+                  "topic": "/components/line_sensor/left",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "start_angle": -140.0,
+                  "end_angle": 140.0,
+                  "min_value": 0.0,
+                  "max_value": 1.0,
+                  "number_of_labels": 8,
+                  "wrap_value": false,
+                  "show_pointer": true,
+                  "show_ticks": true
+                }
+              },
+              {
+                "title": "Right",
+                "x": 128.0,
+                "y": 384.0,
+                "width": 256.0,
+                "height": 256.0,
+                "type": "Radial Gauge",
+                "properties": {
+                  "topic": "/components/line_sensor/right",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "start_angle": -140.0,
+                  "end_angle": 140.0,
+                  "min_value": 0.0,
+                  "max_value": 1.0,
+                  "number_of_labels": 8,
+                  "wrap_value": false,
+                  "show_pointer": true,
+                  "show_ticks": true
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "Heading",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/components/drivetrain/Heading",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "X",
+            "x": 640.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/components/drivetrain/X",
+              "period": 0.033,
+              "data_type": "double",
+              "time_displayed": 5.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "Y",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/components/drivetrain/Y",
+              "period": 0.033,
+              "data_type": "double",
+              "time_displayed": 5.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "Nearest Object",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/components/distance_sensor/Nearest Object",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    }
+  ]
+}
