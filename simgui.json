@@ -1,0 +1,18 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Autonomous Mode": "String Chooser"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "robot": {
+        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
