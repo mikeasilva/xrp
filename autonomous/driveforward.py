@@ -18,12 +18,14 @@ class DriveForward(magicbot.AutonomousStateMachine):
     @state(first=True, must_finish=True)
     def create_setpoint(self):
         # Set setpoint to current heading at start of auto
-        self.heading = self.drivetrain.gyro.getAngle()
+        self.heading = self.drivetrain.gyro_angle()
+        print(self.heading)
         self.next_state("drive_forward")
 
     @timed_state(duration=3, next_state="finish")
     def drive_forward(self):
-        error = self.heading - self.drivetrain.gyro.getAngle()
+        error = self.heading - self.drivetrain.gyro_angle()
+        print(error)
         # Drives forward continuously at half speed, using the gyro to stabilize the heading
         self.drivetrain.drive.tankDrive(0.8 + self.P * error, 0.8 - self.P * error)
 

@@ -2,7 +2,6 @@ from magicbot import feedback
 import math
 import wpilib
 import wpilib.drive
-import wpimath.units
 import xrp
 
 
@@ -12,8 +11,6 @@ class DriveTrain:
     left_motor: xrp.XRPMotor
     right_encoder: wpilib.Encoder
     right_motor: xrp.XRPMotor
-
-    ENCODER_VALUES = {"right": 0, "left": 0}
 
     def setup(self):
         self.drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
@@ -45,20 +42,14 @@ class DriveTrain:
     # =========================================================================
 
     @feedback(key="Gyro Angle (degrees)")
-    def gyro_angle(self):
+    def gyro_angle(self) -> float:
         angle_in_radians = self.gyro.getAngle()
         angle = math.degrees(angle_in_radians)
         return round(angle, 1)
 
     @feedback(key="Is Moving")
     def is_moving(self) -> bool:
-        if (self.ENCODER_VALUES["left"] != self.left_encoder_value()) or (
-            self.ENCODER_VALUES["right"] != self.right_encoder_value()
-        ):
-            self.ENCODER_VALUES["left"] = self.left_encoder_value()
-            self.ENCODER_VALUES["right"] = self.right_encoder_value()
-            return True
-        return False
+        return self.velocity() > 0
 
     @feedback(key="Is Turning")
     def is_turning(self) -> bool:
@@ -67,9 +58,14 @@ class DriveTrain:
         return True
 
     @feedback(key="Right Encoder")
-    def right_encoder_value(self):
+    def right_encoder_value(self) -> int:
         return self.right_encoder.getRaw()
 
     @feedback(key="Left Encoder")
-    def left_encoder_value(self):
+    def left_encoder_value(self) -> int:
         return self.left_encoder.getRaw()
+
+    @feedback(key="Velocity (inch per sec)")
+    def velocity(self) -> float:
+        speed = (self.right_encoder.getRate() + self.left_encoder.getRate()) / 2
+        return round(abs(speed), 1)

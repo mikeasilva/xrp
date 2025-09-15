@@ -4,6 +4,7 @@ import elasticlib
 import genie
 import magicbot
 from magicbot import feedback
+import math
 import os
 import wpilib
 import xrp
@@ -45,6 +46,19 @@ class MyRobot(genie.GenieRobot):
         self.drivetrain_right_encoder = wpilib.Encoder(
             constants.RIGHT_ENCODER_CHANNEL_A, constants.RIGHT_ENCODER_CHANNEL_B
         )
+        wheel_circumference = constants.WHEEL_DIAMETER_INCH * math.pi
+        counts_per_wheel_revolution = (
+            constants.ENCODER_RESOLUTION * constants.MOTOR_GEAR_RATIO
+        )
+
+        # And since we know the circumference of the wheel, we can calculate:
+        distance_per_pulse = wheel_circumference / counts_per_wheel_revolution
+
+        # We can tell the encoder to use distance per pulse
+        # This changes the values returned by getDistance() to be in inches
+        self.drivetrain_left_encoder.setDistancePerPulse(distance_per_pulse)
+        self.drivetrain_right_encoder.setDistancePerPulse(distance_per_pulse)
+
         self.drivetrain_p = magicbot.tunable(default=1.0)
 
     def autonomousInit(self):
