@@ -15,8 +15,12 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 class MyRobot(genie.GenieRobot):
     # The robot's magic components
+    arm: components.Arm
     controller: components.XboxController
+    distance_sensor: components.DistanceSensor
     drivetrain: components.DriveTrain
+    led: components.LED
+    line_sensor: components.LineSensor
 
     # Key variables
     STATE = "STARTING"
@@ -26,6 +30,11 @@ class MyRobot(genie.GenieRobot):
 
     def createObjects(self):
         """Create motors and stuff here"""
+        # ============================================================
+        # ARM OBJECTS
+        # ============================================================
+        self.arm_servo_channel = constants.ARM_SERVO_CHANNEL
+
         # ============================================================
         # CONTROLLER OBJECTS
         # ============================================================
@@ -66,6 +75,7 @@ class MyRobot(genie.GenieRobot):
         """Runs all initialization code for autonomous"""
         elasticlib.select_tab("Autonomous")
         self.set_state("AUTOPILOT")
+        self.led.turn_on()
 
     def teleopInit(self):
         """Called when teleop starts; optional"""
@@ -73,6 +83,7 @@ class MyRobot(genie.GenieRobot):
         self.set_state("OPERATOR CONTROLLED")
 
     def teleopPeriodic(self):
+        self.led.blink()
         self.set_is_moving(self.drivetrain.is_moving())
         self.set_is_turning(self.drivetrain.is_turning())
         # Get the input from the controller

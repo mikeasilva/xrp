@@ -27,6 +27,10 @@ class DriveTrain:
         self.drive.arcadeDrive(throttle, rotation, squareInputs=square_inputs)
         # TODO: Check if the robot is moving and update it
 
+    def move_forward(self, speed, heading):
+        current_heading = self.gyro_angle()
+        error = heading - current_heading
+
     def reset_encoders(self) -> None:
         self.left_encoder.reset()
         self.right_encoder.reset()
