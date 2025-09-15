@@ -14,6 +14,7 @@ class DriveTrain:
 
     def setup(self):
         self.drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
+        self.reset_encoders()
 
     def execute(self):
         pass
@@ -47,11 +48,9 @@ class DriveTrain:
         angle = math.degrees(angle_in_radians)
         return round(angle, 1)
 
-    @feedback(key="Is Moving")
     def is_moving(self) -> bool:
         return self.velocity() > 0
 
-    @feedback(key="Is Turning")
     def is_turning(self) -> bool:
         if abs(round(self.gyro.getRate(), 0)) == 0:
             return False

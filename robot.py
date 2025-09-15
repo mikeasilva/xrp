@@ -21,6 +21,7 @@ class MyRobot(genie.GenieRobot):
     # Key variables
     STATE = "STARTING"
     IS_MOVING = False
+    IS_TURNING = False
     ALLIANCE = "RED" if wpilib.DriverStation.Alliance.kRed else "BLUE"
 
     def createObjects(self):
@@ -73,13 +74,14 @@ class MyRobot(genie.GenieRobot):
 
     def teleopPeriodic(self):
         self.set_is_moving(self.drivetrain.is_moving())
+        self.set_is_turning(self.drivetrain.is_turning())
         # Get the input from the controller
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
 
         # Use the controller input to move the robot
         self.drivetrain.go(-left_y, -right_x)
 
-        if self.controller.x_button_was_pressed():
+        if self.controller.x_button_pressed():
             self.drivetrain.reset_gyro()
             self.drivetrain.reset_encoders()
 
@@ -91,12 +93,19 @@ class MyRobot(genie.GenieRobot):
     def get_state(self):
         return self.STATE
 
-    @feedback(key="is moving")
+    @feedback(key="is_moving")
     def get_is_moving(self):
         return self.IS_MOVING
 
+    @feedback(key="is_turning")
+    def get_is_turning(self):
+        return self.IS_TURNING
+
     def set_is_moving(self, is_moving: bool):
         self.IS_MOVING = is_moving
+
+    def set_is_turning(self, is_turning: bool):
+        self.IS_TURNING = is_turning
 
     def set_state(self, state: str):
         self.STATE = state
