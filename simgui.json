@@ -41,7 +41,13 @@
         }
       },
       "components": {
+        "distance_sensor": {
+          "open": true
+        },
         "drivetrain": {
+          "open": true
+        },
+        "line_sensor": {
           "open": true
         },
         "open": true

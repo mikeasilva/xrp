@@ -72,3 +72,8 @@ class DriveTrain:
     def velocity(self) -> float:
         speed = (self.right_encoder.getRate() + self.left_encoder.getRate()) / 2
         return round(abs(speed), 1)
+    
+    @feedback(key="Distance")
+    def distance(self) -> float:
+        distance = (self.right_encoder.getDistance() + self.left_encoder.getDistance()) / 2
+        return round(distance, 1)

@@ -93,7 +93,7 @@ class MyRobot(genie.GenieRobot):
         self.drivetrain.go(-left_y, -right_x)
 
         if self.controller.x_button_pressed():
-            self.drivetrain.reset_gyro()
+            #self.drivetrain.reset_gyro()
             self.drivetrain.reset_encoders()
 
     @feedback(key="alliance")

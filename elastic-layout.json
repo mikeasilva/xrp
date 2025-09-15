@@ -7,56 +7,63 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "Line Sensor",
-            "x": 0.0,
-            "y": 128.0,
+            "title": "Sensors",
+            "x": 512.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 384.0,
             "type": "List Layout",
             "properties": {
-              "label_position": "LEFT"
+              "label_position": "TOP"
             },
             "children": [
               {
-                "title": "Left",
-                "x": 128.0,
+                "title": "Left Line Sensor",
+                "x": 640.0,
                 "y": 128.0,
-                "width": 256.0,
-                "height": 256.0,
-                "type": "Radial Gauge",
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Number Bar",
                 "properties": {
                   "topic": "/components/line_sensor/left",
                   "period": 0.06,
                   "data_type": "double",
-                  "start_angle": -140.0,
-                  "end_angle": 140.0,
                   "min_value": 0.0,
                   "max_value": 1.0,
-                  "number_of_labels": 8,
-                  "wrap_value": false,
-                  "show_pointer": true,
-                  "show_ticks": true
+                  "divisions": 5,
+                  "inverted": false,
+                  "orientation": "horizontal"
                 }
               },
               {
-                "title": "Right",
-                "x": 128.0,
-                "y": 384.0,
-                "width": 256.0,
-                "height": 256.0,
-                "type": "Radial Gauge",
+                "title": "Right Line Sensor",
+                "x": 640.0,
+                "y": 256.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Number Bar",
                 "properties": {
                   "topic": "/components/line_sensor/right",
                   "period": 0.06,
                   "data_type": "double",
-                  "start_angle": -140.0,
-                  "end_angle": 140.0,
                   "min_value": 0.0,
                   "max_value": 1.0,
-                  "number_of_labels": 8,
-                  "wrap_value": false,
-                  "show_pointer": true,
-                  "show_ticks": true
+                  "divisions": 5,
+                  "inverted": false,
+                  "orientation": "horizontal"
+                }
+              },
+              {
+                "title": "Distance to Nearest Object",
+                "x": 512.0,
+                "y": 256.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Large Text Display",
+                "properties": {
+                  "topic": "/components/distance_sensor/Nearest Object",
+                  "period": 0.06,
+                  "data_type": "string"
                 }
               }
             ]
@@ -64,62 +71,106 @@
         ],
         "containers": [
           {
-            "title": "Heading",
-            "x": 384.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/components/drivetrain/Heading",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "X",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Graph",
-            "properties": {
-              "topic": "/components/drivetrain/X",
-              "period": 0.033,
-              "data_type": "double",
-              "time_displayed": 5.0,
-              "color": 4278238420,
-              "line_width": 2.0
-            }
-          },
-          {
-            "title": "Y",
-            "x": 896.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Graph",
-            "properties": {
-              "topic": "/components/drivetrain/Y",
-              "period": 0.033,
-              "data_type": "double",
-              "time_displayed": 5.0,
-              "color": 4278238420,
-              "line_width": 2.0
-            }
-          },
-          {
-            "title": "Nearest Object",
-            "x": 0.0,
+            "title": "Alliance",
+            "x": 256.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
-              "topic": "/components/distance_sensor/Nearest Object",
+              "topic": "/robot/alliance",
               "period": 0.06,
               "data_type": "string"
+            }
+          },
+          {
+            "title": "Heading",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "/components/drivetrain/Gyro Angle (degrees)",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": 0.0,
+              "end_angle": 360.0,
+              "min_value": 0.0,
+              "max_value": 360.0,
+              "number_of_labels": 8,
+              "wrap_value": true,
+              "show_pointer": true,
+              "show_ticks": true
+            }
+          },
+          {
+            "title": "Velocity (inch/sec)",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "/components/drivetrain/Velocity (inch per sec)",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -140.0,
+              "end_angle": 140.0,
+              "min_value": 0.0,
+              "max_value": 25.0,
+              "number_of_labels": 5,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": true
+            }
+          },
+          {
+            "title": "Moving",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/robot/is_moving",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Turning",
+            "x": 128.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/robot/is_turning",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Arm Position",
+            "x": 128.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/components/arm/position",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
