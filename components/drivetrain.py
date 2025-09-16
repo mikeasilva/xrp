@@ -46,6 +46,13 @@ class DriveTrain:
     # INFORMATIONAL METHODS
     # =========================================================================
 
+    @feedback(key="Distance")
+    def distance(self) -> float:
+        distance = (
+            self.right_encoder.getDistance() + self.left_encoder.getDistance()
+        ) / 2
+        return round(distance, 1)
+
     @feedback(key="Gyro Angle (degrees)")
     def gyro_angle(self) -> float:
         angle_in_radians = self.gyro.getAngle()
@@ -60,20 +67,7 @@ class DriveTrain:
             return False
         return True
 
-    @feedback(key="Right Encoder")
-    def right_encoder_value(self) -> int:
-        return self.right_encoder.getRaw()
-
-    @feedback(key="Left Encoder")
-    def left_encoder_value(self) -> int:
-        return self.left_encoder.getRaw()
-
     @feedback(key="Velocity (inch per sec)")
     def velocity(self) -> float:
         speed = (self.right_encoder.getRate() + self.left_encoder.getRate()) / 2
         return round(abs(speed), 1)
-    
-    @feedback(key="Distance")
-    def distance(self) -> float:
-        distance = (self.right_encoder.getDistance() + self.left_encoder.getDistance()) / 2
-        return round(distance, 1)

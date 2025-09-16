@@ -7,6 +7,7 @@ from magicbot import feedback
 import math
 import os
 import wpilib
+import wpimath.controller
 import xrp
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
@@ -27,6 +28,14 @@ class MyRobot(genie.GenieRobot):
     IS_MOVING = False
     IS_TURNING = False
     ALLIANCE = "RED" if wpilib.DriverStation.Alliance.kRed else "BLUE"
+    HEADING_P = magicbot.tunable(0.01)
+    HEADING_I = magicbot.tunable(0.001)
+    HEADING_D = magicbot.tunable(0.0)
+    HEADING_TARGET = 0.0
+    HEADING_ERROR = 0.0
+    HEADING_ADJUSTMENT = 0.0
+    LEFT_ADJUSTMENT = 0.0
+    RIGHT_ADJUSTMENT = 0.0
 
     def createObjects(self):
         """Create motors and stuff here"""
@@ -84,6 +93,7 @@ class MyRobot(genie.GenieRobot):
 
     def teleopPeriodic(self):
         self.led.blink()
+
         self.set_is_moving(self.drivetrain.is_moving())
         self.set_is_turning(self.drivetrain.is_turning())
         # Get the input from the controller
@@ -92,10 +102,45 @@ class MyRobot(genie.GenieRobot):
         # Use the controller input to move the robot
         self.drivetrain.go(-left_y, -right_x)
 
+        if self.controller.y_button_pressed():
+            self.HEADING_TARGET = self.drivetrain.gyro_angle()
+            self.HEADING_PID = wpimath.controller.PIDController(self.HEADING_P, self.HEADING_I, self.HEADING_D)
+
+        if self.controller.a_button_pressed():
+            #distance = self.drivetrain.distance()
+            #self.left_error = distance - self.drivetrain.left_encoder.getDistance()
+            #self.right_error = distance - self.drivetrain.right_encoder.getDistance()
+            self.HEADING_ERROR = self.HEADING_TARGET - self.drivetrain.gyro_angle()
+            self.HEADING_PID.setSetpoint(0)
+            self.HEADING_ADJUSTMENT = self.HEADING_PID.calculate(self.HEADING_ERROR)
+            '''
+            la = self.HEADING_PID.calculate(self.left_error)
+            ra = self.HEADING_PID.calculate(self.right_error)
+            try:
+                self.LEFT_ADJUSTMENT = (la / (abs(la) + abs(ra))) / 2
+            except:
+                self.LEFT_ADJUSTMENT = 0
+            try:
+                self.RIGHT_ADJUSTMENT = (ra / (abs(la) + abs(ra))) / 2
+            except:
+                self.RIGHT_ADJUSTMENT = 0
+            #self.HEADING_ADJUSTMENT = left_adjustment
+            #self.drivetrain.drive.tankDrive(1.0 + self.LEFT_ADJUSTMENT, 1.0 + self.RIGHT_ADJUSTMENT)
+            '''
+            self.drivetrain.drive.tankDrive(0.8 + self.HEADING_ADJUSTMENT, 0.8 - self.HEADING_ADJUSTMENT)
+
         if self.controller.x_button_pressed():
-            #self.drivetrain.reset_gyro()
+            # self.drivetrain.reset_gyro()
             self.drivetrain.reset_encoders()
 
+    @feedback(key="L Adj")
+    def l_adjustment(self):
+        return self.LEFT_ADJUSTMENT
+    
+    @feedback(key="R Adj")
+    def r_adjustment(self):
+        return self.RIGHT_ADJUSTMENT
+    
     @feedback(key="alliance")
     def get_alliance(self):
         return self.ALLIANCE
@@ -111,6 +156,18 @@ class MyRobot(genie.GenieRobot):
     @feedback(key="is_turning")
     def get_is_turning(self):
         return self.IS_TURNING
+    
+    @feedback(key="heading_target")
+    def get_target_heading(self):
+        return self.HEADING_TARGET
+    
+    @feedback(key="heading_error")
+    def get_target_error(self):
+        return self.HEADING_ERROR
+    
+    @feedback(key="heading_adjustment")
+    def get_heading_adjustment(self):
+        return self.HEADING_ADJUSTMENT
 
     def set_is_moving(self, is_moving: bool):
         self.IS_MOVING = is_moving
