@@ -34,8 +34,6 @@ class MyRobot(genie.GenieRobot):
     HEADING_TARGET = 0.0
     HEADING_ERROR = 0.0
     HEADING_ADJUSTMENT = 0.0
-    LEFT_ADJUSTMENT = 0.0
-    RIGHT_ADJUSTMENT = 0.0
 
     def createObjects(self):
         """Create motors and stuff here"""
@@ -107,39 +105,19 @@ class MyRobot(genie.GenieRobot):
             self.HEADING_PID = wpimath.controller.PIDController(self.HEADING_P, self.HEADING_I, self.HEADING_D)
 
         if self.controller.a_button_pressed():
-            #distance = self.drivetrain.distance()
-            #self.left_error = distance - self.drivetrain.left_encoder.getDistance()
-            #self.right_error = distance - self.drivetrain.right_encoder.getDistance()
             self.HEADING_ERROR = self.HEADING_TARGET - self.drivetrain.gyro_angle()
             self.HEADING_PID.setSetpoint(0)
             self.HEADING_ADJUSTMENT = self.HEADING_PID.calculate(self.HEADING_ERROR)
-            '''
-            la = self.HEADING_PID.calculate(self.left_error)
-            ra = self.HEADING_PID.calculate(self.right_error)
-            try:
-                self.LEFT_ADJUSTMENT = (la / (abs(la) + abs(ra))) / 2
-            except:
-                self.LEFT_ADJUSTMENT = 0
-            try:
-                self.RIGHT_ADJUSTMENT = (ra / (abs(la) + abs(ra))) / 2
-            except:
-                self.RIGHT_ADJUSTMENT = 0
-            #self.HEADING_ADJUSTMENT = left_adjustment
-            #self.drivetrain.drive.tankDrive(1.0 + self.LEFT_ADJUSTMENT, 1.0 + self.RIGHT_ADJUSTMENT)
-            '''
             self.drivetrain.drive.tankDrive(0.8 + self.HEADING_ADJUSTMENT, 0.8 - self.HEADING_ADJUSTMENT)
 
         if self.controller.x_button_pressed():
-            # self.drivetrain.reset_gyro()
             self.drivetrain.reset_encoders()
 
-    @feedback(key="L Adj")
-    def l_adjustment(self):
-        return self.LEFT_ADJUSTMENT
-    
-    @feedback(key="R Adj")
-    def r_adjustment(self):
-        return self.RIGHT_ADJUSTMENT
+        if self.controller.dpad_down_pressed():
+            self.arm.set_position(1)
+
+        if self.controller.dpad_up_pressed():
+            self.arm.set_position(0)
     
     @feedback(key="alliance")
     def get_alliance(self):

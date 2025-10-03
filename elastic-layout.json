@@ -3,6 +3,13 @@
   "grid_size": 128,
   "tabs": [
     {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
       "name": "Teleoperated",
       "grid_layout": {
         "layouts": [
@@ -64,6 +71,63 @@
                   "topic": "/components/distance_sensor/Nearest Object",
                   "period": 0.06,
                   "data_type": "string"
+                }
+              }
+            ]
+          },
+          {
+            "title": "Heading PID",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 512.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Target",
+                "x": 1152.0,
+                "y": 128.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Large Text Display",
+                "properties": {
+                  "topic": "/robot/heading_target",
+                  "period": 0.06,
+                  "data_type": "double"
+                }
+              },
+              {
+                "title": "Error",
+                "x": 1152.0,
+                "y": 128.0,
+                "width": 256.0,
+                "height": 256.0,
+                "type": "Graph",
+                "properties": {
+                  "topic": "/robot/heading_error",
+                  "period": 0.033,
+                  "data_type": "double",
+                  "time_displayed": 5.0,
+                  "min_value": -20.0,
+                  "max_value": 20.0,
+                  "color": 4278238420,
+                  "line_width": 2.0
+                }
+              },
+              {
+                "title": "Adjustment",
+                "x": 1152.0,
+                "y": 384.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Large Text Display",
+                "properties": {
+                  "topic": "/robot/heading_adjustment",
+                  "period": 0.06,
+                  "data_type": "double"
                 }
               }
             ]
@@ -161,26 +225,73 @@
           },
           {
             "title": "Arm Position",
-            "x": 128.0,
+            "x": 0.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/components/arm/position",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Distance",
+            "x": 0.0,
             "y": 384.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/components/drivetrain/Distance",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "HEADING_P",
+            "x": 1024.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/components/arm/position",
+              "topic": "/robot/HEADING_P",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "HEADING_I",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/robot/HEADING_I",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "HEADING_D",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/robot/HEADING_D",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
             }
           }
         ]
-      }
-    },
-    {
-      "name": "Autonomous",
-      "grid_layout": {
-        "layouts": [],
-        "containers": []
       }
     }
   ]
