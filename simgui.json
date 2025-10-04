@@ -30,6 +30,13 @@
       "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/SmartDashboard/Autonomous Mode": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Autonomous Mode": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
@@ -40,13 +47,27 @@
       "open": false
     },
     "transitory": {
+      "SmartDashboard": {
+        "Autonomous Mode": {
+          "open": true
+        },
+        "string[]##v_/SmartDashboard/Auto List": {
+          "open": true
+        }
+      },
       "autonomous": {
         "Drive Forward": {
+          "state": {
+            "open": true
+          }
+        },
+        "Tune PID": {
           "open": true,
           "state": {
             "open": true
           }
-        }
+        },
+        "open": true
       },
       "components": {
         "distance_sensor": {

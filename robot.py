@@ -29,8 +29,8 @@ class MyRobot(genie.GenieRobot):
     IS_TURNING = False
     ALLIANCE = "RED" if wpilib.DriverStation.Alliance.kRed else "BLUE"
     HEADING_P = magicbot.tunable(0.01)
-    HEADING_I = magicbot.tunable(0.001)
-    HEADING_D = magicbot.tunable(0.0)
+    HEADING_I = magicbot.tunable(0.0)
+    HEADING_D = magicbot.tunable(0.001)
     HEADING_TARGET = 0.0
     HEADING_ERROR = 0.0
     HEADING_ADJUSTMENT = 0.0
@@ -102,13 +102,17 @@ class MyRobot(genie.GenieRobot):
 
         if self.controller.y_button_pressed():
             self.HEADING_TARGET = self.drivetrain.gyro_angle()
-            self.HEADING_PID = wpimath.controller.PIDController(self.HEADING_P, self.HEADING_I, self.HEADING_D)
+            self.HEADING_PID = wpimath.controller.PIDController(
+                self.HEADING_P, self.HEADING_I, self.HEADING_D
+            )
 
         if self.controller.a_button_pressed():
             self.HEADING_ERROR = self.HEADING_TARGET - self.drivetrain.gyro_angle()
             self.HEADING_PID.setSetpoint(0)
             self.HEADING_ADJUSTMENT = self.HEADING_PID.calculate(self.HEADING_ERROR)
-            self.drivetrain.drive.tankDrive(0.8 + self.HEADING_ADJUSTMENT, 0.8 - self.HEADING_ADJUSTMENT)
+            self.drivetrain.drive.tankDrive(
+                0.8 + self.HEADING_ADJUSTMENT, 0.8 - self.HEADING_ADJUSTMENT
+            )
 
         if self.controller.x_button_pressed():
             self.drivetrain.reset_encoders()
@@ -118,7 +122,7 @@ class MyRobot(genie.GenieRobot):
 
         if self.controller.dpad_up_pressed():
             self.arm.set_position(0)
-    
+
     @feedback(key="alliance")
     def get_alliance(self):
         return self.ALLIANCE
@@ -134,15 +138,15 @@ class MyRobot(genie.GenieRobot):
     @feedback(key="is_turning")
     def get_is_turning(self):
         return self.IS_TURNING
-    
+
     @feedback(key="heading_target")
     def get_target_heading(self):
         return self.HEADING_TARGET
-    
+
     @feedback(key="heading_error")
     def get_target_error(self):
         return self.HEADING_ERROR
-    
+
     @feedback(key="heading_adjustment")
     def get_heading_adjustment(self):
         return self.HEADING_ADJUSTMENT

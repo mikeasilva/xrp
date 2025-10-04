@@ -4,7 +4,7 @@
 # The servo motor is connected to
 # SERVO 1 = 4
 # SERVO 2 = 5
-ARM_SERVO_CHANNEL = 5
+ARM_SERVO_CHANNEL = 4
 
 # ============================================================
 # CONTROLLER CONSTANTS
