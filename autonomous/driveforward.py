@@ -20,14 +20,14 @@ class DriveForward(magicbot.AutonomousStateMachine):
     @magicbot.state(first=True, must_finish=True)
     def create_setpoint(self):
         # Set setpoint to current heading at start of auto
-        self.heading = self.drivetrain.gyro_angle()
+        self.heading = self.drivetrain.heading_in_degrees()
         self.pid_controller = wpimath.controller.PIDController(self.P, self.I, self.D)
         self.pid_controller.setSetpoint(0)
         self.next_state("drive_forward")
 
     @magicbot.timed_state(duration=3, next_state="finish")
     def drive_forward(self):
-        error = self.heading - self.drivetrain.gyro_angle()
+        error = self.heading - self.drivetrain.heading_in_degrees()
         adjustment = self.pid_controller.calculate(error)
         self.drivetrain.drive.tankDrive(0.8 + adjustment, 0.8 - adjustment)
 

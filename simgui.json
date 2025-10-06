@@ -66,8 +66,7 @@
           "state": {
             "open": true
           }
-        },
-        "open": true
+        }
       },
       "components": {
         "distance_sensor": {

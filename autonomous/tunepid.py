@@ -10,7 +10,7 @@ class DriveForward(magicbot.AutonomousStateMachine):
 
     MODE_NAME = "Tune PID"
     DEFAULT = False
-    FILE_NAME= "pid_tuning.csv"
+    FILE_NAME = "pid_tuning.csv"
     P = 0.01
     I = 0.0
     D = 0.001
@@ -31,7 +31,7 @@ class DriveForward(magicbot.AutonomousStateMachine):
     @magicbot.state(first=False, must_finish=True)
     def create_setpoint(self):
         # Set setpoint to current heading at start of auto
-        self.heading = self.drivetrain.gyro_angle()
+        self.heading = self.drivetrain.heading_in_degrees()
         self.drivetrain.reset_encoders()
         self.pid_controller = wpimath.controller.PIDController(self.P, self.I, self.D)
         self.pid_controller.setSetpoint(0)
@@ -39,12 +39,11 @@ class DriveForward(magicbot.AutonomousStateMachine):
 
     @magicbot.timed_state(duration=3, next_state="drive_backwards")
     def drive_forward(self):
-        error = self.heading - self.drivetrain.gyro_angle()
+        error = self.heading - self.drivetrain.heading_in_degrees()
         self.errors.append(error)
         adjustment = self.pid_controller.calculate(error)
         self.drivetrain.drive.tankDrive(0.85 + adjustment, 0.85 - adjustment)
         self.distance = self.drivetrain.distance()
-
 
     @magicbot.timed_state(duration=3, next_state="save_data")
     def drive_backwards(self):
@@ -55,7 +54,9 @@ class DriveForward(magicbot.AutonomousStateMachine):
         squared_errors = [e**2 for e in self.errors]
         mse = sum(squared_errors) / len(squared_errors)
         with open(self.FILE_NAME, "a") as f:
-            f.write(f"{self.P},{self.I},{self.D},{mse},{len(squared_errors)},{self.distance}\n")
+            f.write(
+                f"{self.P},{self.I},{self.D},{mse},{len(squared_errors)},{self.distance}\n"
+            )
         self.errors = []
         self.n = self.n + 1
         if self.n < self.n_runs:
@@ -70,9 +71,8 @@ class DriveForward(magicbot.AutonomousStateMachine):
         self.D = round(random.uniform(0.001, 0.1), 3)
         self.next_state("create_setpoint")
 
-
     @magicbot.state()
     def finish(self):
         self.drivetrain.stop()
-        
+
         self.done()

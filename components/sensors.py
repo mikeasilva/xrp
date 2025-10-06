@@ -5,7 +5,7 @@ import xrp
 class DistanceSensor:
     """Distance sensor class to handle the distance sensor functionality."""
 
-    UNIT = "inch"
+    UNIT = '"'
 
     def setup(self) -> None:
         """Initialize the distance sensor."""
@@ -35,9 +35,9 @@ class DistanceSensor:
         # The distance from the sensor is in meters by default.
         # Convert to the requested unit.
         distance = self.distance_sensor.getDistance()
-        if self.UNIT == "inch" or self.UNIT == "in":
+        if self.UNIT == "inch" or self.UNIT == "in" or self.UNIT == '"':
             distance = distance * 39.3701
-        elif self.UNIT == "feet" or self.UNIT == "ft":
+        elif self.UNIT == "feet" or self.UNIT == "ft" or self.UNIT == "'":
             distance = distance * 3.28084
         elif self.UNIT == "yard" or self.UNIT == "yd":
             distance = distance * 1.09361
@@ -54,7 +54,7 @@ class DistanceSensor:
     @feedback(key="Nearest Object")
     def get_distance_string(self) -> str:
         distance = int(round(self.get_distance(), 0))
-        return f"{distance} {self.UNIT}"
+        return f"{distance}{self.UNIT}"
 
     @feedback(key="unit")
     def get_unit(self) -> str:

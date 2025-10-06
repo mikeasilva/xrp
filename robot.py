@@ -24,7 +24,6 @@ class MyRobot(genie.GenieRobot):
     line_sensor: components.LineSensor
 
     # Key variables
-    STATE = "STARTING"
     IS_MOVING = False
     IS_TURNING = False
     ALLIANCE = "RED" if wpilib.DriverStation.Alliance.kRed else "BLUE"
@@ -76,21 +75,25 @@ class MyRobot(genie.GenieRobot):
         self.drivetrain_left_encoder.setDistancePerPulse(distance_per_pulse)
         self.drivetrain_right_encoder.setDistancePerPulse(distance_per_pulse)
 
-        self.drivetrain_p = magicbot.tunable(default=1.0)
+        #self.drivetrain_p = magicbot.tunable(default=1.0)
+        self.mode = "disabled"
 
     def autonomousInit(self):
         """Runs all initialization code for autonomous"""
         elasticlib.select_tab("Autonomous")
-        self.set_state("AUTOPILOT")
+        self.autonomous_start_time = wpilib.Timer.getFPGATimestamp()
         self.led.turn_on()
+        self.mode = "autonomous"
 
     def teleopInit(self):
         """Called when teleop starts; optional"""
         elasticlib.select_tab("Teleoperated")
-        self.set_state("OPERATOR CONTROLLED")
+        self.teleop_start_time = wpilib.Timer.getFPGATimestamp()
+        self.mode = "teleop"
 
     def teleopPeriodic(self):
         self.led.blink()
+        self.drivetrain.update_odometry()
 
         self.set_is_moving(self.drivetrain.is_moving())
         self.set_is_turning(self.drivetrain.is_turning())
@@ -101,13 +104,15 @@ class MyRobot(genie.GenieRobot):
         self.drivetrain.go(-left_y, -right_x)
 
         if self.controller.y_button_pressed():
-            self.HEADING_TARGET = self.drivetrain.gyro_angle()
+            self.HEADING_TARGET = self.drivetrain.heading_in_degrees()
             self.HEADING_PID = wpimath.controller.PIDController(
                 self.HEADING_P, self.HEADING_I, self.HEADING_D
             )
 
         if self.controller.a_button_pressed():
-            self.HEADING_ERROR = self.HEADING_TARGET - self.drivetrain.gyro_angle()
+            self.HEADING_ERROR = (
+                self.HEADING_TARGET - self.drivetrain.heading_in_degrees()
+            )
             self.HEADING_PID.setSetpoint(0)
             self.HEADING_ADJUSTMENT = self.HEADING_PID.calculate(self.HEADING_ERROR)
             self.drivetrain.drive.tankDrive(
@@ -126,10 +131,6 @@ class MyRobot(genie.GenieRobot):
     @feedback(key="alliance")
     def get_alliance(self):
         return self.ALLIANCE
-
-    @feedback(key="state")
-    def get_state(self):
-        return self.STATE
 
     @feedback(key="is_moving")
     def get_is_moving(self):
@@ -151,11 +152,33 @@ class MyRobot(genie.GenieRobot):
     def get_heading_adjustment(self):
         return self.HEADING_ADJUSTMENT
 
+    @feedback(key="voltage")
+    def get_voltage(self):
+        return wpilib.RobotController.getBatteryVoltage()
+
+    @feedback(key="time")
+    def get_time(self):
+        if wpilib.DriverStation.isAutonomous():
+            return round(
+                constants.AUTONOMOUS_LENGTH_IN_SECONDS
+                - (wpilib.Timer.getFPGATimestamp() - self.autonomous_start_time),
+                0,
+            )
+        elif self.mode == "teleop":# wpilib.DriverStation.isTeleop():
+            return round(
+                constants.TELEOP_LENGTH_IN_SECONDS
+                - (wpilib.Timer.getFPGATimestamp() - self.teleop_start_time),
+                0,
+            )
+        else:
+            return 0
+
     def set_is_moving(self, is_moving: bool):
         self.IS_MOVING = is_moving
 
     def set_is_turning(self, is_turning: bool):
         self.IS_TURNING = is_turning
 
-    def set_state(self, state: str):
-        self.STATE = state
+
+# if __name__ == "__main__":
+#    wpilib.run(MyRobot)
