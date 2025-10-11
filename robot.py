@@ -75,7 +75,7 @@ class MyRobot(genie.GenieRobot):
         self.drivetrain_left_encoder.setDistancePerPulse(distance_per_pulse)
         self.drivetrain_right_encoder.setDistancePerPulse(distance_per_pulse)
 
-        #self.drivetrain_p = magicbot.tunable(default=1.0)
+        # self.drivetrain_p = magicbot.tunable(default=1.0)
         self.mode = "disabled"
 
     def autonomousInit(self):
@@ -120,7 +120,12 @@ class MyRobot(genie.GenieRobot):
             )
 
         if self.controller.x_button_pressed():
-            self.drivetrain.reset_encoders()
+            # self.drivetrain.reset_encoders()
+            target_heading = self.HEADING_TARGET + 90
+            # if target_heading > 360:
+            #    target_heading = 360 - target_heading
+
+            self.drivetrain.turn_to_angle(target_heading)
 
         if self.controller.dpad_down_pressed():
             self.arm.set_position(1)
@@ -164,7 +169,7 @@ class MyRobot(genie.GenieRobot):
                 - (wpilib.Timer.getFPGATimestamp() - self.autonomous_start_time),
                 0,
             )
-        elif self.mode == "teleop":# wpilib.DriverStation.isTeleop():
+        elif self.mode == "teleop":  # wpilib.DriverStation.isTeleop():
             return round(
                 constants.TELEOP_LENGTH_IN_SECONDS
                 - (wpilib.Timer.getFPGATimestamp() - self.teleop_start_time),

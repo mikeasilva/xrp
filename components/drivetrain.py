@@ -2,6 +2,7 @@ from magicbot import feedback
 import math
 import wpilib
 import wpilib.drive
+import wpimath.controller
 import wpimath.geometry
 import wpimath.kinematics
 import xrp
@@ -22,6 +23,11 @@ class DriveTrain:
             self.left_encoder.getDistance(),
             self.right_encoder.getDistance(),
         )
+        self.theta_pid = wpimath.controller.PIDController(0.04, 0.00, 0.01)
+        self.target_heading = 0.0
+        self.theta_adjustment = 0.0
+        self.heading_tolerance = 1.0  # degrees
+        self.theta_error = 0.0
 
     def execute(self):
         pass
@@ -32,11 +38,16 @@ class DriveTrain:
 
     def go(self, throttle: float, rotation: float, square_inputs: bool = True) -> None:
         self.drive.arcadeDrive(throttle, rotation, squareInputs=square_inputs)
-        # TODO: Check if the robot is moving and update it
 
-    def move_forward(self, speed, heading):
-        current_heading = self.heading_in_degrees()
-        error = heading - current_heading
+    def turn_to_angle(self, target_angle: float) -> None:
+        self.target_heading = target_angle
+        self.theta_error = target_angle - self.heading_in_degrees()
+        self.theta_pid.setSetpoint(0)
+        if abs(self.theta_error) > self.heading_tolerance:
+            self.theta_adjustment = self.theta_pid.calculate(self.theta_error)
+            self.drive.tankDrive(
+                0.4 + self.theta_adjustment, 0.4 - self.theta_adjustment
+            )
 
     def reset_encoders(self) -> None:
         self.left_encoder.reset()
@@ -80,6 +91,18 @@ class DriveTrain:
     @feedback(key="Pose Y")
     def pose_y(self):
         return round(self.odometry.getPose().Y(), 1)
+
+    @feedback(key="Theta Target")
+    def get_theta_target(self) -> float:
+        return self.target_heading
+
+    @feedback(key="Theta Adjustment")
+    def get_theta_adjustment(self) -> float:
+        return self.theta_adjustment
+
+    @feedback(key="Turn Error")
+    def get_turn_error(self) -> float:
+        return round(self.theta_error, 0)
 
     def is_moving(self) -> bool:
         return self.velocity() > 0
