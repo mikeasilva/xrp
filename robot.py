@@ -34,5 +34,7 @@ class Robot(magicbot.MagicRobot):
         # Servo
         self.servo_channel = constants.SERVO_CHANNEL
 
+        self.xrp_gyro = xrp.XRPGyro()
+
     def teleopPeriodic(self):
         pass

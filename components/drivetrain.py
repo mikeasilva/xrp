@@ -144,8 +144,11 @@ class DriveTrain:
     def right_encoder_distance(self) -> float:
         return self.right_encoder.getDistance()
 
+    '''
+    #TODO: Get this working
     @magicbot.feedback(key="Wheel Speed")
     def wheel_speed(self) -> float:
         return wpimath.kinematics.DifferentialDriveWheelSpeeds(
             self.left_encoder.getRate(), self.right_encoder.getRate()
         )
+    '''
