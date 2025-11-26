@@ -5,6 +5,37 @@
       "/SmartDashboard/Autonomous Mode": "String Chooser"
     }
   },
+  "NetworkTables": {
+    "transitory": {
+      "SmartDashboard": {
+        "Autonomous Mode": {
+          "open": true
+        },
+        "open": true
+      },
+      "components": {
+        "accelerometer": {
+          "open": true
+        },
+        "drivetrain": {
+          "open": true
+        },
+        "gyro": {
+          "open": true
+        },
+        "open": true,
+        "reflectance_sensor": {
+          "open": true
+        },
+        "servo": {
+          "open": true
+        }
+      },
+      "robot": {
+        "open": true
+      }
+    }
+  },
   "NetworkTables Info": {
     "visible": true
   }

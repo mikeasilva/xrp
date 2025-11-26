@@ -12,31 +12,39 @@ import xrp
 
 class DriveTrain:
     accelerometer: components.Accelerometer
+    distance_pid_p: float
+    distance_pid_i: float
+    distance_pid_d: float
+    encoder_units: str
     gyro: components.Gyro
+    heading_pid_p: float
+    heading_pid_i: float
+    heading_pid_d: float
     left_motor: xrp.XRPMotor
     left_encoder: wpilib.Encoder
     right_motor: xrp.XRPMotor
     right_encoder: wpilib.Encoder
 
-    def execute(self):
+    def execute(self) -> None:
         pass
 
-    def setup(self):
+    def setup(self) -> None:
+        self.distance_setpoint = 0.0
+        self.heading_setpoint = 0.0
+        self.set_encoder_units(self.encoder_units)
         self.right_motor.setInverted(True)
         self.drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
         self.distance_PID = wpimath.controller.PIDController(
-            constants.DISTANCE_PID[0],
-            constants.DISTANCE_PID[1],
-            constants.DISTANCE_PID[2]
+            self.distance_pid_p,
+            self.distance_pid_i,
+            self.distance_pid_d,
         )
         self.heading_PID = wpimath.controller.PIDController(
-            constants.HEADING_PID[0], 
-            constants.HEADING_PID[1], 
-            constants.HEADING_PID[2]
+            self.heading_pid_p,
+            self.heading_pid_i,
+            self.heading_pid_d,
         )
         self.heading_PID.enableContinuousInput(-180.0, 180.0)
-        self.distance_setpoint = 0.0
-        self.heading_setpoint = 0.0
         self.odometry = wpimath.kinematics.DifferentialDriveOdometry(
             wpimath.geometry.Rotation2d.fromDegrees(self.gyro.yaw()),
             self.left_encoder_distance(),
@@ -48,14 +56,14 @@ class DriveTrain:
     # CONTROL METHODS
     # =========================================================================
 
-    def reset_encoders(self):
+    def reset_encoders(self) -> None:
         self.left_encoder.reset()
         self.right_encoder.reset()
 
-    def reset_gyro(self):
+    def reset_gyro(self) -> None:
         self.gyro.reset()
 
-    def reset_odometry(self, pose: wpimath.geometry.Pose2d):
+    def reset_odometry(self, pose: wpimath.geometry.Pose2d) -> None:
         self.reset_encoders()
         self.reset_gyro()
         self.odometry.resetPosition(
@@ -65,10 +73,20 @@ class DriveTrain:
             pose,
         )
 
-    def stop(self):
+    def set_encoder_units(self, unit: str) -> None:
+        self.encoder_units = unit
+        distance_per_pulse = (
+            math.pi * constants.WHEEL_DIAMETER[unit]
+        ) / constants.COUNTS_PER_REVOLUTION
+        self.left_encoder.setDistancePerPulse(distance_per_pulse)
+        self.right_encoder.setDistancePerPulse(distance_per_pulse)
+
+    def stop(self) -> None:
         self.drive.stopMotor()
 
-    def straight(self, distance: float):  # , unit: str = "cm", effort: float = 0.5):
+    def straight(self, distance: float, unit: str = "inches") -> None:
+        # Set the encoder units
+        self.set_encoder_units(unit)
         # Set PID setpoints
         self.distance_setpoint = self.distance() + distance
         self.distance_PID.setSetpoint(self.distance_setpoint)
@@ -91,7 +109,12 @@ class DriveTrain:
             right_output = distance_output - heading_output
             self.drive.tankDrive(left_output, right_output)
 
-    def turn(self, degree, clockwise: bool = True, effort: float = 0.5):
+    def tank_drive_voltage(self, left_voltage: float, right_voltage: float) -> None:
+        self.left_motor.setVoltage(left_voltage)
+        self.right_motor.setVoltage(right_voltage)
+        self.drive.feed()
+
+    def turn(self, degree, clockwise: bool = True, effort: float = 0.5) -> None:
         # Set the PID setpoint
         current_heading = self.gyro.yaw()
         if clockwise:
@@ -111,7 +134,7 @@ class DriveTrain:
         while angle_in_radians < -math.pi:
             angle_in_radians += 2 * math.pi
         return angle_in_radians
-    
+
     # =========================================================================
     # INFORMATIONAL METHODS
     # =========================================================================
@@ -144,11 +167,8 @@ class DriveTrain:
     def right_encoder_distance(self) -> float:
         return self.right_encoder.getDistance()
 
-    '''
-    #TODO: Get this working
-    @magicbot.feedback(key="Wheel Speed")
+    # @magicbot.feedback(key="Wheel Speed")
     def wheel_speed(self) -> float:
         return wpimath.kinematics.DifferentialDriveWheelSpeeds(
             self.left_encoder.getRate(), self.right_encoder.getRate()
         )
-    '''

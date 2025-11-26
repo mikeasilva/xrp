@@ -2,6 +2,8 @@ import wpilib
 
 
 class XboxController:
+    correct_for_deadband: bool
+    deadband: float
     port: int
 
     def execute(self):
@@ -12,8 +14,6 @@ class XboxController:
         Setup the Xbox controller.
         This method is called once when the robot is initialized.
         """
-        self.correct_for_deadband = True
-        self.deadband = 0.3
         self.xbox_controller = wpilib.XboxController(self.port)
         self.button_was_pressed = {
             "A": False,
