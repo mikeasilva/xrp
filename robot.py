@@ -25,11 +25,11 @@ class Robot(magicbot.MagicRobot):
         # Drivetrain stuff here
         self.drivetrain_left_motor = xrp.XRPMotor(constants.LEFT_MOTOR_DEVICE_NUMBER)
         self.drivetrain_left_encoder = wpilib.Encoder(
-            constants.LEFT_ENCODER_A_CHANNEL, constants.LEFT_ENCODER_B_CHANNEL
+            constants.LEFT_ENCODER_CHANNEL[0], constants.LEFT_ENCODER_CHANNEL[1]
         )
         self.drivetrain_right_motor = xrp.XRPMotor(constants.RIGHT_MOTOR_DEVICE_NUMBER)
         self.drivetrain_right_encoder = wpilib.Encoder(
-            constants.RIGHT_ENCODER_A_CHANNEL, constants.RIGHT_ENCODER_B_CHANNEL
+            constants.RIGHT_ENCODER_CHANNEL[0], constants.RIGHT_ENCODER_CHANNEL[1]
         )
         # Servo
         self.servo_channel = constants.SERVO_CHANNEL
