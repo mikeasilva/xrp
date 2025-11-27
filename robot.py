@@ -53,4 +53,4 @@ class Robot(genie.GenieRobot):
         self.servo_channel = constants.SERVO_CHANNEL
 
     def teleopPeriodic(self):
-        pass
+        self.controller.capture_buton_presses()

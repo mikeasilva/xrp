@@ -17,8 +17,8 @@ RIGHT_ENCODER_CHANNEL = (6, 7)
 ENCODER_UNITS = "inches"  # "cm", "meters", "mm", "inches"
 
 # PID controller constants
-DISTANCE_PID = (0.1, 0.0, 0.0)
-HEADING_PID = (0.1, 0.0, 0.0)
+DISTANCE_PID = (0.01, 0.0, 0.001)
+HEADING_PID = (0.01, 0.0, 0.001)
 
 # Drive gear ratio and wheel diameter
 COUNTS_PER_MOTOR_SHAFT_REVOLUTION = 12.0

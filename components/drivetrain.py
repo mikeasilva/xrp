@@ -81,6 +81,14 @@ class DriveTrain:
         self.left_encoder.setDistancePerPulse(distance_per_pulse)
         self.right_encoder.setDistancePerPulse(distance_per_pulse)
 
+    def set_distance_pid_setpoint(self, setpoint: float) -> None:
+        self.distance_setpoint = setpoint
+        self.distance_PID.setSetpoint(setpoint)
+
+    def set_heading_pid_setpoint(self, setpoint: float) -> None:
+        self.heading_setpoint = setpoint
+        self.heading_PID.setSetpoint(setpoint)
+
     def stop(self) -> None:
         self.drive.stopMotor()
 
@@ -88,10 +96,8 @@ class DriveTrain:
         # Set the encoder units
         self.set_encoder_units(unit)
         # Set PID setpoints
-        self.distance_setpoint = self.distance() + distance
-        self.distance_PID.setSetpoint(self.distance_setpoint)
-        self.heading_setpoint = self.gyro.yaw()
-        self.heading_PID.setSetpoint(self.heading_setpoint)
+        self.set_distance_pid_setpoint(self.distance() + distance)
+        self.set_heading_pid_setpoint(self.gyro.yaw())
         # Check if the PID controllers are at their setpoints
         while not self.distance_PID.atSetpoint() and not self.heading_PID.atSetpoint():
             # Get current states
