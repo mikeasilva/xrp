@@ -12,12 +12,12 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 class Robot(genie.GenieRobot):
     accelerometer: components.Accelerometer
     controller: components.XboxController
-    distance_sensor = components.Distance
+    distance_sensor = components.DistanceSensor
     drivetrain: components.DriveTrain
     gyro: components.Gyro
     # huskylens: components.HuskyLens
     led: components.LED
-    reflectance_sensor: components.Reflectance
+    reflectance_sensor: components.ReflectanceSensor
     servo: components.Servo
 
     def createObjects(self):
@@ -51,6 +51,11 @@ class Robot(genie.GenieRobot):
 
         # Servo
         self.servo_channel = constants.SERVO_CHANNEL
+
+    def robotInit(self):
+        if constants.LOGGING_ENABLED:
+            wpilib.DataLogManager.start()
+            wpilib.DriverStation.startDataLog(wpilib.DataLogManager.getLog())
 
     def teleopPeriodic(self):
         self.controller.capture_buton_presses()

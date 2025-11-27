@@ -9,10 +9,6 @@ class Accelerometer:
         pass
 
     # =========================================================================
-    # CONTROL METHODS
-    # =========================================================================
-
-    # =========================================================================
     # INFORMATIONAL METHODS
     # =========================================================================
 
@@ -29,7 +25,7 @@ class Accelerometer:
         return self.xrp_gyro.getRateZ()
 
 
-class Distance:
+class DistanceSensor:
     """Distance sensor class to handle the distance sensor functionality."""
 
     def execute(self) -> None:
@@ -100,6 +96,10 @@ class Gyro:
     # CONTROL METHODS
     # =========================================================================
 
+    def reset(self) -> None:
+        """Reset the accelerometer readings to zero."""
+        self.xrp_gyro.reset()
+
     # =========================================================================
     # INFORMATIONAL METHODS
     # =========================================================================
@@ -117,7 +117,7 @@ class Gyro:
         return self.xrp_gyro.getAngleZ()
 
 
-class Reflectance:
+class ReflectanceSensor:
     """Handles the reflectance (line) sensor functionality."""
 
     def execute(self) -> None:
@@ -126,10 +126,6 @@ class Reflectance:
     def setup(self) -> None:
         """Initialize the sensor."""
         self.line_sensor = xrp.XRPReflectanceSensor()
-
-    # =========================================================================
-    # CONTROL METHODS
-    # =========================================================================
 
     # =========================================================================
     # INFORMATIONAL METHODS

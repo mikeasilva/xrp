@@ -46,3 +46,6 @@ SERVO_CHANNEL = 4
 
 # The default algorithm for the HuskyLens AI camera
 HUSKYLENS_DEFAULT_ALGORITHM = "tag recognition"
+
+# Enable or disable logging throughout the code
+LOGGING_ENABLED = False
