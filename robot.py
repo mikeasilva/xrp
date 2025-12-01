@@ -47,15 +47,17 @@ class Robot(genie.GenieRobot):
         self.xrp_gyro = xrp.XRPGyro()
 
         # HuskyLens AI Camera
-        self.huskylens_default_algorithm = constants.HUSKYLENS_DEFAULT_ALGORITHM
+        #self.huskylens_default_algorithm = constants.HUSKYLENS_DEFAULT_ALGORITHM
 
         # Servo
         self.servo_channel = constants.SERVO_CHANNEL
-
+    '''
     def robotInit(self):
         if constants.LOGGING_ENABLED:
             wpilib.DataLogManager.start()
             wpilib.DriverStation.startDataLog(wpilib.DataLogManager.getLog())
-
+    '''
     def teleopPeriodic(self):
         self.controller.capture_buton_presses()
+        left_x, left_y, right_x, right_y = self.controller.get_joysticks()
+        self.drivetrain.drive.arcadeDrive(-left_y, -right_x)
