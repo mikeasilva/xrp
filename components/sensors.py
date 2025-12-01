@@ -126,6 +126,9 @@ class ReflectanceSensor:
     def setup(self) -> None:
         """Initialize the sensor."""
         self.line_sensor = xrp.XRPReflectanceSensor()
+        self.threshold = (
+            0.5  # Value where the sensor detects a line (might need tuning)
+        )
 
     # =========================================================================
     # INFORMATIONAL METHODS
@@ -140,3 +143,19 @@ class ReflectanceSensor:
     def right_reflectance(self) -> float:
         """Returns the value from the right sensor."""
         return self.line_sensor.getRightReflectanceValue()
+
+    @magicbot.feedback(key="Senses a Line")
+    def senses_a_line(self) -> bool:
+        """Returns True if either sensor detects a line."""
+        return (
+            self.left_reflectance() <= self.threshold
+            or self.right_reflectance() <= self.threshold
+        )
+
+    def senses_a_line_on_the_left(self) -> bool:
+        """Returns True if the left sensor detects a line."""
+        return self.left_reflectance() <= self.threshold
+
+    def senses_a_line_on_the_right(self) -> bool:
+        """Returns True if the right sensor detects a line."""
+        return self.right_reflectance() <= self.threshold
