@@ -5,7 +5,7 @@ class PlayStationController:
     correct_for_deadband: bool
     deadband: float
     port: int
-    version: int
+    version: int = 4
 
     def execute(self) -> None:
         pass
@@ -19,7 +19,7 @@ class PlayStationController:
             self.this_controller = wpilib.PS5Controller(self.port)
         else:
             self.this_controller = wpilib.PS4Controller(self.port)
-            
+
         self.button_was_pressed = {
             "Cross": False,
             "Circle": False,

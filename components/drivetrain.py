@@ -30,6 +30,7 @@ class DriveTrain:
 
     def setup(self) -> None:
         self.distance_setpoint = 0.0
+        self.effort = 0.8
         self.heading_setpoint = 0.0
         self.set_encoder_units(self.encoder_units)
         self.right_motor.setInverted(True)
@@ -56,6 +57,11 @@ class DriveTrain:
     # CONTROL METHODS
     # =========================================================================
 
+    def arcade_drive(self, forward: float, rotation: float) -> None:
+        forward *= self.effort
+        rotation *= self.effort
+        self.drive.arcadeDrive(forward, rotation)
+
     def reset_encoders(self) -> None:
         self.left_encoder.reset()
         self.right_encoder.reset()
@@ -72,6 +78,9 @@ class DriveTrain:
             self.right_encoder_distance(),
             pose,
         )
+
+    def set_effort(self, effort: float) -> None:
+        self.effort = effort
 
     def set_encoder_units(self, unit: str) -> None:
         self.encoder_units = unit
@@ -148,6 +157,10 @@ class DriveTrain:
     @magicbot.feedback(key="Distance")
     def distance(self) -> float:
         return (self.left_encoder_distance() + self.right_encoder_distance()) / 2.0
+
+    @magicbot.feedback(key="Effort")
+    def the_effort(self) -> float:
+        return self.effort
 
     @magicbot.feedback(key="Distance Setpoint")
     def the_distance_setpoint(self) -> float:
