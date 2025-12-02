@@ -44,6 +44,9 @@ TRACK_WIDTH = {
 # SERVO 2 = 5
 SERVO_CHANNEL = 4
 
+# What do you want to measure the distance sensor in
+DISTANCE_SENSOR_UNIT = "inches"
+
 # The default algorithm for the HuskyLens AI camera
 HUSKYLENS_DEFAULT_ALGORITHM = "tag recognition"
 

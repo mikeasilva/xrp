@@ -60,6 +60,9 @@
         "accelerometer": {
           "open": true
         },
+        "distance_sensor": {
+          "open": true
+        },
         "drivetrain": {
           "open": true
         },

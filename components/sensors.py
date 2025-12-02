@@ -28,12 +28,13 @@ class Accelerometer:
 class DistanceSensor:
     """Distance sensor class to handle the distance sensor functionality."""
 
+    unit: str
+
     def execute(self) -> None:
         pass
 
     def setup(self) -> None:
         """Initialize the distance sensor."""
-        self.unit = "in"
         self.distance_sensor = xrp.XRPRangefinder()
 
     # =========================================================================
@@ -51,34 +52,32 @@ class DistanceSensor:
     # INFORMATIONAL METHODS
     # =========================================================================
 
-    @magicbot.feedback(key="sonar distance")
+    @magicbot.feedback(key="Sonar Distance")
     def sonar_distance(self) -> float:
         """Get the distance from the sensor in various units (inches by default)."""
         # The distance from the sensor is in meters by default.
         # Convert to the requested unit.
         distance = self.distance_sensor.getDistance()
-        if self.unit == "inch" or self.unit == "in" or self.unit == '"':
+        if (
+            self.unit == "inch"
+            or self.unit == "in"
+            or self.unit == '"'
+            or self.unit == "inches"
+        ):
             distance = distance * 39.3701
         elif self.unit == "feet" or self.unit == "ft" or self.unit == "'":
             distance = distance * 3.28084
-        elif self.unit == "yard" or self.unit == "yd":
+        elif self.unit == "yard" or self.unit == "yd" or self.unit == "yards":
             distance = distance * 1.09361
         elif self.unit == "cm":
             distance = distance * 100
-        elif self.unit == "meter":
+        elif self.unit == "meter" or self.unit == "meters":
             return distance
         else:
             raise ValueError(
                 "Invalid unit. Use 'inch', 'feet', 'yard', 'cm', or 'meter'."
             )
         return distance
-
-    """
-    @magicbot.feedback(key="Nearest Object")
-    def get_sonar_distance_string(self) -> str:
-        distance = int(round(self.get_distance(), 0))
-        return f"{distance}{self.unit}"
-    """
 
     @magicbot.feedback(key="unit")
     def get_unit(self) -> str:

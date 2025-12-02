@@ -12,7 +12,7 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 class Robot(genie.GenieRobot):
     accelerometer: components.Accelerometer
     controller: components.XboxController
-    distance_sensor = components.DistanceSensor
+    distance_sensor: components.DistanceSensor
     drivetrain: components.DriveTrain
     gyro: components.Gyro
     # huskylens: components.HuskyLens
@@ -43,6 +43,9 @@ class Robot(genie.GenieRobot):
         self.drivetrain_heading_pid_i = constants.HEADING_PID[1]
         self.drivetrain_heading_pid_d = constants.HEADING_PID[2]
 
+        # Distance Sensor
+        self.distance_sensor_unit = constants.DISTANCE_SENSOR_UNIT
+
         # Gyro - Passed into the gyro and accelerometer components
         self.xrp_gyro = xrp.XRPGyro()
 
@@ -56,7 +59,18 @@ class Robot(genie.GenieRobot):
             wpilib.DataLogManager.start()
             wpilib.DriverStation.startDataLog(wpilib.DataLogManager.getLog())
 
-    def teleopPeriodic(self):
+    def autonomousInit(self) -> None:
+        self.led.turn_on()
+        return super().autonomousInit()
+
+    def disabledInit(self) -> None:
+        self.led.turn_off()
+        self.servo.set_position(0)
+        return super().disabledInit()
+        
+
+    def teleopPeriodic(self) -> None:
+        self.led.blink()
         self.controller.capture_buton_presses()
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
         self.drivetrain.arcade_drive(-left_y, -right_x)
