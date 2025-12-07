@@ -2,6 +2,7 @@ import components
 import constants
 import genie
 import os
+#import state_machines
 import wpilib
 import xrp
 
@@ -13,9 +14,10 @@ class Robot(genie.GenieRobot):
     accelerometer: components.Accelerometer
     controller: components.XboxController
     distance_sensor: components.DistanceSensor
+    #drive_straight: state_machines.DriveStraight
     drivetrain: components.DriveTrain
     gyro: components.Gyro
-    # huskylens: components.HuskyLens
+    #huskylens: components.HuskyLens
     led: components.LED
     reflectance_sensor: components.ReflectanceSensor
     servo: components.Servo
@@ -74,16 +76,16 @@ class Robot(genie.GenieRobot):
         self.controller.capture_buton_presses()
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
         self.drivetrain.arcade_drive(-left_y, -right_x)
-
+        
         if self.controller.y_button_was_pressed():
-            self.drivetrain.straight(12)
-
+            self.drivetrain.straight(12, "inches")
+        '''
         if self.controller.dpad_right_was_pressed():
             self.drivetrain.turn(90)
 
         if self.controller.dpad_left_was_pressed():
             self.drivetrain.turn(-90)
-
+        '''
         if self.controller.b_button_pressed():
             self.drivetrain.set_effort(1)
         else:

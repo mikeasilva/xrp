@@ -20,7 +20,7 @@ class DriveForward(magicbot.AutonomousStateMachine):
     def drive_forward(self):
         error = self.initial_heading - self.drivetrain.gyro.yaw()
         adjustment = self.drivetrain.heading_PID.calculate(error)
-        self.drivetrain.drive.tankDrive(0.8 + adjustment, 0.8 - adjustment)
+        self.drivetrain.tank_drive(0.8 + adjustment, 0.8 - adjustment)
 
     @magicbot.state()
     def finish(self):

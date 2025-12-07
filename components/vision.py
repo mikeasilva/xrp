@@ -1,21 +1,22 @@
 import magicbot
 import qwiic_huskylens
-
+import qwiic_i2c
+import wpilib
 
 class HuskyLens:
     default_algorithm: str
+    address = 0x32  # default HuskyLens I2C address
 
     def execute(self) -> None:
         pass
 
     def setup(self) -> None:
-        self.husky_lens = qwiic_huskylens.QwiicHuskylens()
-        if self.husky_lens.is_connected() == False:
-            raise Exception("HuskyLens not connected. Please check your connection.")
-        if self.husky_lens.begin() == False:
-            raise Exception(
-                "Failed to initialize the HuskyLens device. Please check your connection."
-            )
+        driver = qwiic_i2c.get_i2c_driver()
+        self.husky_lens = qwiic_huskylens.QwiicHuskylens(i2c_driver=driver, address=self.address)
+        if not self.husky_lens.connected:
+            print("ERROR: HuskyLens not detected on Qwiic!")
+        else:
+            print("HuskyLens connected!")
         self.set_algorithm(self.default_algorithm)
 
     # =========================================================================
