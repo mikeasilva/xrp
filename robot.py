@@ -73,7 +73,7 @@ class Robot(genie.GenieRobot):
 
     def teleopPeriodic(self) -> None:
         self.led.blink()
-        self.controller.capture_buton_presses()
+        self.controller.capture_button_presses()
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
         self.drivetrain.arcade_drive(-left_y, -right_x)
         

@@ -441,7 +441,7 @@ class XboxController:
             )
         return raw_value
 
-    def capture_buton_presses(self) -> None:
+    def capture_button_presses(self) -> None:
         """
         Capture the current state of all buttons to track presses.
         This method should be called at the end of each control loop iteration.
