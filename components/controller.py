@@ -2,10 +2,10 @@ import wpilib
 
 
 class PlayStationController:
-    correct_for_deadband: bool
-    deadband: float
-    port: int
-    version: int = 4
+    CORRECT_FOR_DEADBAND: bool
+    DEADBAND: float
+    PORT: int
+    VERSION: int = 4
 
     def execute(self) -> None:
         pass
@@ -15,10 +15,10 @@ class PlayStationController:
         Setup the PlayStation controller.
         This method is called once when the robot is initialized.
         """
-        if self.version == 5:
-            self.this_controller = wpilib.PS5Controller(self.port)
+        if self.VERSION == 5:
+            self.this_controller = wpilib.PS5Controller(self.PORT)
         else:
-            self.this_controller = wpilib.PS4Controller(self.port)
+            self.this_controller = wpilib.PS4Controller(self.PORT)
 
         self.button_was_pressed = {
             "Cross": False,
@@ -84,15 +84,15 @@ class PlayStationController:
         :param raw_value: The raw joystick value.
         :return: The corrected joystick value.
         """
-        if self.correct_for_deadband:
-            if abs(raw_value) < self.deadband:
+        if self.CORRECT_FOR_DEADBAND:
+            if abs(raw_value) < self.DEADBAND:
                 return 0.0
             return (raw_value / abs(raw_value)) * (
-                (abs(raw_value) - self.deadband) / (1 - self.deadband)
+                (abs(raw_value) - self.DEADBAND) / (1 - self.DEADBAND)
             )
         return raw_value
 
-    def capture_buton_presses(self) -> None:
+    def capture_button_presses(self) -> None:
         """
         Capture the current state of all buttons to track presses.
         This method should be called at the end of each control loop iteration.
@@ -341,7 +341,7 @@ class PlayStationController:
 
         :return: True if the Share button is pressed, False otherwise.
         """
-        if self.version == 4:
+        if self.VERSION == 4:
             return self._button_pressed("Share", self.this_controller.getShareButton())
         else:
             return self._button_pressed("Share", False)
@@ -356,9 +356,9 @@ class PlayStationController:
 
 
 class XboxController:
-    correct_for_deadband: bool
-    deadband: float
-    port: int
+    CORRECT_FOR_DEADBAND: bool
+    DEADBAND: float
+    PORT: int
 
     def execute(self) -> None:
         pass
@@ -368,7 +368,7 @@ class XboxController:
         Setup the Xbox controller.
         This method is called once when the robot is initialized.
         """
-        self.this_controller = wpilib.XboxController(self.port)
+        self.this_controller = wpilib.XboxController(self.PORT)
         self.button_was_pressed = {
             "A": False,
             "B": False,
@@ -433,11 +433,11 @@ class XboxController:
         :param raw_value: The raw joystick value.
         :return: The corrected joystick value.
         """
-        if self.correct_for_deadband:
-            if abs(raw_value) < self.deadband:
+        if self.CORRECT_FOR_DEADBAND:
+            if abs(raw_value) < self.DEADBAND:
                 return 0.0
             return (raw_value / abs(raw_value)) * (
-                (abs(raw_value) - self.deadband) / (1 - self.deadband)
+                (abs(raw_value) - self.DEADBAND) / (1 - self.DEADBAND)
             )
         return raw_value
 

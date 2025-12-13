@@ -3,13 +3,13 @@ import xrp
 
 
 class Servo:
-    channel: int
+    CHANNEL: int
 
     def execute(self) -> None:
         pass
 
     def setup(self) -> None:
-        self.servo = xrp.XRPServo(self.channel)
+        self.servo = xrp.XRPServo(self.CHANNEL)
 
     # =========================================================================
     # CONTROL METHODS

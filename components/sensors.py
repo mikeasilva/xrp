@@ -3,7 +3,7 @@ import xrp
 
 
 class Accelerometer:
-    xrp_gyro: xrp.XRPGyro
+    XRP_GYRO: xrp.XRPGyro
 
     def execute(self) -> None:
         pass
@@ -14,21 +14,21 @@ class Accelerometer:
 
     @magicbot.feedback(key="X")
     def x(self) -> float:
-        return self.xrp_gyro.getRateX()
+        return self.XRP_GYRO.getRateX()
 
     @magicbot.feedback(key="Y")
     def y(self) -> float:
-        return self.xrp_gyro.getRateY()
+        return self.XRP_GYRO.getRateY()
 
     @magicbot.feedback(key="Z")
     def z(self) -> float:
-        return self.xrp_gyro.getRateZ()
+        return self.XRP_GYRO.getRateZ()
 
 
 class DistanceSensor:
     """Distance sensor class to handle the distance sensor functionality."""
 
-    unit: str
+    UNIT: str
 
     def execute(self) -> None:
         pass
@@ -46,7 +46,7 @@ class DistanceSensor:
         valid_units = ["inch", "in", "feet", "ft", "yard", "yd", "cm", "meter"]
         if unit not in valid_units:
             raise ValueError(f"Invalid unit. Valid units are: {valid_units}")
-        self.unit = unit
+        self.UNIT = unit
 
     # =========================================================================
     # INFORMATIONAL METHODS
@@ -59,19 +59,19 @@ class DistanceSensor:
         # Convert to the requested unit.
         distance = self.distance_sensor.getDistance()
         if (
-            self.unit == "inch"
-            or self.unit == "in"
-            or self.unit == '"'
-            or self.unit == "inches"
+            self.UNIT == "inch"
+            or self.UNIT == "in"
+            or self.UNIT == '"'
+            or self.UNIT == "inches"
         ):
             distance = distance * 39.3701
-        elif self.unit == "feet" or self.unit == "ft" or self.unit == "'":
+        elif self.UNIT == "feet" or self.UNIT == "ft" or self.UNIT == "'":
             distance = distance * 3.28084
-        elif self.unit == "yard" or self.unit == "yd" or self.unit == "yards":
+        elif self.UNIT == "yard" or self.UNIT == "yd" or self.UNIT == "yards":
             distance = distance * 1.09361
-        elif self.unit == "cm":
+        elif self.UNIT == "cm":
             distance = distance * 100
-        elif self.unit == "meter" or self.unit == "meters":
+        elif self.UNIT == "meter" or self.UNIT == "meters":
             return distance
         else:
             raise ValueError(
@@ -82,11 +82,11 @@ class DistanceSensor:
     @magicbot.feedback(key="unit")
     def get_unit(self) -> str:
         """Get the current unit for distance measurement."""
-        return self.unit
+        return self.UNIT
 
 
 class Gyro:
-    xrp_gyro: xrp.XRPGyro
+    XRP_GYRO: xrp.XRPGyro
 
     def execute(self) -> None:
         pass
@@ -97,7 +97,7 @@ class Gyro:
 
     def reset(self) -> None:
         """Reset the accelerometer readings to zero."""
-        self.xrp_gyro.reset()
+        self.XRP_GYRO.reset()
 
     # =========================================================================
     # INFORMATIONAL METHODS
@@ -105,15 +105,15 @@ class Gyro:
 
     @magicbot.feedback(key="Pitch")
     def pitch(self) -> float:
-        return self.xrp_gyro.getAngleY()
+        return self.XRP_GYRO.getAngleY()
 
     @magicbot.feedback(key="Roll")
     def roll(self) -> float:
-        return self.xrp_gyro.getAngleX()
+        return self.XRP_GYRO.getAngleX()
 
     @magicbot.feedback(key="Yaw")
     def yaw(self) -> float:
-        return self.xrp_gyro.getAngleZ()
+        return self.XRP_GYRO.getAngleZ()
 
 
 class ReflectanceSensor:

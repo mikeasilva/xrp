@@ -11,43 +11,43 @@ import xrp
 
 
 class DriveTrain:
-    accelerometer: components.Accelerometer
-    distance_pid_p: float
-    distance_pid_i: float
-    distance_pid_d: float
-    encoder_units: str
-    gyro: components.Gyro
-    heading_pid_p: float
-    heading_pid_i: float
-    heading_pid_d: float
-    left_motor: xrp.XRPMotor
-    left_encoder: wpilib.Encoder
-    right_motor: xrp.XRPMotor
-    right_encoder: wpilib.Encoder
+    ACCELEROMETER: components.Accelerometer
+    DISTANCE_PID_P: float
+    DISTANCE_PID_I: float
+    DISTANCE_PID_D: float
+    ENCODER_UNITS: str
+    GYRO: components.Gyro
+    HEADING_PID_P: float
+    HEADING_PID_I: float
+    HEADING_PID_D: float
+    LEFT_MOTOR: xrp.XRPMotor
+    LEFT_ENCODER: wpilib.Encoder
+    RIGHT_MOTOR: xrp.XRPMotor
+    RIGHT_ENCODER: wpilib.Encoder
+
+    DISTANCE_SETPOINT = 0.0
+    EFFORT = 0.8
+    HEADING_SETPOINT = 0.0
 
     def execute(self) -> None:
         pass
 
     def setup(self) -> None:
-        self.distance_setpoint = 0.0
-        self.effort = 0.8
-        self.heading_setpoint = 0.0
-        self.set_encoder_units(self.encoder_units)
-        self.right_motor.setInverted(True)
-        self.drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
-        self.distance_PID = wpimath.controller.PIDController(
-            self.distance_pid_p,
-            self.distance_pid_i,
-            self.distance_pid_d,
+        self.set_encoder_units(self.ENCODER_UNITS)
+        self.drive = wpilib.drive.DifferentialDrive(self.LEFT_MOTOR, self.RIGHT_MOTOR)
+        self.distance_pid = wpimath.controller.PIDController(
+            self.DISTANCE_PID_P,
+            self.DISTANCE_PID_I,
+            self.DISTANCE_PID_D,
         )
-        self.heading_PID = wpimath.controller.PIDController(
-            self.heading_pid_p,
-            self.heading_pid_i,
-            self.heading_pid_d,
+        self.heading_pid = wpimath.controller.PIDController(
+            self.HEADING_PID_P,
+            self.HEADING_PID_I,
+            self.HEADING_PID_D,
         )
-        self.heading_PID.enableContinuousInput(-180.0, 180.0)
+        self.heading_pid.enableContinuousInput(-180.0, 180.0)
         self.odometry = wpimath.kinematics.DifferentialDriveOdometry(
-            wpimath.geometry.Rotation2d.fromDegrees(self.gyro.yaw()),
+            wpimath.geometry.Rotation2d.fromDegrees(self.GYRO.yaw()),
             self.left_encoder_distance(),
             self.right_encoder_distance(),
             wpimath.geometry.Pose2d(),
@@ -58,59 +58,59 @@ class DriveTrain:
     # =========================================================================
 
     def arcade_drive(self, forward: float, rotation: float) -> None:
-        forward *= self.effort
-        rotation *= self.effort
+        forward *= self.EFFORT
+        rotation *= self.EFFORT
         self.drive.arcadeDrive(forward, rotation)
 
     def reset_encoders(self) -> None:
-        self.left_encoder.reset()
-        self.right_encoder.reset()
+        self.LEFT_ENCODER.reset()
+        self.RIGHT_ENCODER.reset()
 
     def reset_gyro(self) -> None:
-        self.gyro.reset()
+        self.GYRO.reset()
 
     def reset_odometry(self, pose: wpimath.geometry.Pose2d) -> None:
         self.reset_encoders()
         self.reset_gyro()
         self.odometry.resetPosition(
-            wpimath.geometry.Rotation2d.fromDegrees(self.gyro.yaw()),
+            wpimath.geometry.Rotation2d.fromDegrees(self.GYRO.yaw()),
             self.left_encoder_distance(),
             self.right_encoder_distance(),
             pose,
         )
 
     def set_effort(self, effort: float) -> None:
-        self.effort = effort
+        self.EFFORT = effort
 
     def set_encoder_units(self, unit: str) -> None:
-        self.encoder_units = unit
+        self.ENCODER_UNITS = unit
         distance_per_pulse = (
             math.pi * constants.WHEEL_DIAMETER[unit]
         ) / constants.COUNTS_PER_REVOLUTION
-        self.left_encoder.setDistancePerPulse(distance_per_pulse)
-        self.right_encoder.setDistancePerPulse(distance_per_pulse)
+        self.LEFT_ENCODER.setDistancePerPulse(distance_per_pulse)
+        self.RIGHT_ENCODER.setDistancePerPulse(distance_per_pulse)
 
     def set_distance_pid_setpoint(self, setpoint: float) -> None:
-        self.distance_setpoint = setpoint
-        self.distance_PID.setSetpoint(setpoint)
+        self.DISTANCE_SETPOINT = setpoint
+        self.distance_pid.setSetpoint(setpoint)
 
     def set_heading_pid_setpoint(self, setpoint: float) -> None:
-        self.heading_setpoint = setpoint
-        self.heading_PID.setSetpoint(setpoint)
+        self.HEADING_SETPOINT = setpoint
+        self.heading_pid.setSetpoint(setpoint)
 
     def stop(self) -> None:
         self.drive.stopMotor()
 
     def tank_drive(self, left_speed: float, right_speed: float) -> None:
-        left_speed *= self.effort
-        right_speed *= self.effort
+        left_speed *= self.EFFORT
+        right_speed *= self.EFFORT
         self.drive.tankDrive(left_speed, right_speed)
 
     def straight(self, distance: float, unit: str = "inches") -> None:
         # Set the encoder units
         self.set_encoder_units(unit)
         # Set PID setpoints
-        self.initial_heading = self.gyro.yaw()
+        self.initial_heading = self.GYRO.yaw()
         self.reset_encoders()
         self.set_distance_pid_setpoint(distance)
         self.set_heading_pid_setpoint(self.initial_heading)
@@ -120,11 +120,11 @@ class DriveTrain:
             right_delta = self.right_encoder_distance() - distance
             dist_traveled = (left_delta + right_delta) / 2
             distance_error = distance - dist_traveled
-            effort = self.distance_PID.calculate(distance_error)
-            if self.distance_PID.atSetpoint():
+            effort = self.distance_pid.calculate(distance_error)
+            if self.distance_pid.atSetpoint():
                 self.stop()
                 break
-            adjustment = self.heading_PID.calculate(self.initial_heading - self.gyro.yaw())
+            adjustment = self.heading_pid.calculate(self.initial_heading - self.GYRO.yaw())
             left_val = self.bounded(effort + adjustment)
             right_val = self.bounded(effort - adjustment)
             self.tank_drive(left_val, right_val)
@@ -134,8 +134,8 @@ class DriveTrain:
         return max(min_val, min(val, max_val))
     '''
     def tank_drive_voltage(self, left_voltage: float, right_voltage: float) -> None:
-        self.left_motor.setVoltage(left_voltage)
-        self.right_motor.setVoltage(right_voltage)
+        self.LEFT_MOTOR.setVoltage(left_voltage)
+        self.RIGHT_MOTOR.setVoltage(right_voltage)
         self.drive.feed()
 
     def turn(self, turn_degrees: float, max_effort: float = 0.5, timeout: float = None, main_controller: Controller = None, secondary_controller: Controller = None, use_imu:bool = True) -> bool:
@@ -224,16 +224,16 @@ class DriveTrain:
 
     def turn(self, degree, clockwise: bool = True, effort: float = 0.5) -> None:
         # Set the PID setpoint
-        current_heading = self.gyro.yaw()
+        current_heading = self.GYRO.yaw()
         if clockwise:
-            self.heading_setpoint = current_heading + degree
+            self.HEADING_SETPOINT = current_heading + degree
         else:
-            self.heading_setpoint = current_heading - degree
-        self.heading_PID.setSetpoint(self.heading_setpoint)
+            self.HEADING_SETPOINT = current_heading - degree
+        self.heading_pid.setSetpoint(self.HEADING_SETPOINT)
         # Check if the PID is at setpoint
-        while not self.heading_PID.atSetpoint():
+        while not self.heading_pid.atSetpoint():
             # Not at setpoint so continue turning
-            output = self.heading_PID.calculate(self.gyro.yaw(), self.heading_setpoint)
+            output = self.heading_pid.calculate(self.GYRO.yaw(), self.HEADING_SETPOINT)
             self.drive.tankDrive(output, -output)
 
     def wrap_angle(self, angle_in_radians: float) -> float:
@@ -253,36 +253,36 @@ class DriveTrain:
 
     @magicbot.feedback(key="Effort")
     def the_effort(self) -> float:
-        return self.effort
+        return self.EFFORT
 
     @magicbot.feedback(key="Distance Setpoint")
     def the_distance_setpoint(self) -> float:
-        return self.distance_setpoint
+        return self.DISTANCE_SETPOINT
 
     @magicbot.feedback(key="Heading Setpoint")
     def the_heading_setpoint(self) -> float:
-        return self.heading_setpoint
+        return self.HEADING_SETPOINT
 
     @magicbot.feedback(key="Left Encoder Count")
     def left_encoder_count(self) -> int:
-        return self.left_encoder.get()
+        return self.LEFT_ENCODER.get()
 
     @magicbot.feedback(key="Left Encoder Distance")
     def left_encoder_distance(self) -> float:
-        return self.left_encoder.getDistance()
+        return self.LEFT_ENCODER.getDistance()
 
     @magicbot.feedback(key="Right Encoder Count")
     def right_encoder_count(self) -> int:
-        return self.right_encoder.get()
+        return self.RIGHT_ENCODER.get()
 
     @magicbot.feedback(key="Right Encoder Distance")
     def right_encoder_distance(self) -> float:
-        return self.right_encoder.getDistance()
+        return self.RIGHT_ENCODER.getDistance()
 
     """
     @magicbot.feedback(key="Wheel Speed")
     def wheel_speed(self) -> float:
         return wpimath.kinematics.DifferentialDriveWheelSpeeds(
-            self.left_encoder.getRate(), self.right_encoder.getRate()
+            self.LEFT_ENCODER.getRate(), self.RIGHT_ENCODER.getRate()
         )
     """

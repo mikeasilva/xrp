@@ -11,82 +11,86 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 
 class Robot(genie.GenieRobot):
-    accelerometer: components.Accelerometer
-    controller: components.XboxController
-    distance_sensor: components.DistanceSensor
+    ACCELEROMETER: components.Accelerometer
+    CONTROLLER: components.XboxController
+    DISTANCE_SENSOR: components.DistanceSensor
     #drive_straight: state_machines.DriveStraight
-    drivetrain: components.DriveTrain
-    gyro: components.Gyro
-    #huskylens: components.HuskyLens
-    led: components.LED
-    reflectance_sensor: components.ReflectanceSensor
-    servo: components.Servo
+    DRIVETRAIN: components.DriveTrain
+    GYRYO: components.Gyro
+    #HUSKYLENS: components.HuskyLens
+    LED: components.LED
+    REFLECTANCE_SENSOR: components.ReflectanceSensor
+    SERVO: components.Servo
 
     def createObjects(self):
         # Controller stuff here
-        self.controller_correct_for_deadband = True
-        self.controller_deadband = constants.CONTROLLER_DEADBAND
-        self.controller_port = constants.CONTROLLER_PORT
+        self.CONTROLLER_CORRECT_FOR_DEADBAND = True
+        self.CONTROLLER_DEADBAND = constants.CONTROLLER_DEADBAND
+        self.CONTROLLER_PORT = constants.CONTROLLER_PORT
 
         # Drivetrain stuff here
-        self.drivetrain_left_motor = xrp.XRPMotor(constants.LEFT_MOTOR_DEVICE_NUMBER)
-        self.drivetrain_left_encoder = wpilib.Encoder(
+        self.DRIVETRAIN_LEFT_MOTOR = xrp.XRPMotor(constants.LEFT_MOTOR_DEVICE_NUMBER)
+        self.DRIVETRAIN_LEFT_ENCODER = wpilib.Encoder(
             constants.LEFT_ENCODER_CHANNEL[0], constants.LEFT_ENCODER_CHANNEL[1]
         )
-        self.drivetrain_right_motor = xrp.XRPMotor(constants.RIGHT_MOTOR_DEVICE_NUMBER)
-        self.drivetrain_right_encoder = wpilib.Encoder(
+        self.DRIVETRAIN_RIGHT_MOTOR = xrp.XRPMotor(constants.RIGHT_MOTOR_DEVICE_NUMBER)
+        self.DRIVETRAIN_RIGHT_MOTOR.setInverted(True)
+        self.DRIVETRAIN_RIGHT_ENCODER = wpilib.Encoder(
             constants.RIGHT_ENCODER_CHANNEL[0], constants.RIGHT_ENCODER_CHANNEL[1]
         )
-        self.drivetrain_encoder_units = constants.ENCODER_UNITS
-        self.drivetrain_distance_pid_p = constants.DISTANCE_PID[0]
-        self.drivetrain_distance_pid_i = constants.DISTANCE_PID[1]
-        self.drivetrain_distance_pid_d = constants.DISTANCE_PID[2]
-        self.drivetrain_heading_pid_p = constants.HEADING_PID[0]
-        self.drivetrain_heading_pid_i = constants.HEADING_PID[1]
-        self.drivetrain_heading_pid_d = constants.HEADING_PID[2]
+        self.DRIVETRAIN_ENCODER_UNITS = constants.ENCODER_UNITS
+
+        # PID values for the drivetrain
+        self.DRIVETRAIN_DISTANCE_PID_P = constants.DISTANCE_PID[0]
+        self.DRIVETRAIN_DISTANCE_PID_I = constants.DISTANCE_PID[1]
+        self.DRIVETRAIN_DISTANCE_PID_D = constants.DISTANCE_PID[2]
+        
+        self.DRIVETRAIN_HEADING_PID_P = constants.HEADING_PID[0]
+        self.DRIVETRAIN_HEADING_PID_I = constants.HEADING_PID[1]
+        self.DRIVETRAIN_HEADING_PID_D = constants.HEADING_PID[2]
 
         # Distance Sensor
-        self.distance_sensor_unit = constants.DISTANCE_SENSOR_UNIT
+        self.DISTANCE_SENSOR_UNIT = constants.DISTANCE_SENSOR_UNIT
 
         # Gyro - Passed into the gyro and accelerometer components
-        self.xrp_gyro = xrp.XRPGyro()
+        self.XRP_GYRO = xrp.XRPGyro()
 
         # HuskyLens AI Camera
-        self.huskylens_default_algorithm = constants.HUSKYLENS_DEFAULT_ALGORITHM
+        self.HUSKYLENS_DEFAULT_ALGORITHM = constants.HUSKYLENS_DEFAULT_ALGORITHM
 
         # Servo
-        self.servo_channel = constants.SERVO_CHANNEL
+        self.SERVO_CHANNEL = constants.SERVO_CHANNEL
 
         if constants.LOGGING_ENABLED:
             wpilib.DataLogManager.start()
             wpilib.DriverStation.startDataLog(wpilib.DataLogManager.getLog())
 
     def autonomousInit(self) -> None:
-        self.led.turn_on()
+        self.LED.turn_on()
         return super().autonomousInit()
 
     def disabledInit(self) -> None:
-        self.led.turn_off()
-        self.servo.set_position(0)
+        self.LED.turn_off()
+        self.SERVO.set_position(0)
         return super().disabledInit()
         
 
     def teleopPeriodic(self) -> None:
-        self.led.blink()
-        self.controller.capture_button_presses()
-        left_x, left_y, right_x, right_y = self.controller.get_joysticks()
-        self.drivetrain.arcade_drive(-left_y, -right_x)
+        self.LED.blink()
+        self.CONTROLLER.capture_button_presses()
+        left_x, left_y, right_x, right_y = self.CONTROLLER.get_joysticks()
+        self.DRIVETRAIN.arcade_drive(-left_y, -right_x)
         
-        if self.controller.y_button_was_pressed():
-            self.drivetrain.straight(12, "inches")
+        if self.CONTROLLER.y_button_was_pressed():
+            self.DRIVETRAIN.straight(12, "inches")
         '''
-        if self.controller.dpad_right_was_pressed():
-            self.drivetrain.turn(90)
+        if self.CONTROLLER.dpad_right_was_pressed():
+            self.DRIVETRAIN.turn(90)
 
-        if self.controller.dpad_left_was_pressed():
-            self.drivetrain.turn(-90)
+        if self.CONTROLLER.dpad_left_was_pressed():
+            self.DRIVETRAIN.turn(-90)
         '''
-        if self.controller.b_button_pressed():
-            self.drivetrain.set_effort(1)
+        if self.CONTROLLER.b_button_pressed():
+            self.DRIVETRAIN.set_effort(1)
         else:
-            self.drivetrain.set_effort(0.8)
+            self.DRIVETRAIN.set_effort(0.8)
