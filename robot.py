@@ -16,7 +16,7 @@ class Robot(genie.GenieRobot):
     DISTANCE_SENSOR: components.DistanceSensor
     #drive_straight: state_machines.DriveStraight
     DRIVETRAIN: components.DriveTrain
-    GYRYO: components.Gyro
+    GYRO: components.Gyro
     #HUSKYLENS: components.HuskyLens
     LED: components.LED
     REFLECTANCE_SENSOR: components.ReflectanceSensor

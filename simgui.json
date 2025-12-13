@@ -65,6 +65,9 @@
         "open": true
       },
       "components": {
+        "DRIVETRAIN": {
+          "open": true
+        },
         "accelerometer": {
           "open": true
         },
