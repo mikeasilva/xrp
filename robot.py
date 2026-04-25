@@ -1,13 +1,13 @@
 from magicbot import MagicRobot, feedback
 
-class MyRobot(MagicRobot):
 
+class MyRobot(MagicRobot):
     def createObjects(self):
-        '''Create motors and stuff here'''
+        """Create motors and stuff here"""
         pass
 
     def teleopInit(self):
-        '''Called when teleop starts; optional'''
+        """Called when teleop starts; optional"""
         pass
 
     def teleopPeriodic(self):
@@ -15,5 +15,5 @@ class MyRobot(MagicRobot):
 
     @feedback(key="is")
     def get_current_state(self):
-        '''Return the current state of the robot'''
+        """Return the current state of the robot"""
         return "STARTING UP"
