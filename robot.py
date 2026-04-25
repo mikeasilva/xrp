@@ -2,7 +2,7 @@ import components
 import constants
 from magicbot import MagicRobot, feedback
 import os
-import xrp
+from xrp import XRPMotor
 import wpilib
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
@@ -10,21 +10,30 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 
 class MyRobot(MagicRobot):
-    led: components.LED
-    tankdrive: components.TankDrive
+    #controller: components.XboxController
+    led: components.XRPLed
+    #tankdrive: components.TankDrive
 
     def createObjects(self):
-        """Create motors and stuff here"""
+        '''
         self.tankdrive_motors = {
-            "left": xrp.XRPMotor(constants.Channel.LEFT_MOTOR),
-            "right": xrp.XRPMotor(constants.Channel.RIGHT_MOTOR),
+            "left_motor": XRPMotor(constants.Ids.LEFT_MOTOR),
+            "right_motor": XRPMotor(constants.Ids.RIGHT_MOTOR),
         }
+
+        self.controller_port = constants.Ids.CONTROLLER
+
         self.tankdrive_encoders = {
-            "left": wpilib.Encoder(*constants.Channel.LEFT_ENCODER),
-            "right": wpilib.Encoder(*constants.Channel.RIGHT_ENCODER),
+            "left_encoder": wpilib.Encoder(*constants.Ids.LEFT_ENCODER),
+            "right_encoder": wpilib.Encoder(*constants.Ids.RIGHT_ENCODER),
         }
+        '''
         self.led_blink_time = constants.LED_BLINK_TIME
         self.current_state = "CREATING OBJECTS"
+
+    def autonomousInit(self):
+        self.current_state = "AUTO INIT"
+        self.led.mode = "on"
 
     def disabledInit(self):
         self.current_state = "DISABLED"
@@ -43,3 +52,7 @@ class MyRobot(MagicRobot):
     def getcurrent_state(self):
         """Return the current state of the robot"""
         return self.current_state
+
+    @feedback
+    def led_mode(self) -> str:
+        return self.led.mode
