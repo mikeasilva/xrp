@@ -1,12 +1,11 @@
 import wpilib
 
+
 class XboxController:
     correct_for_deadband: bool = True
     deadband: float = 0.1
     port: int
-
-    def execute(self) -> None:
-        pass
+    capture_button_presses: bool = False
 
     def setup(self) -> None:
         """
@@ -14,38 +13,24 @@ class XboxController:
         This method is called once when the robot is initialized.
         """
         self.this_controller = wpilib.XboxController(self.port)
-        self.button_was_pressed = {
-            "A": False,
-            "B": False,
-            "X": False,
-            "Y": False,
-            "DPad_Up": False,
-            "DPad_Down": False,
-            "DPad_Left": False,
-            "DPad_Right": False,
-            "Left_Bumper": False,
-            "Right_Bumper": False,
-            "Left_Trigger": False,
-            "Right_Trigger": False,
-            "Start": False,
-            "Back": False,
-        }
-        self.button_is_pressed = {
-            "A": False,
-            "B": False,
-            "X": False,
-            "Y": False,
-            "DPad_Up": False,
-            "DPad_Down": False,
-            "DPad_Left": False,
-            "DPad_Right": False,
-            "Left_Bumper": False,
-            "Right_Bumper": False,
-            "Left_Trigger": False,
-            "Right_Trigger": False,
-            "Start": False,
-            "Back": False,
-        }
+        controller_buttons = [
+            "A",
+            "B",
+            "X",
+            "Y",
+            "DPad_Up",
+            "DPad_Down",
+            "DPad_Left",
+            "DPad_Right",
+            "Left_Bumper",
+            "Right_Bumper",
+            "Left_Trigger",
+            "Right_Trigger",
+            "Start",
+            "Back",
+        ]
+        self.button_is_pressed = {button: False for button in controller_buttons}
+        self.button_was_pressed = {button: False for button in controller_buttons}
 
     def _button_pressed(self, button_name: str, pressed: bool) -> bool:
         """
@@ -54,7 +39,7 @@ class XboxController:
         :param pressed: The current state of the button (True if pressed, False otherwise).
         """
         if self.button_is_pressed[button_name] and not pressed:
-                self.button_was_pressed[button_name] = True
+            self.button_was_pressed[button_name] = True
         self.button_is_pressed[button_name] = pressed
         return pressed
 
@@ -79,28 +64,30 @@ class XboxController:
             return raw_value
         if abs(raw_value) < self.deadband:
             return 0.0
-        return (raw_value / abs(raw_value)) * ((abs(raw_value) - self.deadband) / (1 - self.deadband))
-    
+        return (raw_value / abs(raw_value)) * (
+            (abs(raw_value) - self.deadband) / (1 - self.deadband)
+        )
 
-    def capture_button_presses(self) -> None:
+    def execute(self) -> None:
         """
         Capture the current state of all buttons to track presses.
         This method should be called at the end of each control loop iteration.
         """
-        self.a_button_pressed()
-        self.b_button_pressed()
-        self.x_button_pressed()
-        self.y_button_pressed()
-        self.dpad_up_pressed()
-        self.dpad_down_pressed()
-        self.dpad_left_pressed()
-        self.dpad_right_pressed()
-        self.left_bumper_pressed()
-        self.right_bumper_pressed()
-        self.left_trigger_pressed()
-        self.right_trigger_pressed()
-        self.start_button_pressed()
-        self.back_button_pressed()
+        if self.capture_button_presses:
+            self.a_button_pressed()
+            self.b_button_pressed()
+            self.x_button_pressed()
+            self.y_button_pressed()
+            self.dpad_up_pressed()
+            self.dpad_down_pressed()
+            self.dpad_left_pressed()
+            self.dpad_right_pressed()
+            self.left_bumper_pressed()
+            self.right_bumper_pressed()
+            self.left_trigger_pressed()
+            self.right_trigger_pressed()
+            self.start_button_pressed()
+            self.back_button_pressed()
 
     def get_joysticks(self) -> tuple[float, float, float, float]:
         """

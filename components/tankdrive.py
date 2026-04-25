@@ -3,11 +3,12 @@ from magicbot import will_reset_to
 import xrp
 import wpilib
 
+
 class TankDrive:
     _speed = will_reset_to(0.0)
     _rotation = will_reset_to(0.0)
     motors: dict[str, xrp.XRPMotor]
-    #encoders: dict[str, wpilib.Encoder]
+    encoders: dict[str, wpilib.Encoder]
 
     def setup(self):
         self.left_motor = self.motors["left_motor"]
