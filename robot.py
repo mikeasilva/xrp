@@ -48,6 +48,9 @@ class MyRobot(MagicRobot):
 
     def teleopPeriodic(self):
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
+        print(
+            f"Left X: {left_x}, Left Y: {left_y}, Right X: {right_x}, Right Y: {right_y}"
+        )
         self.tankdrive.drive(-left_y, -right_x)
 
     @feedback(key="is")

@@ -1,5 +1,5 @@
 from wpilib.drive import DifferentialDrive
-from magicbot import will_reset_to
+from magicbot import will_reset_to, feedback
 import xrp
 import wpilib
 
@@ -38,3 +38,11 @@ class TankDrive:
         self._speed = 0.0
         self._rotation = 0.0
         self._drive.stopMotor()
+
+    @feedback
+    def speed(self) -> float:
+        return self._speed
+
+    @feedback
+    def rotation(self) -> float:
+        return self._rotation
