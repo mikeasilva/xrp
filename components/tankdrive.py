@@ -29,7 +29,6 @@ class TankDrive:
         self._drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
 
     def execute(self):
-        self._driving = abs(self._speed) + abs(self._rotation) > 0
         self._drive.arcadeDrive(self._speed, self._rotation)
 
     def drive(self, speed: float, rotation: float) -> None:
@@ -48,7 +47,3 @@ class TankDrive:
     @magicbot.feedback
     def rotation(self) -> float:
         return self._rotation
-
-    @magicbot.feedback
-    def driving(self) -> bool:
-        return self._driving
