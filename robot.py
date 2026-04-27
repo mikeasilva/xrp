@@ -1,23 +1,26 @@
+# XRP MagicBot
+# To Run: robotpy sim --xrp
+
 import components
 import constants
-from magicbot import MagicRobot, feedback
+import magicbot
 import os
-from xrp import XRPMotor
+import xrp
 import wpilib
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
 os.environ["HALSIMXRP_PORT"] = "3540"
 
 
-class MyRobot(MagicRobot):
+class MyRobot(magicbot.MagicRobot):
     controller: components.XboxController
     led: components.XRPLed
     tankdrive: components.TankDrive
 
     def createObjects(self):
         self.tankdrive_motors = {
-            "left_motor": XRPMotor(constants.Ids.LEFT_MOTOR),
-            "right_motor": XRPMotor(constants.Ids.RIGHT_MOTOR),
+            "left_motor": xrp.XRPMotor(constants.Ids.LEFT_MOTOR),
+            "right_motor": xrp.XRPMotor(constants.Ids.RIGHT_MOTOR),
         }
 
         self.controller_port = constants.Ids.CONTROLLER
@@ -48,16 +51,13 @@ class MyRobot(MagicRobot):
 
     def teleopPeriodic(self):
         left_x, left_y, right_x, right_y = self.controller.get_joysticks()
-        print(
-            f"Left X: {left_x}, Left Y: {left_y}, Right X: {right_x}, Right Y: {right_y}"
-        )
         self.tankdrive.drive(-left_y, -right_x)
 
-    @feedback(key="is")
-    def getcurrent_state(self):
+    @magicbot.feedback(key="is")
+    def get_current_state(self):
         """Return the current state of the robot"""
         return self.current_state
 
-    @feedback
+    @magicbot.feedback
     def led_mode(self) -> str:
         return self.led.mode

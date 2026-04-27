@@ -1,12 +1,13 @@
-from wpilib.drive import DifferentialDrive
-from magicbot import will_reset_to, feedback
+import magicbot
 import xrp
 import wpilib
+import wpilib.drive
 
 
 class TankDrive:
-    _speed = will_reset_to(0.0)
-    _rotation = will_reset_to(0.0)
+    _speed = 0.0
+    _rotation = 0.0
+    _driving: bool = False
     motors: dict[str, xrp.XRPMotor]
     encoders: dict[str, wpilib.Encoder]
 
@@ -25,9 +26,10 @@ class TankDrive:
             self.left_follower.follow(self.left_motor)
 
         # set up differential drive class
-        self._drive = DifferentialDrive(self.left_motor, self.right_motor)
+        self._drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
 
     def execute(self):
+        self._driving = abs(self._speed) + abs(self._rotation) > 0
         self._drive.arcadeDrive(self._speed, self._rotation)
 
     def drive(self, speed: float, rotation: float) -> None:
@@ -39,10 +41,14 @@ class TankDrive:
         self._rotation = 0.0
         self._drive.stopMotor()
 
-    @feedback
+    @magicbot.feedback
     def speed(self) -> float:
         return self._speed
 
-    @feedback
+    @magicbot.feedback
     def rotation(self) -> float:
         return self._rotation
+
+    @magicbot.feedback
+    def driving(self) -> bool:
+        return self._driving
