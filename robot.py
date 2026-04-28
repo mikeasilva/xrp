@@ -19,6 +19,8 @@ class MyRobot(magicbot.MagicRobot):
     tankdrive: components.TankDrive
 
     def createObjects(self):
+        self.gyro_noise_threshold = constants.Robot.GYRO_NOISE_THRESHOLD
+
         self.tankdrive_motors = {
             "left_motor": xrp.XRPMotor(constants.Ids.LEFT_MOTOR),
             "right_motor": xrp.XRPMotor(constants.Ids.RIGHT_MOTOR),
@@ -56,7 +58,3 @@ class MyRobot(magicbot.MagicRobot):
     def get_current_state(self):
         """Return the current state of the robot"""
         return self.current_state
-
-    @magicbot.feedback(key="battery voltage")
-    def get_battery_voltage(self):
-        return wpilib.RobotController.getBatteryVoltage()

@@ -16,6 +16,7 @@ class Robot:
     )  # 585.0
     WHEEL_DIAMETER_MM = 60.0
     TRACK_WIDTH_INCHES = 6.0
+    GYRO_NOISE_THRESHOLD = 0.025
 
 
 LED_BLINK_TIME = 0.25

@@ -5,14 +5,14 @@ import wpilib
 class XRPLed:
     blink_time: float
 
-    def setup(self):
+    def setup(self) -> None:
         self._timer = wpilib.Timer()
         self._led = xrp.XRPOnBoardIO()
         self._mode = "on"
         self._led.setLed(True)
         self._timer.start()
 
-    def execute(self):
+    def execute(self) -> None:
         if self._mode == "blink":
             if self._timer.hasElapsed(self.blink_time):
                 self._led.setLed(not self._led.getLed())
@@ -27,6 +27,6 @@ class XRPLed:
         return self._mode
 
     @mode.setter
-    def mode(self, value):
+    def mode(self, value) -> None:
         # Make sure the mode is always lower case
         self._mode = value.lower()

@@ -5,13 +5,14 @@ import wpilib.drive
 
 
 class TankDrive:
-    _speed = 0.0
+    _speed: float = 0.0
     _rotation = 0.0
-    _driving: bool = False
+    _left_distance: float = 0.0
+    _right_distance: float = 0.0
     motors: dict[str, xrp.XRPMotor]
     encoders: dict[str, wpilib.Encoder]
 
-    def setup(self):
+    def setup(self) -> None:
         self.left_motor = self.motors["left_motor"]
         self.left_motor.setSafetyEnabled(True)
         # We are going to invert the right motors
@@ -29,15 +30,22 @@ class TankDrive:
             self.left_follower.setSafetyEnabled(True)
             self.left_follower.follow(self.left_motor)
 
+        self.right_encoder = self.encoders["right_encoder"]
+        self.left_encoder = self.encoders["left_encoder"]
+
         # set up differential drive class
         self._drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
 
-    def execute(self):
+    def execute(self) -> None:
         self._drive.arcadeDrive(self._speed, self._rotation)
 
     def drive(self, speed: float, rotation: float) -> None:
         self._speed = speed
         self._rotation = rotation
+
+    def reset_encoders(self) -> None:
+        self.left_encoder.reset()
+        self.right_encoder.reset()
 
     def stop(self) -> None:
         self._speed = 0.0
