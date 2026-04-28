@@ -13,16 +13,20 @@ class TankDrive:
 
     def setup(self):
         self.left_motor = self.motors["left_motor"]
+        self.left_motor.setSafetyEnabled(True)
         # We are going to invert the right motors
         self.right_motor = self.motors["right_motor"]
+        self.right_motor.setSafetyEnabled(True)
         self.right_motor.setInverted(True)
         # Check if there are follower motors, and if so, set them up
         if "right_follower" in self.motors:
             self.right_follower = self.motors["right_follower"]
+            self.right_follower.setSafetyEnabled(True)
             self.right_follower.setInverted(True)
             self.right_follower.follow(self.right_motor)
         if "left_follower" in self.motors:
             self.left_follower = self.motors["left_follower"]
+            self.left_follower.setSafetyEnabled(True)
             self.left_follower.follow(self.left_motor)
 
         # set up differential drive class

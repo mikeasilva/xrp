@@ -18,8 +18,7 @@ class XRPLed:
                 self._led.setLed(not self._led.getLed())
                 self._timer.reset()
         elif self._mode == "on":
-            if not self._led.getLed():
-                self._led.setLed(True)
+            self._led.setLed(True)
         else:
             self._led.setLed(False)
 

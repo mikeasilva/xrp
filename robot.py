@@ -14,6 +14,7 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 class MyRobot(magicbot.MagicRobot):
     controller: components.XboxController
+    gyro: components.XRPGyro
     led: components.XRPLed
     tankdrive: components.TankDrive
 
@@ -47,17 +48,15 @@ class MyRobot(magicbot.MagicRobot):
     def teleopInit(self):
         self.current_state = "TELEOP INIT"
         self.led.mode = "blink"
-        self.controller.capture_button_presses = True
 
     def teleopPeriodic(self):
-        left_x, left_y, right_x, right_y = self.controller.get_joysticks()
-        self.tankdrive.drive(-left_y, -right_x)
+        self.tankdrive.drive(-self.controller.left_y, -self.controller.right_x)
 
     @magicbot.feedback(key="is")
     def get_current_state(self):
         """Return the current state of the robot"""
         return self.current_state
 
-    @magicbot.feedback
-    def led_mode(self) -> str:
-        return self.led.mode
+    @magicbot.feedback(key="battery voltage")
+    def get_battery_voltage(self):
+        return wpilib.RobotController.getBatteryVoltage()

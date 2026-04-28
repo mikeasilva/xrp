@@ -1,5 +1,6 @@
 from .controller import XboxController
-from .xrpled import XRPLed
+from .gyro import XRPGyro
+from .led import XRPLed
 from .tankdrive import TankDrive
 
-__all__ = ["XRPLed", "TankDrive", "XboxController"]
+__all__ = ["XRPGyro", "XRPLed", "TankDrive", "XboxController"]

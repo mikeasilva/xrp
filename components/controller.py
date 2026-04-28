@@ -5,7 +5,10 @@ class XboxController:
     correct_for_deadband: bool = True
     deadband: float = 0.1
     port: int
-    capture_button_presses: bool = False
+    left_x: float = 0.0
+    left_y: float = 0.0
+    right_x: float = 0.0
+    right_y: float = 0.0
 
     def setup(self) -> None:
         """
@@ -73,34 +76,24 @@ class XboxController:
         Capture the current state of all buttons to track presses.
         This method should be called at the end of each control loop iteration.
         """
-        if self.capture_button_presses:
-            self.a_button_pressed()
-            self.b_button_pressed()
-            self.x_button_pressed()
-            self.y_button_pressed()
-            self.dpad_up_pressed()
-            self.dpad_down_pressed()
-            self.dpad_left_pressed()
-            self.dpad_right_pressed()
-            self.left_bumper_pressed()
-            self.right_bumper_pressed()
-            self.left_trigger_pressed()
-            self.right_trigger_pressed()
-            self.start_button_pressed()
-            self.back_button_pressed()
-
-    def get_joysticks(self) -> tuple[float, float, float, float]:
-        """
-        Get the joystick values from the Xbox controller.
-
-        :return: A tuple containing the left joystick x, left joystick y, right joystick x, and right joystick y values.
-        """
-        return (
-            self._corrected_joystick_value(self.this_controller.getLeftX()),
-            self._corrected_joystick_value(self.this_controller.getLeftY()),
-            self._corrected_joystick_value(self.this_controller.getRightX()),
-            self._corrected_joystick_value(self.this_controller.getRightY()),
-        )
+        self.a_button_pressed()
+        self.b_button_pressed()
+        self.x_button_pressed()
+        self.y_button_pressed()
+        self.dpad_up_pressed()
+        self.dpad_down_pressed()
+        self.dpad_left_pressed()
+        self.dpad_right_pressed()
+        self.left_bumper_pressed()
+        self.right_bumper_pressed()
+        self.left_trigger_pressed()
+        self.right_trigger_pressed()
+        self.start_button_pressed()
+        self.back_button_pressed()
+        self.left_y = self._corrected_joystick_value(self.this_controller.getLeftY())
+        self.left_x = self._corrected_joystick_value(self.this_controller.getLeftX())
+        self.right_y = self._corrected_joystick_value(self.this_controller.getRightY())
+        self.right_x = self._corrected_joystick_value(self.this_controller.getRightX())
 
     def a_button_pressed(self) -> bool:
         """
