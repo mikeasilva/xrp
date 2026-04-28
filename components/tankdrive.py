@@ -32,6 +32,7 @@ class TankDrive:
 
         self.right_encoder = self.encoders["right_encoder"]
         self.left_encoder = self.encoders["left_encoder"]
+        self.reset_encoders()
 
         # set up differential drive class
         self._drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
