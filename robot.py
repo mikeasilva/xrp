@@ -18,6 +18,7 @@ class MyRobot(magicbot.MagicRobot):
     gyro: components.XRPGyro
     led: components.XRPLed
     tankdrive: components.TankDrive
+    name: str = constants.Robot.NAME
 
     def createObjects(self):
         self.controller_port = constants.Ids.CONTROLLER
@@ -56,6 +57,7 @@ class MyRobot(magicbot.MagicRobot):
     def disabledPeriodic(self):
         self.current_state = "DISABLED"
         self.led.mode = "off"
+        self.tankdrive.stop()
 
     def teleopInit(self):
         self.current_state = "TELEOP INIT"
@@ -64,6 +66,10 @@ class MyRobot(magicbot.MagicRobot):
     def teleopPeriodic(self):
         self.tankdrive.drive(-self.controller.left_y, -self.controller.right_x)
 
+    @magicbot.feedback(key="name")
+    def get_name(self) -> str:
+        return self.name
+
     @magicbot.feedback(key="is")
     def get_current_state(self):
         """Return the current state of the robot"""
@@ -71,4 +77,8 @@ class MyRobot(magicbot.MagicRobot):
 
     @magicbot.feedback
     def pose(self):
-        return [self.tankdrive.get_pose_x(), self.tankdrive.get_pose_y(), self.gyro.angle]
+        return [
+            self.tankdrive.get_pose_x(),
+            self.tankdrive.get_pose_y(),
+            self.gyro.angle,
+        ]

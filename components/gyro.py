@@ -75,3 +75,7 @@ class XRPGyro:
     def heading(self) -> float:
         # The heading in degrees, normalized to [0, 360)
         return math.degrees(self.yaw) % 360
+
+    def get_rate(self) -> float:
+        # The current rotational rate around the Z-axis in radians per second
+        return self._gyro.getRate()
