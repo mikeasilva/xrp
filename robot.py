@@ -4,6 +4,7 @@
 import components
 import constants
 import magicbot
+import math
 import os
 import xrp
 import wpilib
@@ -19,14 +20,23 @@ class MyRobot(magicbot.MagicRobot):
     tankdrive: components.TankDrive
 
     def createObjects(self):
+        self.controller_port = constants.Ids.CONTROLLER
+
         self.gyro_noise_threshold = constants.Robot.GYRO_NOISE_THRESHOLD
+
+        # Distance per pulse is pi * wheel diameter / pulses per revolution * gear ratio
+        self.tankdrive_distance_per_pulse = (
+            math.pi
+            * constants.Robot.WHEEL_DIAMETER_M
+            / (constants.Robot.PULSES_PER_REVOLUTION * constants.Robot.GEAR_RATIO)
+        )
+
+        self.tankdrive_gyro = components.XRPGyro()
 
         self.tankdrive_motors = {
             "left_motor": xrp.XRPMotor(constants.Ids.LEFT_MOTOR),
             "right_motor": xrp.XRPMotor(constants.Ids.RIGHT_MOTOR),
         }
-
-        self.controller_port = constants.Ids.CONTROLLER
 
         self.tankdrive_encoders = {
             "left_encoder": wpilib.Encoder(*constants.Ids.LEFT_ENCODER),
@@ -58,3 +68,7 @@ class MyRobot(magicbot.MagicRobot):
     def get_current_state(self):
         """Return the current state of the robot"""
         return self.current_state
+
+    @magicbot.feedback
+    def pose(self):
+        return [self.tankdrive.get_pose_x(), self.tankdrive.get_pose_y(), self.gyro.angle]

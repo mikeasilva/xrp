@@ -6,6 +6,7 @@ import xrp
 
 class XRPGyro:
     noise_threshold: float
+    angle: float = 0.0
     pitch: float = 0.0
     roll: float = 0.0
     yaw: float = 0.0
@@ -36,6 +37,7 @@ class XRPGyro:
         self.pitch += average_rotational_rate[0] * elapsed_time
         self.roll += average_rotational_rate[1] * elapsed_time
         self.yaw += average_rotational_rate[2] * elapsed_time
+        self.angle += average_rotational_rate[2] * elapsed_time
 
         # Update the previous rotational rates and reset the timer for the next update
         self._previous_rotational_rates = current_rotational_rates
@@ -46,6 +48,7 @@ class XRPGyro:
         self.pitch = 0.0
         self.yaw = 0.0
         self.roll = 0.0
+        self.angle = 0.0
         self._previous_rotational_rates = (0.0, 0.0, 0.0)
 
     def _noise_filter(self, val):
