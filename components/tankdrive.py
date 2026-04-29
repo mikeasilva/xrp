@@ -81,11 +81,19 @@ class TankDrive:
 
         # Update the chassis speed based on the current encoder rates and gyro rate
         ## Average the left and right encoder rates for the linear velocity
-        self.linear_velocity = (
+        linear_velocity = (
             self.right_encoder.getRate() - self.left_encoder.getRate()
         ) / 2
+        ## Apply a filter to the linear velocity
+        if abs(linear_velocity) < 0.001:
+            linear_velocity = 0.0
+        self.linear_velocity = linear_velocity
         ## The angular velocity is the rate of change of the gyro angle
-        self.angular_velocity = self.gyro.get_rate()
+        angular_velocity = self.gyro.get_rate()
+        ## Apply a filter to the angular velocity
+        if abs(angular_velocity) < 0.001:
+            angular_velocity = 0.0
+        self.angular_velocity = angular_velocity
         ## Update the chassis speed
         self.chassis_speed = wpimath.kinematics.ChassisSpeeds(
             self.linear_velocity, 0, self.angular_velocity
