@@ -176,3 +176,4 @@ cython_debug/
 log.txt
 *.json
 */__pycache__/
+*.wpilog

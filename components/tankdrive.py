@@ -45,6 +45,7 @@ class TankDrive:
         self.left_encoder = self.encoders["left_encoder"]
         self.reset_encoders()
         self.right_encoder.setDistancePerPulse(self.distance_per_pulse)
+        self.right_encoder.setReverseDirection(True)
         self.left_encoder.setDistancePerPulse(self.distance_per_pulse)
 
         # Set up differential drive

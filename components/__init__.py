@@ -1,6 +1,6 @@
 from .controller import XboxController
-from .gyro import XRPGyro
-from .led import XRPLed
+from .xrpgyro import XRPGyro
+from .xrpled import XRPLed
 from .tankdrive import TankDrive
 
 __all__ = ["XRPGyro", "XRPLed", "TankDrive", "XboxController"]
