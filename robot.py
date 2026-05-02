@@ -34,6 +34,8 @@ class MyRobot(magicbot.MagicRobot):
             wpilib.DataLogManager.start()
             self.log = wpilib.DataLogManager.getLog()
 
+        self.current_state = "CREATING OBJECTS"
+
         self.controller_port = constants.Ids.CONTROLLER
 
         self.gyro_noise_threshold = constants.Robot.GYRO_NOISE_THRESHOLD
@@ -60,7 +62,6 @@ class MyRobot(magicbot.MagicRobot):
         }
 
         self.led_blink_time = constants.LED_BLINK_TIME
-        self.current_state = "CREATING OBJECTS"
 
     def autonomousInit(self):
         self.current_state = "AUTO INIT"
@@ -79,6 +80,7 @@ class MyRobot(magicbot.MagicRobot):
         self.led.mode = "blink"
 
     def teleopPeriodic(self):
+        # Cruise Control Check
         if self.cruise_control_enabled:
             self.current_state = "CRUISE CONTROL ENABLED"
             speed = self.cruise_control_speed
@@ -86,9 +88,12 @@ class MyRobot(magicbot.MagicRobot):
             self.current_state = "HUMAN CONTROLLED"
             speed = -self.controller.left_y
 
-        rotation = -self.controller.right_x
+        # Crash Avoidance: Stop the robot if an object is too close
+        if self.rangefinder.distance <= constants.Robot.CRASH_AVOIDANCE_THRESHOLD:
+            self.current_state = "CRASH AVOIDANCE"
+            speed = 0.0
 
-        self.tankdrive.drive(speed, rotation)
+        self.tankdrive.drive(speed, -self.controller.right_x)
 
         # Servo control with bumpers
         ## Left bumper raises the servo, right bumper lowers it
