@@ -13,11 +13,11 @@ class XRPLed:
         self._timer.start()
 
     def execute(self) -> None:
-        if self._mode == "blink":
+        if self.mode == "blink":
             if self._timer.hasElapsed(self.blink_time):
                 self._led.setLed(not self._led.getLed())
                 self._timer.reset()
-        elif self._mode == "on":
+        elif self.mode == "on":
             self._led.setLed(True)
         else:
             self._led.setLed(False)

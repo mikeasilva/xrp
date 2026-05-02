@@ -72,6 +72,10 @@ class MyRobot(magicbot.MagicRobot):
 
     def teleopPeriodic(self):
         self.tankdrive.drive(-self.controller.left_y, -self.controller.right_x)
+        if self.controller.left_bumper_pressed():
+            self.servo.position += 0.025
+        elif self.controller.right_bumper_pressed():
+            self.servo.position -= 0.025
 
     @magicbot.feedback(key="name")
     def get_name(self) -> str:
