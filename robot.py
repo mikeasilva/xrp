@@ -17,13 +17,20 @@ class MyRobot(magicbot.MagicRobot):
     controller: components.XboxController
     gyro: components.XRPGyro
     led: components.XRPLed
+    servo: components.XRPServo
     tankdrive: components.TankDrive
     name: str = constants.Robot.NAME
 
     def createObjects(self):
+        if constants.LOGGING_ENABLED:
+            wpilib.DataLogManager.start()
+            self.log = wpilib.DataLogManager.getLog()
+
         self.controller_port = constants.Ids.CONTROLLER
 
         self.gyro_noise_threshold = constants.Robot.GYRO_NOISE_THRESHOLD
+
+        self.servo_channel = constants.Ids.SERVO
 
         # Distance per pulse is pi * wheel diameter / pulses per revolution * gear ratio
         self.tankdrive_distance_per_pulse = (

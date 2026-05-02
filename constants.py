@@ -21,3 +21,4 @@ class Robot:
 
 
 LED_BLINK_TIME = 0.25
+LOGGING_ENABLED = False
