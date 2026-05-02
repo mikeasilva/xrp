@@ -20,9 +20,12 @@ class MyRobot(magicbot.MagicRobot):
     led: components.XRPLed
     servo: components.XRPServo
     tankdrive: components.TankDrive
+    rangefinder: components.XRPRangefinder
+    reflectance_sensor: components.XRPReflectanceSensor
     # Robot specific variables
     name: str = constants.Robot.NAME
-    servo_change: float = 0.025
+    servo_change: float = constants.Robot.SERVO_CHANGE
+    ## Cruise control variables set in this class
     cruise_control_enabled: bool = False
     cruise_control_speed: float = 0.0
 

@@ -1,3 +1,7 @@
+LED_BLINK_TIME = 0.25
+LOGGING_ENABLED = False
+
+
 # Constants for channels and ports
 class Ids:
     LEFT_MOTOR = 0
@@ -8,6 +12,7 @@ class Ids:
     CONTROLLER = 0
 
 
+# Robot specific constants
 class Robot:
     PULSES_PER_REVOLUTION = 12.0
     TICKS_PER_REV = 585.0
@@ -16,9 +21,6 @@ class Robot:
     WHEEL_DIAMETER_M = WHEEL_DIAMETER_MM / 1000.0
     TRACK_WIDTH_INCHES = 6.0
     GYRO_NOISE_THRESHOLD = 0.025
+    SERVO_CHANGE = 0.025
     BATTERY_VOLTAGE = 4.8
     NAME = "XRP"
-
-
-LED_BLINK_TIME = 0.25
-LOGGING_ENABLED = False
