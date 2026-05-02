@@ -14,12 +14,17 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 
 class MyRobot(magicbot.MagicRobot):
+    # Magicbot components
     controller: components.XboxController
     gyro: components.XRPGyro
     led: components.XRPLed
     servo: components.XRPServo
     tankdrive: components.TankDrive
+    # Robot specific variables
     name: str = constants.Robot.NAME
+    servo_change: float = 0.025
+    cruise_control_enabled: bool = False
+    cruise_control_speed: float = 0.0
 
     def createObjects(self):
         if constants.LOGGING_ENABLED:
@@ -71,11 +76,31 @@ class MyRobot(magicbot.MagicRobot):
         self.led.mode = "blink"
 
     def teleopPeriodic(self):
-        self.tankdrive.drive(-self.controller.left_y, -self.controller.right_x)
+        if self.cruise_control_enabled:
+            self.current_state = "CRUISE CONTROL ENABLED"
+            speed = self.cruise_control_speed
+        else:
+            self.current_state = "HUMAN CONTROLLED"
+            speed = -self.controller.left_y
+
+        rotation = -self.controller.right_x
+
+        self.tankdrive.drive(speed, rotation)
+
+        # Servo control with bumpers
+        ## Left bumper raises the servo, right bumper lowers it
         if self.controller.left_bumper_pressed():
-            self.servo.position += 0.025
+            self.servo.position += self.servo_change
         elif self.controller.right_bumper_pressed():
-            self.servo.position -= 0.025
+            self.servo.position -= self.servo_change
+
+        # Enable/disable cruise control with the Y button
+        if self.controller.y_button_was_pressed():
+            # Toggle cruise control
+            self.cruise_control_enabled = not self.cruise_control_enabled
+            # Set the cruise control speed if it's enabled
+            if self.cruise_control_enabled:
+                self.cruise_control_speed = speed
 
     @magicbot.feedback(key="name")
     def get_name(self) -> str:
