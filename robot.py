@@ -1,12 +1,20 @@
 # XRP MagicBot
 # To Run: robotpy sim --xrp
 
-import components
+from components import (
+    XboxController,
+    XRPGyro,
+    XRPLed,
+    XRPTankDrive,
+    XRPServo,
+    XRPRangefinder,
+    XRPReflectanceSensor,
+)
+from components.odometry import Odometery
 import constants
 import magicbot
 import math
 import os
-import xrp
 import wpilib
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
@@ -15,13 +23,14 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 
 class MyRobot(magicbot.MagicRobot):
     # Magicbot components
-    controller: components.XboxController
-    gyro: components.XRPGyro
-    led: components.XRPLed
-    servo: components.XRPServo
-    tankdrive: components.TankDrive
-    rangefinder: components.XRPRangefinder
-    reflectance_sensor: components.XRPReflectanceSensor
+    controller: XboxController
+    gyro: XRPGyro
+    led: XRPLed
+    servo: XRPServo
+    tankdrive: XRPTankDrive
+    rangefinder: XRPRangefinder
+    reflectance_sensor: XRPReflectanceSensor
+    odometry: Odometery
     # Robot specific variables
     name: str = constants.Robot.NAME
     servo_change: float = constants.Robot.SERVO_CHANGE
@@ -48,18 +57,6 @@ class MyRobot(magicbot.MagicRobot):
             * constants.Robot.WHEEL_DIAMETER_M
             / (constants.Robot.PULSES_PER_REVOLUTION * constants.Robot.GEAR_RATIO)
         )
-
-        self.tankdrive_gyro = components.XRPGyro()
-
-        self.tankdrive_motors = {
-            "left_motor": xrp.XRPMotor(constants.Ids.LEFT_MOTOR),
-            "right_motor": xrp.XRPMotor(constants.Ids.RIGHT_MOTOR),
-        }
-
-        self.tankdrive_encoders = {
-            "left_encoder": wpilib.Encoder(*constants.Ids.LEFT_ENCODER),
-            "right_encoder": wpilib.Encoder(*constants.Ids.RIGHT_ENCODER),
-        }
 
         self.led_blink_time = constants.LED_BLINK_TIME
 
@@ -122,7 +119,7 @@ class MyRobot(magicbot.MagicRobot):
     @magicbot.feedback
     def pose(self):
         return [
-            self.tankdrive.get_pose_x(),
-            self.tankdrive.get_pose_y(),
+            self.odometry.get_pose_x(),
+            self.odometry.get_pose_y(),
             self.gyro.angle,
         ]
