@@ -23,4 +23,11 @@ class Robot:
     GYRO_NOISE_THRESHOLD = 0.025
     SERVO_CHANGE = 0.025
     CRASH_AVOIDANCE_THRESHOLD = 2.0  # inches
+    DEFAULT_DRIVETRAIN_CONTROL_STYLE = "arcade"
     NAME = "XRP"
+
+
+# WPI math PID controller specific constants
+class PID:
+    DISTANCE = {"Kp": 0.0, "Ki": 0.0, "Kd": 0.0}
+    HEADING = {"Kp": 0.0, "Ki": 0.0, "Kd": 0.0}

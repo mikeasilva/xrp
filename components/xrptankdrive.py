@@ -1,50 +1,60 @@
-import magicbot
-import math
-import xrp
 import wpilib
 import wpilib.drive
-import constants
+import wpimath.controller
+import xrp
 
 
 class XRPTankDrive:
-    # Other variables
-    _speed: float = 0.0
-    _rotation: float = 0.0
+    distance_pid_values: dict
+    heading_pid_values: dict
+    left_motor: xrp.XRPMotor
+    right_motor: xrp.XRPMotor
+    left_encoder: wpilib.Encoder
+    right_encoder: wpilib.Encoder
+    control_style: str
 
     def setup(self) -> None:
-        # Set up motors
-        # Distance per pulse is pi * wheel diameter / pulses per revolution * gear ratio
-        distance_per_pulse = (
-            math.pi
-            * constants.Robot.WHEEL_DIAMETER_M
-            / (constants.Robot.PULSES_PER_REVOLUTION * constants.Robot.GEAR_RATIO)
-        )
-
-        self.left_motor = xrp.XRPMotor(constants.Ids.LEFT_MOTOR)
-        self.left_motor.setSafetyEnabled(True)
-        ## We are going to invert the right motors
-        self.right_motor = xrp.XRPMotor(constants.Ids.RIGHT_MOTOR)
-        self.right_motor.setSafetyEnabled(True)
-        self.right_motor.setInverted(True)
-
-        # Set up encoders
-        self.right_encoder = wpilib.Encoder(*constants.Ids.RIGHT_ENCODER)
-        self.left_encoder = wpilib.Encoder(*constants.Ids.LEFT_ENCODER)
-        self.reset_encoders()
-        self.right_encoder.setDistancePerPulse(distance_per_pulse)
-        self.right_encoder.setReverseDirection(True)
-        self.left_encoder.setDistancePerPulse(distance_per_pulse)
+        # Initialize variables
+        self._speed = 0.0
+        self._rotation = 0.0
+        self._left_speed = 0.0
+        self._right_speed = 0.0
+        self._initial_heading = 0.0
+        self._initial_distance = 0.0
+        self.distance_setpoint = None
+        self.heading_setpoint = None
 
         # Set up differential drive
         self._drive = wpilib.drive.DifferentialDrive(self.left_motor, self.right_motor)
 
-    def execute(self) -> None:
-        # Drive the robot using arcade drive with the current speed and rotation
-        self._drive.arcadeDrive(self._speed, self._rotation)
+        # Set up PID controllers
+        self.distance_pid = wpimath.controller.PIDController(**self.distance_pid_values)
+        self.heading_pid = wpimath.controller.PIDController(**self.heading_pid_values)
 
-    def drive(self, speed: float, rotation: float) -> None:
+        self.reset_encoders()
+
+    def execute(self) -> None:
+        if self.control_style == "arcade":
+            # Drive the robot using arcade drive with the current speed and rotation
+            self._drive.arcadeDrive(self._speed, self._rotation)
+        elif self.control_style in ["cheesey", "curvature"]:
+            self._drive.curvatureDrive(self._speed, self._rotation, True)
+        elif self.control_style == "tank":
+            self._drive.tankDrive(self._left_speed, self._right_speed)
+        else:
+            pass
+
+    def drive(
+        self,
+        speed: float = 0.0,
+        rotation: float = 0.0,
+        left_speed: float = 0.0,
+        right_speed: float = 0.0,
+    ) -> None:
         self._speed = speed
         self._rotation = rotation
+        self._left_speed = left_speed
+        self._right_speed = right_speed
 
     def reset_encoders(self) -> None:
         self.left_encoder.reset()
