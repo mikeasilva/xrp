@@ -36,7 +36,10 @@ class MyRobot(magicbot.MagicRobot):
 
         self.controller_port = constants.Ids.CONTROLLER
 
+        gyro = xrp.XRPGyro()
         self.gyro_noise_threshold = constants.Robot.GYRO_NOISE_THRESHOLD
+
+        self.odometry_gyro = gyro
 
         self.servo_channel = constants.Ids.SERVO
 
