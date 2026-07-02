@@ -16,10 +16,9 @@ os.environ["HALSIMXRP_PORT"] = "3540"
 class MyRobot(magicbot.MagicRobot):
     # Magicbot components
     controller: components.XboxController
-    gyro: components.XRPGyro
+    drivetrain: components.DriveTrain
     led: components.XRPLed
     servo: components.XRPServo
-    drivetrain: components.XRPTankDrive
     rangefinder: components.XRPRangefinder
     reflectance_sensor: components.XRPReflectanceSensor
 
@@ -36,26 +35,19 @@ class MyRobot(magicbot.MagicRobot):
 
         self.controller_port = constants.Ids.CONTROLLER
 
-        gyro = xrp.XRPGyro()
-        self.gyro_noise_threshold = constants.Robot.GYRO_NOISE_THRESHOLD
-
-        self.odometry_gyro = gyro
-
         self.servo_channel = constants.Ids.SERVO
 
-        # Set up the motors
+        # Setup the drivetrain
+        ## Set up the motors
         left_motor = xrp.XRPMotor(constants.Ids.LEFT_MOTOR)
         left_motor.setSafetyEnabled(True)
         right_motor = xrp.XRPMotor(constants.Ids.RIGHT_MOTOR)
         right_motor.setSafetyEnabled(True)
         right_motor.setInverted(True)
-        self.drivetrain_left_motor = left_motor
-        self.drivetrain_right_motor = right_motor
-
-        # Set up the encoders
+        ## Set up the encoders
         right_encoder = wpilib.Encoder(*constants.Ids.RIGHT_ENCODER)
         left_encoder = wpilib.Encoder(*constants.Ids.LEFT_ENCODER)
-        # Distance per pulse is pi * wheel diameter / pulses per revolution * gear ratio
+        ### Distance per pulse is pi * wheel diameter / pulses per revolution * gear ratio
         distance_per_pulse = (
             math.pi
             * constants.Robot.WHEEL_DIAMETER_M
@@ -64,12 +56,16 @@ class MyRobot(magicbot.MagicRobot):
         right_encoder.setDistancePerPulse(distance_per_pulse)
         right_encoder.setReverseDirection(True)
         left_encoder.setDistancePerPulse(distance_per_pulse)
-        self.drivetrain_right_encoder = right_encoder
-        self.drivetrain_left_encoder = left_encoder
-
+        
+        ## Inject objects and parameters
         self.drivetrain_control_style = constants.Robot.DEFAULT_DRIVETRAIN_CONTROL_STYLE
-
-        # PID settings for the drivetrain
+        self.drivetrain_gyro = xrp.XRPGyro()
+        self.drivetrain_gyro_noise_threshold = constants.Robot.GYRO_NOISE_THRESHOLD
+        self.drivetrain_left_motor = left_motor
+        self.drivetrain_right_motor = right_motor
+        self.drivetrain_left_encoder = left_encoder
+        self.drivetrain_right_encoder = right_encoder
+        ### PID settings for the drivetrain
         self.drivetrain_distance_pid_values = constants.PID.DISTANCE
         self.drivetrain_heading_pid_values = constants.PID.HEADING
 
@@ -142,5 +138,5 @@ class MyRobot(magicbot.MagicRobot):
         return [
             0.0,  # self.localizer.pose.X,
             0.0,  # self.localizer.pose.Y,
-            self.gyro.angle,
+            self.drivetrain.angle,
         ]
