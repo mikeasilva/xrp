@@ -112,7 +112,14 @@ class DriveTrain:
         # Use the PID controllers to calculate adjustments
         heading_adjustment = self.heading_pid.calculate(self.yaw, self.heading_setpoint) if self.heading_setpoint != -999.0 else 0.0
         distance_adjustment = self.distance_pid.calculate(self.odometry.getPose().X(), self.distance_setpoint) if self.distance_setpoint != -999.0 else 0.0
-        adjustment = (heading_adjustment + distance_adjustment) / 2
+        if heading_adjustment != 0.0 or distance_adjustment != 0.0:
+            adjustment = (heading_adjustment + distance_adjustment) / 2
+        elif heading_adjustment != 0.0:
+            adjustment = heading_adjustment
+        elif distance_adjustment != 0.0:
+            adjustment = distance_adjustment
+        else:
+            adjustment = 0.0
 
         if adjustment != 0.0:
             self._drive.tankDrive(adjustment, -adjustment)
@@ -130,8 +137,11 @@ class DriveTrain:
     def drive(self, speed: float = 0.0, rotation: float = 0.0, left_speed: float = 0.0, right_speed: float = 0.0) -> None:
         self._speed = speed
         self._rotation = rotation
-        if rotation == 0 and self.heading_setpoint == -999.0:
-            self.set_heading_setpoint(self.yaw)
+        if rotation == 0:
+            if self.heading_setpoint == -999.0:
+                self.set_heading_setpoint(self.yaw)
+        else:
+            self.set_heading_setpoint(-999.0)
 
         self._left_speed = left_speed
         self._right_speed = right_speed
