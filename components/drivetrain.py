@@ -18,7 +18,6 @@ class DriveTrain:
     gyro: xrp.XRPGyro
     control_style: str
     gyro_noise_threshold: float
-    
 
     def setup(self) -> None:
         # Initialize variables
@@ -69,14 +68,18 @@ class DriveTrain:
         # Double integrate the gyro values to get rotation
         ## Get the current rotational rates, apply noise filtering, and integrate to get the rotation
         current_rotational_rates = {
-            "pitch": self._noise_filter(self.gyro.getRateX(), self.gyro_noise_threshold),
+            "pitch": self._noise_filter(
+                self.gyro.getRateX(), self.gyro_noise_threshold
+            ),
             "roll": self._noise_filter(self.gyro.getRateY(), self.gyro_noise_threshold),
             "yaw": self._noise_filter(self.gyro.getRateZ(), self.gyro_noise_threshold),
         }
         ## Calculate the average rotational rate for integration
         average_rotational_rate = {}
         for k in current_rotational_rates:
-            average_rotational_rate[k] = (current_rotational_rates[k] + self._previous_rotational_rates[k]) / 2.0
+            average_rotational_rate[k] = (
+                current_rotational_rates[k] + self._previous_rotational_rates[k]
+            ) / 2.0
         ## Integrate the average rotational rate around the Z-axis to get the rotation in radians
         elapsed_time = self._timer.get()
         self.pitch += average_rotational_rate["pitch"] * elapsed_time
@@ -100,18 +103,32 @@ class DriveTrain:
 
         # Update the chassis speed based on the current encoder rates and gyro rate
         ## Average the left and right encoder rates for the linear velocity
-        linear_velocity = (self.right_encoder.getRate() - self.left_encoder.getRate()) / 2
+        linear_velocity = (
+            self.right_encoder.getRate() - self.left_encoder.getRate()
+        ) / 2
         ## Apply a filter to the linear velocity
         self.linear_velocity = self._noise_filter(linear_velocity, 0.001)
         ## The angular velocity is the rate of change of the gyro angle
         ## Apply a filter to the angular velocity
         self.angular_velocity = self._noise_filter(self.gyro.getRate(), 0.001)
         ## Update the chassis speed
-        self.chassis_speed = wpimath.kinematics.ChassisSpeeds(self.linear_velocity, 0, self.angular_velocity)
+        self.chassis_speed = wpimath.kinematics.ChassisSpeeds(
+            self.linear_velocity, 0, self.angular_velocity
+        )
 
         # Use the PID controllers to calculate adjustments
-        heading_adjustment = self.heading_pid.calculate(self.yaw, self.heading_setpoint) if self.heading_setpoint != -999.0 else 0.0
-        distance_adjustment = self.distance_pid.calculate(self.odometry.getPose().X(), self.distance_setpoint) if self.distance_setpoint != -999.0 else 0.0
+        heading_adjustment = (
+            self.heading_pid.calculate(self.yaw, self.heading_setpoint)
+            if self.heading_setpoint != -999.0
+            else 0.0
+        )
+        distance_adjustment = (
+            self.distance_pid.calculate(
+                self.odometry.getPose().X(), self.distance_setpoint
+            )
+            if self.distance_setpoint != -999.0
+            else 0.0
+        )
         if heading_adjustment != 0.0 or distance_adjustment != 0.0:
             adjustment = (heading_adjustment + distance_adjustment) / 2
         elif heading_adjustment != 0.0:
@@ -134,7 +151,13 @@ class DriveTrain:
         else:
             pass
 
-    def drive(self, speed: float = 0.0, rotation: float = 0.0, left_speed: float = 0.0, right_speed: float = 0.0) -> None:
+    def drive(
+        self,
+        speed: float = 0.0,
+        rotation: float = 0.0,
+        left_speed: float = 0.0,
+        right_speed: float = 0.0,
+    ) -> None:
         self._speed = speed
         self._rotation = rotation
         if rotation == 0:

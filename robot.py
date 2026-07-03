@@ -56,7 +56,7 @@ class MyRobot(magicbot.MagicRobot):
         right_encoder.setDistancePerPulse(distance_per_pulse)
         right_encoder.setReverseDirection(True)
         left_encoder.setDistancePerPulse(distance_per_pulse)
-        
+
         ## Inject objects and parameters
         self.drivetrain_control_style = constants.Robot.DEFAULT_DRIVETRAIN_CONTROL_STYLE
         self.drivetrain_gyro = xrp.XRPGyro()
