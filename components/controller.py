@@ -4,6 +4,8 @@ import wpilib
 class XboxController:
     correct_for_deadband: bool = True
     deadband: float = 0.1
+    trapazoidal_output: bool = True
+    trapazoidal_step: float = 0.01
     port: int
     left_x: float = 0.0
     left_y: float = 0.0
@@ -71,6 +73,28 @@ class XboxController:
             (abs(raw_value) - self.deadband) / (1 - self.deadband)
         )
 
+    def _trapazoidal_output(
+        self,
+        current_value: float,
+        target_value: float,
+        step: float,
+        return_target_value: bool,
+    ) -> float:
+        """
+        Apply a trapezoidal output to a joystick value.
+        :param current_value: The current joystick value.
+        :param target_value: The target joystick value.
+        :param step: The step size for the trapezoidal output.
+        :param return_target_value: Bypass the logic and return the target
+        :return: The trapezoidal output value.
+        """
+        # Return the target value if the difference is smaller than the step
+        if abs(current_value - target_value) < abs(step) or return_target_value:
+            return target_value
+        # Move towards the target value by the step size
+        sign = 1 if target_value > current_value else -1
+        return current_value + (sign * step)
+
     def execute(self) -> None:
         """
         Capture the current state of all buttons to track presses.
@@ -90,10 +114,42 @@ class XboxController:
         self.right_trigger_pressed()
         self.start_button_pressed()
         self.back_button_pressed()
-        self.left_y = self._corrected_joystick_value(self.this_controller.getLeftY())
-        self.left_x = self._corrected_joystick_value(self.this_controller.getLeftX())
-        self.right_y = self._corrected_joystick_value(self.this_controller.getRightY())
-        self.right_x = self._corrected_joystick_value(self.this_controller.getRightX())
+        corrected_left_x = self._corrected_joystick_value(
+            self.this_controller.getLeftX()
+        )
+        corrected_left_y = self._corrected_joystick_value(
+            self.this_controller.getLeftY()
+        )
+        corrected_right_x = self._corrected_joystick_value(
+            self.this_controller.getRightX()
+        )
+        corrected_right_y = self._corrected_joystick_value(
+            self.this_controller.getRightY()
+        )
+        self.left_x = self._trapazoidal_output(
+            self.left_x,
+            corrected_left_x,
+            self.trapazoidal_step,
+            self.trapazoidal_output,
+        )
+        self.left_y = self._trapazoidal_output(
+            self.left_y,
+            corrected_left_y,
+            self.trapazoidal_step,
+            self.trapazoidal_output,
+        )
+        self.right_x = self._trapazoidal_output(
+            self.right_x,
+            corrected_right_x,
+            self.trapazoidal_step,
+            self.trapazoidal_output,
+        )
+        self.right_y = self._trapazoidal_output(
+            self.right_y,
+            corrected_right_y,
+            self.trapazoidal_step,
+            self.trapazoidal_output,
+        )
 
     def a_button_pressed(self) -> bool:
         """
