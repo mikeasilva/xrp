@@ -101,7 +101,7 @@ class SmoothDrive:
     # MagicBot injects values from robot attributes named after this component.
     type: str
     gyro: Gyro
-    components: dict[str, Any] | None = None
+    components: dict[str, Any]
     track_width: float = 0.6
     units: str = "meters"
     max_speed_mps: float = 3.0
