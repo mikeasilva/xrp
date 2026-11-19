@@ -115,12 +115,12 @@ class SmoothDrive:
     rotation_curve = tunable(2.0)
 
     # Maximums per mode (real units)
-    max_speed_normal = tunable(3.0)  # m/s
-    max_speed_boost = tunable(4.5)
+    max_speed_normal = tunable(2.0)  # m/s
+    max_speed_boost = tunable(3.0)
     max_speed_precision = tunable(1.0)
-    max_rot_normal = tunable(3.0)  # rad/s
-    max_rot_boost = tunable(4.0)
-    max_rot_precision = tunable(1.5)
+    max_rot_normal = tunable(6.0)  # rad/s
+    max_rot_boost = tunable(8.0)
+    max_rot_precision = tunable(4.0)
 
     # Slew rates (base values, normal mode)
     translation_accel = tunable(6.0)  # m/s^2
@@ -491,6 +491,11 @@ class SmoothDrive:
     def pose_y_meters(self) -> float:
         """Show the estimated robot Y position in meters."""
         return self.pose.Y()
+
+    @feedback
+    def velocity(self) -> float:
+        """Show the robot's current translational velocity in meters per second."""
+        return math.hypot(self._vx, self._vy)
 
     # -- Internals ---------------------------------------------------------
 
