@@ -77,7 +77,7 @@ from typing import Any, overload
 
 import wpilib
 import wpilib.drive
-from magicbot import feedback, tunable, will_reset_to
+from magicbot import feedback, will_reset_to
 from wpimath import applyDeadband
 from wpimath import units as wpimath_units
 from wpimath.controller import PIDController
@@ -107,44 +107,44 @@ class SmoothDrive:
     max_speed_mps: float = 3.0
     max_angular_speed_rps: float = 6.0
     module_locations: tuple[Translation2d, ...] = ()
-    control_loop_wait_time: float = 0.02
+    control_loop_wait_time: float = 0.02  # seconds, from MagicBot
 
     # Input shaping
-    deadband = tunable(0.08)
-    translation_curve = tunable(2.0)  # 1.0 = linear, 2.0 = squared
-    rotation_curve = tunable(2.0)
+    deadband:float = 0.08
+    translation_curve:float = 2.0  # 1.0 = linear, 2.0 = squared
+    rotation_curve:float = 2.0
 
     # Maximums per mode (real units)
-    max_speed_normal = tunable(2.0)  # m/s
-    max_speed_boost = tunable(3.0)
-    max_speed_precision = tunable(1.0)
-    max_rot_normal = tunable(6.0)  # rad/s
-    max_rot_boost = tunable(8.0)
-    max_rot_precision = tunable(4.0)
+    max_speed_normal:float = 2.0  # m/s
+    max_speed_boost:float = 3.0  # m/s
+    max_speed_precision:float = 1.0  # m/s
+    max_rot_normal:float = 6.0  # rad/s
+    max_rot_boost:float = 8.0  # rad/s
+    max_rot_precision:float = 4.0  # rad/s
 
     # Slew rates (base values, normal mode)
-    translation_accel = tunable(6.0)  # m/s^2
-    translation_decel = tunable(12.0)  # m/s^2, faster so the driver can stop
-    rotation_accel = tunable(12.0)  # rad/s^2
-    rotation_decel = tunable(20.0)  # rad/s^2
+    translation_accel:float = 6.0  # m/s^2
+    translation_decel:float = 12.0  # m/s^2, faster so the driver can stop
+    rotation_accel:float = 12.0  # rad/s^2
+    rotation_decel:float = 20.0  # rad/s^2
 
     # Slew rate multipliers for the other modes
-    boost_slew_scale = tunable(0.75)  # gentler, protects traction at speed
-    precision_slew_scale = tunable(0.5)  # gentler, for fine positioning
+    boost_slew_scale:float = 0.75  # gentler, protects traction at speed
+    precision_slew_scale:float = 0.5  # gentler, for fine positioning
 
     # Heading hold
-    heading_hold_enabled = tunable(True)
-    hold_kp = tunable(4.0)  # rad/s of correction per rad of error
-    hold_ki = tunable(0.0)
-    hold_kd = tunable(0.0)
-    settle_rate_dps = tunable(8.0)  # must turn slower than this to capture
-    settle_time = tunable(0.1)  # seconds below settle_rate_dps to capture
-    hold_max_fraction = tunable(0.6)  # hold correction limit, fraction of max rot
+    heading_hold_enabled:bool = True
+    hold_kp:float = 4.0  # rad/s of correction per rad of error
+    hold_ki:float = 0.0
+    hold_kd:float = 0.0
+    settle_rate_dps:float = 8.0  # must turn slower than this to capture
+    settle_time:float = 0.1  # seconds below settle_rate_dps to capture
+    hold_max_fraction:float = 0.6  # hold correction limit, fraction of max rot
 
     # Inputs, cleared to 0 every loop so stale values can't stick
-    fwd_input = will_reset_to(0.0)
-    strafe_input = will_reset_to(0.0)
-    rot_input = will_reset_to(0.0)
+    fwd_input:float = will_reset_to(0.0)
+    strafe_input:float = will_reset_to(0.0)
+    rot_input:float = will_reset_to(0.0)
 
     @staticmethod
     def apply_curve(value: float, exponent: float) -> float:
