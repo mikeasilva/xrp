@@ -69,7 +69,7 @@ from typing import Protocol
 
 import wpilib
 from magicbot import feedback
-from wpimath.geometry import Rotation2d
+from wpimath import Rotation2d
 
 # ---------------------------------------------------------------------------
 # Shared gyro rules and settings
@@ -121,7 +121,7 @@ class Pigeon2GyroReader:
 
     def get_heading(self) -> Rotation2d:
         """Return the latest Pigeon heading."""
-        return Rotation2d.fromDegrees(self._heading_signal.refresh().value_as_double)
+        return Rotation2d.from_degrees(self._heading_signal.refresh().value_as_double)
 
     def get_turn_rate_dps(self) -> float:
         """Return the latest turn rate in degrees per second."""
@@ -187,11 +187,11 @@ class XRPGyroReader:
 
     def get_heading(self) -> Rotation2d:
         """Return the XRP heading in the component's positive direction."""
-        return Rotation2d(-self._gyro.getAngle())
+        return Rotation2d(-self._gyro.get_angle())
 
     def get_turn_rate_dps(self) -> float:
         """Return the turn rate converted from radians to degrees per second."""
-        return -degrees(self._gyro.getRate())
+        return -degrees(self._gyro.get_rate())
 
     def is_connected(self) -> bool:
         """Report connected because XRPGyro does not expose connection status."""
@@ -213,11 +213,11 @@ class WpilibGyroReader:
 
     def get_heading(self) -> Rotation2d:
         """Return the robot's heading using counterclockwise-positive angles."""
-        return Rotation2d.fromDegrees(-self._gyro.getAngle())
+        return Rotation2d.from_degrees(-self._gyro.get_angle())
 
     def get_turn_rate_dps(self) -> float:
         """Return the turn rate using counterclockwise-positive values."""
-        return -self._gyro.getRate()
+        return -self._gyro.get_rate()
 
     def is_connected(self) -> bool:
         """Return the callback's status, or assume connected if absent."""
@@ -242,13 +242,17 @@ def _normalize_gyro_name(name: str) -> str:
 def _create_adis16448(settings: GyroSettings) -> GyroReader:
     """Create a reader for the ADIS16448 gyro."""
     imu = wpilib.ADIS16448_IMU()
-    return WpilibGyroReader(imu, getattr(imu, "isConnected", None))
+    return WpilibGyroReader(
+        imu, getattr(imu, "is_connected", getattr(imu, "isConnected", None))
+    )
 
 
 def _create_adis16470(settings: GyroSettings) -> GyroReader:
     """Create a reader for the ADIS16470 gyro."""
     imu = wpilib.ADIS16470_IMU()
-    return WpilibGyroReader(imu, getattr(imu, "isConnected", None))
+    return WpilibGyroReader(
+        imu, getattr(imu, "is_connected", getattr(imu, "isConnected", None))
+    )
 
 
 def _create_adxrs450(settings: GyroSettings) -> GyroReader:
@@ -267,7 +271,7 @@ def _create_navx(settings: GyroSettings) -> GyroReader:
         ahrs = navx.AHRS.create_i2c()
     else:
         raise ValueError(f"navx bus must be 'spi' or 'i2c', got {settings.bus!r}")
-    return WpilibGyroReader(ahrs, ahrs.isConnected)
+    return WpilibGyroReader(ahrs, getattr(ahrs, "is_connected", ahrs.isConnected))
 
 
 def _create_pigeon2(settings: GyroSettings) -> GyroReader:
@@ -352,7 +356,7 @@ class Gyro:
     def _create_reader(self) -> GyroReader:
         """Choose a reader based on whether the robot is simulated."""
         gyro_type = _normalize_gyro_name(self.type)
-        if wpilib.RobotBase.isSimulation() and gyro_type != "xrp":
+        if wpilib.RobotBase.is_simulation() and gyro_type != "xrp":
             return SimulatedGyroReader()
 
         try:

@@ -76,20 +76,21 @@ import math
 from typing import Any, overload
 
 import wpilib
-import wpilib.drive
 from magicbot import feedback, will_reset_to
-from wpimath import applyDeadband
-from wpimath import units as wpimath_units
-from wpimath.controller import PIDController
-from wpimath.geometry import Pose2d, Rotation2d, Translation2d
-from wpimath.kinematics import (
-    ChassisSpeeds,
+from wpimath import (
+    ChassisVelocities,
     DifferentialDriveKinematics,
     DifferentialDriveOdometry,
+    PIDController,
+    Pose2d,
+    Rotation2d,
     SwerveDrive4Kinematics,
     SwerveDrive4Odometry,
     SwerveModulePosition,
+    Translation2d,
+    apply_deadband,
 )
+from wpimath import units as wpimath_units
 
 from .gyro import Gyro
 from .swervemodule import SwerveModule
@@ -110,41 +111,41 @@ class SmoothDrive:
     control_loop_wait_time: float = 0.02  # seconds, from MagicBot
 
     # Input shaping
-    deadband:float = 0.08
-    translation_curve:float = 2.0  # 1.0 = linear, 2.0 = squared
-    rotation_curve:float = 2.0
+    deadband: float = 0.08
+    translation_curve: float = 2.0  # 1.0 = linear, 2.0 = squared
+    rotation_curve: float = 2.0
 
     # Maximums per mode (real units)
-    max_speed_normal:float = 2.0  # m/s
-    max_speed_boost:float = 3.0  # m/s
-    max_speed_precision:float = 1.0  # m/s
-    max_rot_normal:float = 6.0  # rad/s
-    max_rot_boost:float = 8.0  # rad/s
-    max_rot_precision:float = 4.0  # rad/s
+    max_speed_normal: float = 2.0  # m/s
+    max_speed_boost: float = 3.0  # m/s
+    max_speed_precision: float = 1.0  # m/s
+    max_rot_normal: float = 6.0  # rad/s
+    max_rot_boost: float = 8.0  # rad/s
+    max_rot_precision: float = 4.0  # rad/s
 
     # Slew rates (base values, normal mode)
-    translation_accel:float = 6.0  # m/s^2
-    translation_decel:float = 12.0  # m/s^2, faster so the driver can stop
-    rotation_accel:float = 12.0  # rad/s^2
-    rotation_decel:float = 20.0  # rad/s^2
+    translation_accel: float = 6.0  # m/s^2
+    translation_decel: float = 12.0  # m/s^2, faster so the driver can stop
+    rotation_accel: float = 12.0  # rad/s^2
+    rotation_decel: float = 20.0  # rad/s^2
 
     # Slew rate multipliers for the other modes
-    boost_slew_scale:float = 0.75  # gentler, protects traction at speed
-    precision_slew_scale:float = 0.5  # gentler, for fine positioning
+    boost_slew_scale: float = 0.75  # gentler, protects traction at speed
+    precision_slew_scale: float = 0.5  # gentler, for fine positioning
 
     # Heading hold
-    heading_hold_enabled:bool = True
-    hold_kp:float = 4.0  # rad/s of correction per rad of error
-    hold_ki:float = 0.0
-    hold_kd:float = 0.0
-    settle_rate_dps:float = 8.0  # must turn slower than this to capture
-    settle_time:float = 0.1  # seconds below settle_rate_dps to capture
-    hold_max_fraction:float = 0.6  # hold correction limit, fraction of max rot
+    heading_hold_enabled: bool = True
+    hold_kp: float = 4.0  # rad/s of correction per rad of error
+    hold_ki: float = 0.0
+    hold_kd: float = 0.0
+    settle_rate_dps: float = 8.0  # must turn slower than this to capture
+    settle_time: float = 0.1  # seconds below settle_rate_dps to capture
+    hold_max_fraction: float = 0.6  # hold correction limit, fraction of max rot
 
     # Inputs, cleared to 0 every loop so stale values can't stick
-    fwd_input:float = will_reset_to(0.0)
-    strafe_input:float = will_reset_to(0.0)
-    rot_input:float = will_reset_to(0.0)
+    fwd_input: float = will_reset_to(0.0)
+    strafe_input: float = will_reset_to(0.0)
+    rot_input: float = will_reset_to(0.0)
 
     @staticmethod
     def apply_curve(value: float, exponent: float) -> float:
@@ -201,7 +202,7 @@ class SmoothDrive:
                 f"Unknown smoothdrive_type {self.type!r}; use 'tank' or 'swerve'"
             )
 
-        self._is_simulation = wpilib.RobotBase.isSimulation()
+        self._is_simulation = wpilib.RobotBase.is_simulation()
         self.pose = Pose2d()
         self._tank_simulation_readings: tuple[float, float, Rotation2d] | None = None
         self._swerve_simulation_heading: Rotation2d | None = None
@@ -234,7 +235,7 @@ class SmoothDrive:
         if track_width <= 0:
             raise ValueError("smoothdrive_track_width must be greater than zero")
 
-        self._tank_drive = wpilib.drive.DifferentialDrive(left_motor, right_motor)
+        self._tank_drive = wpilib.DifferentialDrive(left_motor, right_motor)
         self._tank_kinematics = DifferentialDriveKinematics(track_width)
         self._left_encoder = self.components.get("left_encoder")
         self._right_encoder = self.components.get("right_encoder")
@@ -316,9 +317,9 @@ class SmoothDrive:
         if source in ("m", "meter", "meters"):
             meters = distance
         elif source in ("in", "inch", "inches"):
-            meters = wpimath_units.inchesToMeters(distance)
+            meters = wpimath_units.inches_to_meters(distance)
         elif source in ("ft", "foot", "feet"):
-            meters = wpimath_units.feetToMeters(distance)
+            meters = wpimath_units.feet_to_meters(distance)
         else:
             raise ValueError(
                 f"Unsupported distance unit {from_units!r}; use meters, inches, or feet"
@@ -327,9 +328,9 @@ class SmoothDrive:
         if target in ("m", "meter", "meters"):
             return meters
         if target in ("in", "inch", "inches"):
-            return wpimath_units.metersToInches(meters)
+            return wpimath_units.meters_to_inches(meters)
         if target in ("ft", "foot", "feet"):
-            return wpimath_units.metersToFeet(meters)
+            return wpimath_units.meters_to_feet(meters)
         raise ValueError(
             f"Unsupported distance unit {to_units!r}; use meters, inches, or feet"
         )
@@ -349,7 +350,7 @@ class SmoothDrive:
         else:
             if self._left_encoder is None:
                 raise RuntimeError("Tank odometry requires a left encoder")
-            distance = self._left_encoder.getDistance()
+            distance = self._left_encoder.get_distance()
         return self._convert_distance(distance, self.units, "meters")
 
     def _get_right_distance(self) -> float:
@@ -359,7 +360,7 @@ class SmoothDrive:
         else:
             if self._right_encoder is None:
                 raise RuntimeError("Tank odometry requires a right encoder")
-            distance = self._right_encoder.getDistance()
+            distance = self._right_encoder.get_distance()
         return self._convert_distance(distance, self.units, "meters")
 
     def _get_module_positions(
@@ -375,13 +376,13 @@ class SmoothDrive:
 
     def _execute_tank(self) -> None:
         """Convert chassis speeds to bounded left and right motor outputs."""
-        wheel_speeds = self._tank_kinematics.toWheelSpeeds(self.speeds)
+        wheel_speeds = self._tank_kinematics.to_wheel_velocities(self.speeds)
         max_wheel_speed = max(abs(wheel_speeds.left), abs(wheel_speeds.right))
         scale = max(1.0, max_wheel_speed / self.max_speed_mps)
-        self._tank_drive.tankDrive(
+        self._tank_drive.tank_drive(
             wheel_speeds.left / (self.max_speed_mps * scale),
             wheel_speeds.right / (self.max_speed_mps * scale),
-            squareInputs=False,
+            False,
         )
         if self._tank_odometry is not None:
             self.pose = self._tank_odometry.update(
@@ -392,8 +393,8 @@ class SmoothDrive:
 
     def _execute_swerve(self) -> None:
         """Calculate module targets from chassis speeds and update odometry."""
-        states = self._swerve_kinematics.toSwerveModuleStates(self.speeds)
-        states = self._swerve_kinematics.desaturateWheelSpeeds(
+        states = self._swerve_kinematics.to_swerve_module_velocities(self.speeds)
+        states = self._swerve_kinematics.desaturate_wheel_velocities(
             states, self.max_speed_mps
         )
         for module, state in zip(self._modules, states, strict=True):
@@ -419,7 +420,7 @@ class SmoothDrive:
         self._settle_elapsed = 0.0
         self._heading_error_rad = 0.0
         self._hold_pid.reset()
-        self.speeds = ChassisSpeeds()
+        self.speeds = ChassisVelocities()
         self._stop_requested = False
 
     def set_mode(self, mode: str) -> None:
@@ -485,12 +486,12 @@ class SmoothDrive:
     @feedback
     def pose_x_meters(self) -> float:
         """Show the estimated robot X position in meters."""
-        return self.pose.X()
+        return self.pose.x
 
     @feedback
     def pose_y_meters(self) -> float:
         """Show the estimated robot Y position in meters."""
-        return self.pose.Y()
+        return self.pose.y
 
     @feedback
     def velocity(self) -> float:
@@ -523,7 +524,7 @@ class SmoothDrive:
         if magnitude < 1e-9:
             return (0.0, 0.0)
         shaped = self.apply_curve(
-            applyDeadband(min(magnitude, 1.0), self.deadband), self.translation_curve
+            apply_deadband(min(magnitude, 1.0), self.deadband), self.translation_curve
         )
         if self._type == "tank":
             return (math.copysign(shaped, self.fwd_input), 0.0)
@@ -533,7 +534,7 @@ class SmoothDrive:
     def _shape_rotation(self) -> float:
         """Deadband and curve the rotation stick."""
         return self.apply_curve(
-            applyDeadband(max(-1.0, min(1.0, self.rot_input)), self.deadband),
+            apply_deadband(max(-1.0, min(1.0, self.rot_input)), self.deadband),
             self.rotation_curve,
         )
 
@@ -571,8 +572,8 @@ class SmoothDrive:
         # PID is needed. Error is the shortest turn from heading to target.
         error = (self._heading_target - self.gyro.rotation).radians()
         self._heading_error_rad = error
-        self._hold_pid.setP(self.hold_kp)
-        self._hold_pid.setD(self.hold_kd)
+        self._hold_pid.set_p(self.hold_kp)
+        self._hold_pid.set_d(self.hold_kd)
         # PIDController computes (setpoint - measurement), so measurement 0
         # and setpoint = error gives a command that turns toward the target.
         correction = self._hold_pid.calculate(0.0, error)
@@ -585,7 +586,7 @@ class SmoothDrive:
         """Compute smoothed chassis speeds and command the selected drive."""
         if self._stop_requested:
             if self._type == "tank":
-                self._tank_drive.stopMotor()
+                self._tank_drive.stop_motor()
             else:
                 for module in self._modules:
                     module.stop()
@@ -638,7 +639,7 @@ class SmoothDrive:
                 dt,
             )
 
-        self.speeds = ChassisSpeeds(self._vx, self._vy, self._omega)
+        self.speeds = ChassisVelocities(self._vx, self._vy, self._omega)
         if self._type == "tank":
             self._execute_tank()
         else:
@@ -651,14 +652,14 @@ class SmoothDrive:
         if self._type == "tank":
             if self._tank_odometry is None:
                 raise RuntimeError("Tank odometry requires two encoders")
-            self._tank_odometry.resetPosition(
+            self._tank_odometry.reset_position(
                 self._get_heading(),
                 self._get_left_distance(),
                 self._get_right_distance(),
                 pose,
             )
         else:
-            self._swerve_odometry.resetPosition(
+            self._swerve_odometry.reset_position(
                 self._get_heading(),
                 self._get_module_positions(),
                 pose,
@@ -668,8 +669,8 @@ class SmoothDrive:
     def get_pose(self, units: str = "meters") -> Pose2d:
         """Return the estimated pose, converting X and Y to the requested units."""
         return Pose2d(
-            self._convert_distance(self.pose.X(), "meters", units),
-            self._convert_distance(self.pose.Y(), "meters", units),
+            self._convert_distance(self.pose.x, "meters", units),
+            self._convert_distance(self.pose.y, "meters", units),
             self.pose.rotation(),
         )
 
@@ -745,7 +746,7 @@ class SmoothDrive:
         self.reset()
         self._stop_requested = True
         if self._type == "tank":
-            self._tank_drive.stopMotor()
+            self._tank_drive.stop_motor()
         else:
             for module in self._modules:
                 module.stop()

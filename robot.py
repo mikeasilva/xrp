@@ -19,7 +19,7 @@ class MyRobot(magicbot.MagicRobot):
     gyro: components.Gyro
     drivetrain: components.SmoothDrive
 
-    def createObjects(self):
+    def create_objects(self):
         self.name = constants.Robot.NAME
         self.controller_port = constants.Ids.CONTROLLER
         self.gyro_type = "xrp"
@@ -33,7 +33,7 @@ class MyRobot(magicbot.MagicRobot):
         ## Set up the motors and encoders
         left_motor = xrp.XRPMotor(constants.Ids.LEFT_MOTOR)
         right_motor = xrp.XRPMotor(constants.Ids.RIGHT_MOTOR)
-        right_motor.setInverted(True)
+        right_motor.set_inverted(True)
         right_encoder = wpilib.Encoder(*constants.Ids.RIGHT_ENCODER)
         left_encoder = wpilib.Encoder(*constants.Ids.LEFT_ENCODER)
         ### Distance per pulse is pi * wheel diameter / pulses per revolution * gear ratio
@@ -42,9 +42,9 @@ class MyRobot(magicbot.MagicRobot):
             * constants.Robot.WHEEL_DIAMETER_M
             / (constants.Robot.PULSES_PER_REVOLUTION * constants.Robot.GEAR_RATIO)
         )
-        right_encoder.setDistancePerPulse(distance_per_pulse)
-        right_encoder.setReverseDirection(True)
-        left_encoder.setDistancePerPulse(distance_per_pulse)
+        right_encoder.set_distance_per_pulse(distance_per_pulse)
+        right_encoder.set_reverse_direction(True)
+        left_encoder.set_distance_per_pulse(distance_per_pulse)
         self.drivetrain_components = {
             "left_motor": left_motor,
             "right_motor": right_motor,
@@ -52,14 +52,14 @@ class MyRobot(magicbot.MagicRobot):
             "right_encoder": right_encoder,
         }
 
-    def disabledPeriodic(self):
+    def disabled_periodic(self):
         pass
 
-    def teleopInit(self):
+    def teleop_init(self):
         self.gyro.reset()
         self.drivetrain.reset()
 
-    def teleopPeriodic(self):
+    def teleop_periodic(self):
         # Change the drive "mode" based on the bumpers. Boost mode is faster, precision mode is slower.
         if self.controller.right_bumper_pressed():
             self.drivetrain.set_mode("boost")

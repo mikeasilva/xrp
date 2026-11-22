@@ -25,10 +25,9 @@ from __future__ import annotations
 from typing import Protocol, runtime_checkable
 
 import wpilib
-import wpimath.controller
+import wpimath
 from magicbot import feedback
-from wpimath.geometry import Rotation2d
-from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
+from wpimath import Rotation2d, SwerveModulePosition, SwerveModuleVelocity
 
 
 @runtime_checkable
@@ -39,7 +38,7 @@ class MotorController(Protocol):
         """Set motor power from -1.0 to 1.0."""
         ...
 
-    def stopMotor(self) -> None:
+    def stop_motor(self) -> None:
         """Stop the motor."""
         ...
 
@@ -48,11 +47,11 @@ class MotorController(Protocol):
 class DriveEncoder(Protocol):
     """The distance and speed readings needed from a drive encoder."""
 
-    def getDistance(self) -> float:
+    def get_distance(self) -> float:
         """Return wheel distance in meters."""
         ...
 
-    def getRate(self) -> float:
+    def get_rate(self) -> float:
         """Return wheel speed in meters per second."""
         ...
 
@@ -61,7 +60,7 @@ class DriveEncoder(Protocol):
 class SteeringEncoder(Protocol):
     """The angle reading needed from a steering encoder."""
 
-    def getDistance(self) -> float:
+    def get_distance(self) -> float:
         """Return steering angle in degrees."""
         ...
 
@@ -88,11 +87,11 @@ class SwerveModule:
             if getattr(self, name, None) is None:
                 raise ValueError(f"swerve module requires {name}")
 
-        self._drive_controller = wpimath.controller.PIDController(*self.drive_pid)
-        self._steering_controller = wpimath.controller.PIDController(*self.steering_pid)
-        self._steering_controller.enableContinuousInput(-180.0, 180.0)
-        self._desired_state = SwerveModuleState()
-        self._is_simulation = wpilib.RobotBase.isSimulation()
+        self._drive_controller = wpimath.PIDController(*self.drive_pid)
+        self._steering_controller = wpimath.PIDController(*self.steering_pid)
+        self._steering_controller.enable_continuous_input(-180.0, 180.0)
+        self._desired_state = SwerveModuleVelocity()
+        self._is_simulation = wpilib.RobotBase.is_simulation()
         self._simulation_readings: tuple[float, float, Rotation2d] | None = None
         self._stopped = False
 
@@ -100,29 +99,29 @@ class SwerveModule:
         """Return the calibrated wheel angle."""
         if self._simulation_readings is not None:
             return self._simulation_readings[2]
-        return Rotation2d.fromDegrees(
-            self.steering_encoder.getDistance() + self.steering_offset_degrees
+        return Rotation2d.from_degrees(
+            self.steering_encoder.get_distance() + self.steering_offset_degrees
         )
 
     def _drive_distance_meters(self) -> float:
         """Return how far the wheel has rolled."""
         if self._simulation_readings is not None:
             return self._simulation_readings[0]
-        return self.drive_encoder.getDistance()
+        return self.drive_encoder.get_distance()
 
     def _drive_speed_meters_per_second(self) -> float:
         """Return how quickly the wheel is rolling."""
         if self._simulation_readings is not None:
             return self._simulation_readings[1]
-        return self.drive_encoder.getRate()
+        return self.drive_encoder.get_rate()
 
-    def set_desired_state(self, state: SwerveModuleState) -> None:
+    def set_desired_state(self, state: SwerveModuleVelocity) -> None:
         """Set the wheel's requested speed and angle.
 
         WPILib may reverse the wheel's speed to reduce how far its steering
         motor must turn.
         """
-        optimized_state = SwerveModuleState(state.speed, state.angle)
+        optimized_state = SwerveModuleVelocity(state.velocity, state.angle)
         optimized_state.optimize(self._current_angle())
         self._desired_state = optimized_state
         self._stopped = False
@@ -134,9 +133,9 @@ class SwerveModule:
             self._current_angle(),
         )
 
-    def get_state(self) -> SwerveModuleState:
+    def get_state(self) -> SwerveModuleVelocity:
         """Return measured wheel speed and steering angle."""
-        return SwerveModuleState(
+        return SwerveModuleVelocity(
             self._drive_speed_meters_per_second(),
             self._current_angle(),
         )
@@ -149,7 +148,7 @@ class SwerveModule:
         angle = self._current_angle()
         drive_output = self._drive_controller.calculate(
             self._drive_speed_meters_per_second(),
-            self._desired_state.speed,
+            self._desired_state.velocity,
         )
         steering_output = self._steering_controller.calculate(
             angle.degrees(),
@@ -188,11 +187,11 @@ class SwerveModule:
 
     def stop(self) -> None:
         """Stop both motors until a new desired state is received."""
-        self._desired_state = SwerveModuleState()
+        self._desired_state = SwerveModuleVelocity()
         self._drive_controller.reset()
         self._steering_controller.reset()
-        self.drive_motor.stopMotor()
-        self.steering_motor.stopMotor()
+        self.drive_motor.stop_motor()
+        self.steering_motor.stop_motor()
         self._stopped = True
 
     @feedback
@@ -213,7 +212,7 @@ class SwerveModule:
     @feedback
     def requested_drive_speed_mps(self) -> float:
         """Show the requested wheel speed in meters per second."""
-        return self._desired_state.speed
+        return self._desired_state.velocity
 
     @feedback
     def requested_steering_angle_degrees(self) -> float:
