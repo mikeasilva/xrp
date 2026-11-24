@@ -23,13 +23,6 @@ class MyRobot(magicbot.MagicRobot):
         self.name = constants.Robot.NAME
         self.controller_port = constants.Ids.CONTROLLER
         self.gyro_type = "xrp"
-        # Setup the drivetrain
-        self.drivetrain_type = "tank"
-        self.drivetrain_max_speed_mps = constants.Robot.MAX_SPEED_MPS
-        self.drivetrain_max_speed_normal = constants.Robot.NORMAL_SPEED_MPS
-        self.drivetrain_max_speed_boost = constants.Robot.BOOST_SPEED_MPS
-        self.drivetrain_max_speed_precision = constants.Robot.PRECISION_SPEED_MPS
-        self.drivetrain_track_width = constants.Robot.TRACK_WIDTH_M
         ## Set up the motors and encoders
         left_motor = xrp.XRPMotor(constants.Ids.LEFT_MOTOR)
         right_motor = xrp.XRPMotor(constants.Ids.RIGHT_MOTOR)
@@ -51,6 +44,7 @@ class MyRobot(magicbot.MagicRobot):
             "left_encoder": left_encoder,
             "right_encoder": right_encoder,
         }
+        self.drivetrain_config = constants.DRIVETRAIN_CONFIG
 
     def disabled_periodic(self):
         pass
