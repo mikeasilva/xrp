@@ -31,7 +31,9 @@ if TYPE_CHECKING:
 
 
 @wpilib.teleop(
-    name="Arcade Drive", group="Drive", description="Left stick drives, right stick turns"
+    name="Arcade Drive",
+    group="Drive",
+    description="Left stick drives, right stick turns",
 )
 class ArcadeTeleop(wpilib.PeriodicOpMode):
     def __init__(self, robot: Robot) -> None:

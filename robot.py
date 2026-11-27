@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 THE ROBOT CLASS (RobotPy 2027 alpha, XRP)
 
@@ -18,7 +17,7 @@ HOW OPMODES GET FOUND: classes decorated with @wpilib.teleop / @wpilib.autonomou
 """
 
 import wpilib
-import xrp  # separate package from robotpy-xrp (not part of wpilib): pip install robotpy-xrp
+import xrp
 
 
 class Robot(wpilib.OpModeRobot):

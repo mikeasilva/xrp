@@ -19,7 +19,9 @@ if TYPE_CHECKING:
     from robot import Robot
 
 
-@wpilib.utility(name="Motor Test", description="Spins left then right motor to check wiring")
+@wpilib.utility(
+    name="Motor Test", description="Spins left then right motor to check wiring"
+)
 class MotorTest(wpilib.PeriodicOpMode):
     def __init__(self, robot: Robot) -> None:
         super().__init__()
