@@ -27,14 +27,18 @@ class Robot(wpilib.OpModeRobot):
         super().__init__()
 
         # -------------------------------------------------------------------------------------
-        # FALLBACK: explicit registration. If your RobotPy alpha doesn't auto-discover, replace
-        # the super().__init__() line above with the block below. (Names are from the RobotPy
-        # discovery pull request and may differ slightly in your version.)
+        # FALLBACK: explicit registration. If your RobotPy alpha doesn't auto-discover, register
+        # the opmodes explicitly using RobotMode from hal.
         #
-        #   super().__init__(auto_discover=False)
-        #   from opmodes.arcade_teleop import ArcadeTeleop
-        #   self.add_opmode(ArcadeTeleop, wpilib.RobotMode.TELEOPERATED, "Arcade Drive", "Drive")
-        #   self.publish_opmodes()
+        # super().__init__(auto_discover=False)
+        # from hal import RobotMode
+        # from opmodes.arcade_teleop import ArcadeTeleop
+        # from opmodes.drive_and_turn_auto import DriveAndTurnAuto
+        # from opmodes.motor_test import MotorTest
+        # self.add_opmode(ArcadeTeleop, RobotMode.TELEOPERATED, "Arcade Drive", "Drive")
+        # self.add_opmode(DriveAndTurnAuto, RobotMode.AUTONOMOUS, "Drive and Turn", "Auto")
+        # self.add_opmode(MotorTest, RobotMode.UTILITY, "Motor Test", "Utility")
+        # self.publish_opmodes()
         # -------------------------------------------------------------------------------------
 
         # -------------------------------------------------------------------------------------
@@ -42,21 +46,18 @@ class Robot(wpilib.OpModeRobot):
         # constructors. Think of Robot as a "toolbox" every opmode reaches into.
         # -------------------------------------------------------------------------------------
 
-        # The XRP needs XRPMotor, NOT the normal PWM motor classes.
-        # Motor channel 0 = left motor, channel 1 = right motor.
+        # Setup the XRP motors
         self.left_motor = xrp.XRPMotor(0)
         self.right_motor = xrp.XRPMotor(1)
-
-        # One side of a drivetrain must be flipped so +1 means "forward" on both sides.
-        # (If your XRP drives backwards or spins in place, flip this to the other motor.)
         self.right_motor.set_inverted(True)
 
-        # DifferentialDrive turns "forward speed + turn rate" into left/right motor outputs.
-        # In RobotPy 2027 it lives directly in the wpilib module (there is no wpilib.drive) and
-        # takes the motor objects themselves.
+        # Setup the drivetrain
         self.drive = wpilib.DifferentialDrive(self.left_motor, self.right_motor)
 
-        # The 2027 Gamepad class (replaces XboxController/PS4Controller). USB port 0.
+        # Setup the controller. The Gamepad class is a new, unified controller class that 
+        # replaces the XboxController and PS4Controller classes. It supports any USB gamepad, 
+        # including Xbox, PS4, and generic controllers. The Gamepad class is part of the 2027 
+        # RobotPy alpha release. We assume it's connected to USB port 0.
         self.controller = wpilib.Gamepad(0)
 
     # ------------------------------------------------------------------------------------------
