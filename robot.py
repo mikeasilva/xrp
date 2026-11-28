@@ -15,6 +15,7 @@ HOW OPMODES GET FOUND: classes decorated with @wpilib.teleop / @wpilib.autonomou
 @wpilib.utility are discovered automatically at startup, so there is no registration code here.
 (See the commented-out fallback in __init__ if discovery doesn't work on your alpha version.)
 """
+
 import os
 
 import wpilib
@@ -22,6 +23,7 @@ import xrp
 
 os.environ["HALSIMXRP_HOST"] = "192.168.42.1"
 os.environ["HALSIMXRP_PORT"] = "3540"
+
 
 class Robot(wpilib.OpModeRobot):
     def __init__(self) -> None:
@@ -35,12 +37,16 @@ class Robot(wpilib.OpModeRobot):
         #
         super().__init__(auto_discover=False)
         from hal import RobotMode
-        from opmodes.arcade_teleop import ArcadeTeleop
-        from opmodes.drive_and_turn_auto import DriveAndTurnAuto
-        from opmodes.motor_test import MotorTest
-        self.add_opmode(ArcadeTeleop, RobotMode.TELEOPERATED, "Arcade Drive", "Drive")
-        self.add_opmode(DriveAndTurnAuto, RobotMode.AUTONOMOUS, "Drive and Turn", "Auto")
-        self.add_opmode(MotorTest, RobotMode.UTILITY, "Motor Test", "Utility")
+
+        import opmodes
+
+        self.add_opmode(
+            opmodes.ArcadeTeleop, RobotMode.TELEOPERATED, "Arcade Drive", "Drive"
+        )
+        self.add_opmode(
+            opmodes.DriveAndTurnAuto, RobotMode.AUTONOMOUS, "Drive and Turn", "Auto"
+        )
+        self.add_opmode(opmodes.MotorTest, RobotMode.UTILITY, "Motor Test", "Utility")
         self.publish_opmodes()
         # -------------------------------------------------------------------------------------
 
@@ -57,9 +63,9 @@ class Robot(wpilib.OpModeRobot):
         # Setup the drivetrain
         self.drive = wpilib.DifferentialDrive(self.left_motor, self.right_motor)
 
-        # Setup the controller. The Gamepad class is a new, unified controller class that 
-        # replaces the XboxController and PS4Controller classes. It supports any USB gamepad, 
-        # including Xbox, PS4, and generic controllers. The Gamepad class is part of the 2027 
+        # Setup the controller. The Gamepad class is a new, unified controller class that
+        # replaces the XboxController and PS4Controller classes. It supports any USB gamepad,
+        # including Xbox, PS4, and generic controllers. The Gamepad class is part of the 2027
         # RobotPy alpha release. We assume it's connected to USB port 0.
         self.controller = wpilib.Gamepad(0)
 
