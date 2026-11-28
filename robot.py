@@ -70,10 +70,10 @@ class Robot(wpilib.OpModeRobot):
 
         # Setup the encoders
         self.left_encoder = wpilib.Encoder(*constants.Ids.LEFT_ENCODER)
-        self.left_encoder.set_reverse_direction(constants.LEFT_INVERTED)
+        # self.left_encoder.set_reverse_direction(constants.LEFT_INVERTED)
         self.left_encoder.set_distance_per_pulse(constants.DISTANCE_PER_PULSE)
         self.right_encoder = wpilib.Encoder(*constants.Ids.RIGHT_ENCODER)
-        self.right_encoder.set_reverse_direction(constants.RIGHT_INVERTED)
+        # self.right_encoder.set_reverse_direction(constants.RIGHT_INVERTED)
         self.right_encoder.set_distance_per_pulse(constants.DISTANCE_PER_PULSE)
 
         # Setup the servo
@@ -86,6 +86,7 @@ class Robot(wpilib.OpModeRobot):
 
         # Setup the on-board LED
         self.led = xrp.XRPOnBoardIO()
+        self.led.set_led(False)  # Turn off the LED at startup
 
         # Setup the controller. The Gamepad class is a new, unified controller class that
         # replaces the XboxController and PS4Controller classes. It supports any USB gamepad,
@@ -100,12 +101,14 @@ class Robot(wpilib.OpModeRobot):
     def driver_station_connected(self) -> None:
         """Called once, the first time the Driver Station connects."""
         print("Driver Station connected!")
+        self.led.set_led(True)  # Turn on the LED when the DS connects
 
     def robot_periodic(self) -> None:
         """Called every loop (20 ms) regardless of enabled state or selected opmode."""
 
     def none_periodic(self) -> None:
         """Called every loop while NO opmode is selected (including when the DS is disconnected)."""
+        self.led.set_led(False)  # Turn off the LED when no opmode is selected
 
 
 if __name__ == "__main__":
